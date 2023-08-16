@@ -6,6 +6,7 @@
     import {inertia} from "@inertiajs/inertia-svelte";
 
     export let tasks;
+    console.log(tasks);
 </script>
 
 <svelte:head>
@@ -14,12 +15,15 @@
 
 <h1 class="text-3xl">All Tasks</h1>
 
-{#each tasks.data as task (task.id)}
-    <div class="border border-gray-200 rounded p-4 my-2">
-        <h2 class="text-xl">{task.title}</h2>
-        <p>{task.description}</p>
-    </div>
-{/each}
+<div class="space-y-4 mt-5">
+    {#each tasks.data as task (task.id)}
+        <div class="border border-gray-200 rounded p-4 my-2">
+            <a use:inertia href="/"><h2 class="text-2xl font-bold pb-3">{task.title}</h2></a>
+            <p>{task.description}</p>
+            <a use:inertia href="/" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag.name}</a>
+        </div>
+    {/each}
+</div>
 
 <div>
     <div class="mt-6">
