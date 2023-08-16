@@ -13,11 +13,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
 //Route::middleware('auth')->group(function () {
     Route::get('/', [TaskControler::class, 'index'])->name('tasks.index');
-//    Route::get('/', function () {
-//        return Inertia::render('Home', [
-//            'frameworks' => ['Laravel', 'Inertia', 'Tailwind CSS', 'Vue']
-//        ]);
-//    });
+
 
     Route::get('/users', function () {
         sleep(1);

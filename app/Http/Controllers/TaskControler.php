@@ -17,7 +17,15 @@ class TaskControler extends Controller
         // return Task::latest()->paginate();
 
         return Inertia::render('Tasks/Index', [
-            'tasks' => Task::latest()->simplePaginate(6)
+            'tasks' => Task::with('tag')
+                ->latest()
+                ->simplePaginate(6)
+                ->through(fn($task) => [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'description' => $task->description,
+                    'tag' => $task->tag->name,
+                ])
         ]);
     }
 
