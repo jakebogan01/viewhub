@@ -20,7 +20,7 @@
                    class="text-black hover:underline" href="/test">Test</a>
             </li>
             <li>
-                Welcome back, {$page.props.auth.user.name}
+<!--                Welcome back, {$page.props.auth.user.name}-->
             </li>
             <li>
                 <button use:inertia="{{ href: '/logout', method: 'post' }}" class="text-black hover:underline" type="submit">Logout</button>
