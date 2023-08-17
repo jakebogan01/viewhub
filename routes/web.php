@@ -13,6 +13,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
 //Route::middleware('auth')->group(function () {
     Route::get('/', [TaskControler::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/{task:slug}', [TaskControler::class, 'show']);
 
 
     Route::get('/users', function () {

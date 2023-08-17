@@ -17,12 +17,12 @@ class TaskControler extends Controller
         // return Task::latest()->paginate();
 
         return Inertia::render('Tasks/Index', [
-            'tasks' => Task::with('tag')
-                ->latest()
+            'tasks' => Task::latest()
                 ->simplePaginate(6)
                 ->through(fn($task) => [
                     'id' => $task->id,
                     'title' => $task->title,
+                    'slug' => $task->slug,
                     'description' => $task->description,
                     'tag' => $task->tag->name,
                 ])
@@ -48,9 +48,15 @@ class TaskControler extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Task $task)
     {
-        //
+        return Inertia::render('Tasks/Show', [
+            'task' => [
+                'title' => $task->title,
+                'description' => $task->description,
+                'tag' => $task->tag->name,
+            ]
+        ]);
     }
 
     /**
