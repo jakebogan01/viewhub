@@ -10,6 +10,8 @@ class Task extends Model
 {
     use HasFactory;
 
+    protected $with = ['tag'];
+
     /**
      * @return BelongsTo
      */
