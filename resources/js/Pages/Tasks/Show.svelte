@@ -15,9 +15,13 @@
 
 <div class="space-y-4 mt-5">
     <div class="border border-gray-200 rounded p-4 my-2">
-        <h2 class="text-2xl font-bold pb-3">{task.title}</h2>
+        <div class="flex justify-between items-center">
+            <h2 class="text-2xl font-bold pb-3">{task.title}</h2>
+
+            <span>Created by: {task.user}</span>
+        </div>
         <p>{task.description}</p>
-        <a use:inertia href="/" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag.name}</a>
+        <a use:inertia href="/" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
     </div>
 </div>
 
