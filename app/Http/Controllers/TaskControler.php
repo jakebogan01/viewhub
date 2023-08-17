@@ -55,6 +55,7 @@ class TaskControler extends Controller
                 'title' => $task->title,
                 'description' => $task->description,
                 'tag' => $task->tag->name,
+                'user' => $task->user->name,
             ]
         ]);
     }

@@ -10,7 +10,15 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $with = ['tag'];
+    protected $with = ['tag', 'user'];
+
+    /**
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * @return BelongsTo

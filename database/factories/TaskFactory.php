@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,8 +20,7 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            // laravel will automatically create user and assign user id to a post
-//            'user_id' => User::factory(),
+            'user_id' => User::factory(),
             'tag_id' => Tag::factory(),
             'title' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
