@@ -4,16 +4,41 @@
 
 <script>
     import {inertia} from "@inertiajs/inertia-svelte";
+    import {Inertia} from "@inertiajs/inertia";
 
     export let tasks;
+    export let filters;
+
     console.log(tasks);
+
+    let search = filters.search;
+    let timer;
+
+    // debounce search input
+    const debounce = v => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            Inertia.get('/', {search: v}, {
+                // search input doesn't reload the page and lose focus
+                preserveState: true,
+                // prevents the browser's history from being updated
+                replace: true,
+                // preserve scroll position on back navigation
+                preserveScroll: true,
+            });
+        }, 300);
+    }
 </script>
 
 <svelte:head>
     <title>Home</title>
 </svelte:head>
 
-<h1 class="text-3xl">All Tasks</h1>
+<div class="flex justify-between mb-6">
+    <h1 class="text-3xl">All Tasks</h1>
+
+    <input on:keyup={({ target: { value } }) => debounce(value)} value={search} type="text" placeholder="Search..." class="border px-2 rounded-lg"/>
+</div>
 
 <div class="space-y-4 mt-5">
     {#each tasks.data as task (task.id)}

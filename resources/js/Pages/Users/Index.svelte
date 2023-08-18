@@ -10,7 +10,7 @@
     export let time;
     export let users;
     export let filters;
-    export let can;
+    // export let can;
 
     let search = filters.search;
 
@@ -35,9 +35,9 @@
     <div class="flex items-center">
         <h1 class="text-3xl">Users</h1>
 
-        {#if can.createUser}
-            <a use:inertia href="/users/create" class="text-blue-500 text-sm ml-3">New User</a>
-        {/if}
+        <!--{#if can.createUser}-->
+        <!--    <a use:inertia href="/users/create" class="text-blue-500 text-sm ml-3">New User</a>-->
+        <!--{/if}-->
     </div>
 
     <input on:keyup={({ target: { value } }) => debounce(value)} value={search} type="text" placeholder="Search..." class="border px-2 rounded-lg"/>
@@ -60,12 +60,12 @@
                                     </div>
                                 </div>
                             </td>
-                            {#if user.can.edit}
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a use:inertia href="/users/${user.id}/edit"
-                                       class="text-indigo-600 hover:text-indigo-900">Edit</a>
-                                </td>
-                            {/if}
+                            <!--{#if user.can.edit}-->
+                            <!--    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">-->
+                            <!--        <a use:inertia href="/users/${user.id}/edit"-->
+                            <!--           class="text-indigo-600 hover:text-indigo-900">Edit</a>-->
+                            <!--    </td>-->
+                            <!--{/if}-->
                         </tr>
                     {/each}
                     </tbody>
