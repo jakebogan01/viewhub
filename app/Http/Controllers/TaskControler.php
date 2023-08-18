@@ -17,15 +17,23 @@ class TaskControler extends Controller
         // return Task::latest()->paginate();
 
         return Inertia::render('Tasks/Index', [
-            'tasks' => Task::latest()
+            'tasks' => Task::query()
+                // if you find something for the search input, append to the query
+                ->when(request()->input('search'), function($query, $search) {
+                    $query->where('title', 'like', "%$search%");
+                })
+                ->latest()
                 ->simplePaginate(6)
+                ->withQueryString()
                 ->through(fn($task) => [
                     'id' => $task->id,
                     'title' => $task->title,
                     'slug' => $task->slug,
                     'description' => $task->description,
                     'tag' => $task->tag->name,
-                ])
+                ]),
+            // pass the search input to the view
+            'filters' => request()->only(['search']),
         ]);
     }
 

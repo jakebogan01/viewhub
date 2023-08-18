@@ -30,15 +30,15 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
                 ->through(fn($user) => [
                     'id' => $user->id,
                     'name' => $user->name,
-                    'can' => [
-                        'edit' => Auth::user()->can('edit', $user),
-                    ],
+//                    'can' => [
+//                        'edit' => Auth::user()->can('edit', $user),
+//                    ],
                 ]),
 
             'filters' => Request::only(['search']),
-            'can' => [
-                'createUser' => Auth::user()->can('create', User::class)
-            ],
+//            'can' => [
+//                'createUser' => Auth::user()->can('create', User::class)
+//            ],
         ]);
     })->name('users');
 
