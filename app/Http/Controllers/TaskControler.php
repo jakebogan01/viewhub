@@ -20,7 +20,11 @@ class TaskControler extends Controller
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
                 ->when(request()->input('search'), function($query, $search) {
-                    $query->where('title', 'like', "%$search%");
+                    // query the title and related tag name
+                    $query->where('title', 'LIKE', "%$search%")
+                        ->orWhereHas('tag', function($query) use ($search) {
+                            $query->where('name', 'LIKE', "%$search%");
+                        });
                 })
                 ->latest()
                 ->simplePaginate(6)
