@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
-    protected $with = ['tag', 'user'];
+    protected $with = ['tag', 'user', 'status'];
 
     /**
      * @return BelongsTo
@@ -26,5 +28,13 @@ class Task extends Model
     public function tag(): BelongsTo
     {
         return $this->BelongsTo(Tag::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function status(): BelongsTo
+    {
+        return $this->BelongsTo(Status::class);
     }
 }

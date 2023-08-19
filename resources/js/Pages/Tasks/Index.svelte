@@ -41,13 +41,22 @@
 </div>
 
 <div class="space-y-4 mt-5">
-    {#each tasks.data as task (task.id)}
-        <div class="border border-gray-200 rounded p-4 my-2">
-            <a use:inertia href="/tasks/{task.slug}"><h2 class="text-2xl font-bold pb-3">{task.title}</h2></a>
-            <p>{task.description}</p>
-            <a use:inertia href="/" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
-        </div>
-    {/each}
+    {#if tasks.data.length < 1}
+        <p>There currently are no tasks</p>
+    {:else}
+        {#each tasks.data as task (task.id)}
+            <div class="border border-gray-200 rounded p-4 my-2">
+                <div class="flex items-center justify-between">
+                    <a use:inertia href="/tasks/{task.slug}"><h2 class="text-2xl font-bold pb-3">{task.title}</h2></a>
+                    <span class="whitespace-nowrap">Status: <span class="text-[#3bba2d] bg-[#d4facf] p-2 rounded">{task.status}</span></span>
+                </div>
+                <p class="mt-4">{task.description}</p>
+                <a use:inertia href="/" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
+            </div>
+        {:else}
+            <p>There currently are no tasks</p>
+        {/each}
+    {/if}
 </div>
 
 <div>
