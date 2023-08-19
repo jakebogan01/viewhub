@@ -35,6 +35,7 @@ class TaskControler extends Controller
                     'slug' => $task->slug,
                     'description' => $task->description,
                     'tag' => $task->tag->name,
+                    'status' => $task->status->name,
                 ]),
             // pass the search input to the view
             'filters' => request()->only(['search']),

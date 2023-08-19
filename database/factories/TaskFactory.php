@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
 use App\Models\User;
@@ -22,6 +23,7 @@ class TaskFactory extends Factory
         return [
             'user_id' => User::factory(),
             'tag_id' => Tag::factory(),
+            'status_id' => Status::factory(),
             'title' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
             'description' => fake()->paragraphs(6, true),
