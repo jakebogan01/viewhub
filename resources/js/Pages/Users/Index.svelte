@@ -36,7 +36,7 @@
         <h1 class="text-3xl">Users</h1>
 
         <!--{#if can.createUser}-->
-        <!--    <a use:inertia href="/users/create" class="text-blue-500 text-sm ml-3">New User</a>-->
+        <!--    <a use:inertia={{ replace: true }} href="/users/create" class="text-blue-500 text-sm ml-3">New User</a>-->
         <!--{/if}-->
     </div>
 

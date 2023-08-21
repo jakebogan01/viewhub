@@ -15,6 +15,29 @@ class Task extends Model
     protected $with = ['tag', 'user', 'status'];
 
     /**
+     * @param $query
+     * @param array $filters
+     * @return void
+     */
+    public function scopeFilter($query, array $filters): void
+    {
+        // if search exists in filters, then search for title or tag name
+        $query->when($filters['search'] ?? false, function($query, $search) {
+            $query->where('title', 'LIKE', "%$search%")
+                ->orWhereHas('tag', function($query) use ($search) {
+                    $query->where('name', 'LIKE', "%$search%");
+                });
+        });
+
+        // if status exists in filters, then search for name
+        $query->when($filters['status'] ?? false, function($query, $search) {
+            $query->whereHas('status', function($query) use ($search) {
+                    $query->where('name', $search);
+                });
+        });
+    }
+
+    /**
      * @return BelongsTo
      */
     public function user(): BelongsTo
