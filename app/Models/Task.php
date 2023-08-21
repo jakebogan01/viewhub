@@ -21,7 +21,7 @@ class Task extends Model
      */
     public function scopeFilter($query, array $filters): void
     {
-        // if search exists in filters, then search for title or tag name
+        // if search exists in filters, then search by title or tag name
         $query->when($filters['search'] ?? false, function($query, $search) {
             $query->where('title', 'LIKE', "%$search%")
                 ->orWhereHas('tag', function($query) use ($search) {
@@ -29,11 +29,18 @@ class Task extends Model
                 });
         });
 
-        // if status exists in filters, then search for name
+        // if status exists in filters, then search by name
         $query->when($filters['status'] ?? false, function($query, $search) {
             $query->whereHas('status', function($query) use ($search) {
                     $query->where('name', $search);
                 });
+        });
+
+        // if tag exists in filters, then search by name
+        $query->when($filters['tag'] ?? false, function($query, $search) {
+            $query->whereHas('tag', function($query) use ($search) {
+                $query->where('name', $search);
+            });
         });
     }
 
