@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
+use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,7 +21,7 @@ class TaskControler extends Controller
         return Inertia::render('Tasks/Index', [
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
-                ->filter(request(['search', 'status']))
+                ->filter(request(['search', 'status', 'tag']))
                 ->latest()
                 ->simplePaginate(6)
                 ->withQueryString()
@@ -33,8 +34,9 @@ class TaskControler extends Controller
                     'status' => $task->status->name,
                 ]),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status']),
-            'statuses' => Status::all()->map->only(['id', 'name']),
+            'filters' => request()->only(['search', 'status', 'tag']),
+            'statuses' => Status::all(),
+            'tags' => Tag::all(),
         ]);
     }
 

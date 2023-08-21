@@ -18,7 +18,6 @@ class StatusFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
-            'slug' => fake()->unique()->slug()
         ];
     }
 }
