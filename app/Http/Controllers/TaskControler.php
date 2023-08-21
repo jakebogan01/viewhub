@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Status;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,13 +20,7 @@ class TaskControler extends Controller
         return Inertia::render('Tasks/Index', [
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
-                ->when(request()->input('search'), function($query, $search) {
-                    // query the title and related tag name
-                    $query->where('title', 'LIKE', "%$search%")
-                        ->orWhereHas('tag', function($query) use ($search) {
-                            $query->where('name', 'LIKE', "%$search%");
-                        });
-                })
+                ->filter(request(['search', 'status']))
                 ->latest()
                 ->simplePaginate(6)
                 ->withQueryString()
@@ -38,7 +33,8 @@ class TaskControler extends Controller
                     'status' => $task->status->name,
                 ]),
             // pass the search input to the view
-            'filters' => request()->only(['search']),
+            'filters' => request()->only(['search', 'status']),
+            'statuses' => Status::all()->map->only(['id', 'name']),
         ]);
     }
 
