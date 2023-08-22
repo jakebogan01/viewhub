@@ -1,68 +1,46 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\TaskControler;
-use App\Models\User;
+use App\Http\Controllers\LinkController;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/login', [LoginController::class, 'create'])->name('login');
-Route::post('/login', [LoginController::class, 'store']);
-Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
-//Route::middleware('auth')->group(function () {
-    Route::get('/', [TaskControler::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/{task:slug}', [TaskControler::class, 'show']);
-    Route::post('/tasks/{task}/like', [TaskControler::class, 'toggle']);
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
-    Route::get('/users', function () {
-        sleep(1);
 
-        return Inertia::render('Users/Index', [
-            'time' => now()->format('h:i:s A'),
-            'users' => User::query()
-                ->when(Request::input('search'), function ($query, $search) {
-                    $query->where('name', 'like', "%{$search}%");
-                })
-                ->paginate(10)
-                ->withQueryString()
-                ->through(fn($user) => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-//                    'can' => [
-//                        'edit' => Auth::user()->can('edit', $user),
-//                    ],
-                ]),
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
 
-            'filters' => Request::only(['search']),
-//            'can' => [
-//                'createUser' => Auth::user()->can('create', User::class)
-//            ],
-        ]);
-    })->name('users');
+require __DIR__ . '/auth.php';
 
-    Route::get('/users/create', function () {
-        return Inertia::render('Users/Create');
-    });
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-    Route::post('/users', function () {
-        $attributes = Request::validate([
-            'name' => 'required',
-            'email' => ['required', 'email'],
-            'password' => 'required',
-        ]);
+Route::get('/about', function () {
+    return Inertia::render('About');
+})->middleware(['auth', 'verified'])->name('about');
 
-        User::create($attributes);
-
-        return to_route('users');
-    });
-
-    Route::get('/settings', function () {
-        return Inertia::render('Settings');
-    });
-
-    Route::post('/test', function () {
-        dd(request('foo'));
-    });
-//});
+// Links
+Route::get('/links', [LinkController::class, 'index'])->middleware(['auth', 'verified'])->name('links.index');
+Route::post('/links', [LinkController::class, 'store'])->name('links.store');
+Route::delete('/links/{link}', [LinkController::class, 'destroy'])->name('links.destroy');

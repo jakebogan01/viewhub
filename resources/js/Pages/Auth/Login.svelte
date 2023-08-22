@@ -1,53 +1,99 @@
 <script>
-    import {Inertia} from '@inertiajs/inertia';
-    import {inertia, page} from "@inertiajs/inertia-svelte";
+    import BreezeButton from "@/Components/Button.svelte";
+    import BreezeCheckbox from "@/Components/Checkbox.svelte";
+    import BreezeGuestLayout from "@/Layouts/Guest.svelte";
+    import BreezeInput from "@/Components/Input.svelte";
+    import BreezeLabel from "@/Components/Label.svelte";
+    import BreezeValidationErrors from "@/Components/ValidationErrors.svelte";
+    import { Link, useForm } from "@inertiajs/inertia-svelte";
+    let err = {};
+    export let errors = {};
+    export let canResetPassword;
+    export let status;
 
-    let form;
-    export let errors;
+    const form = useForm({
+        email: null,
+        password: null,
+        remember: false,
+    });
 
-    $: form = {
-        email: '',
-        password: '',
-    };
-
-    let handleSubmit = () => {
-        Inertia.post('/login', form)
+    $: {
+        err = errors;
     }
+
+    const onSubmit = () => {
+        $form.post("/login", {
+            onSuccess: () => $form.reset(),
+        });
+    };
 </script>
 
 <svelte:head>
-    <title>Login</title>
+    <title>Log in</title>
 </svelte:head>
 
-<main class="grid place-items-center min-h-screen">
-    <section class="bg-white p-8 rounded-xl max-w-md mx-auto border w-full">
-        <h1 class="text-3xl">Login</h1>
+<BreezeGuestLayout>
+    <BreezeValidationErrors class="mb-4" errors={err} />
 
-        <form on:submit|preventDefault|once={handleSubmit} class="max-w-md mx-auto mt-8">
-            <div class="mb-6">
-                <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="email"> Email </label>
+    {#if status}
+        <div class="mb-4 font-medium text-sm text-green-600">
+            {status}
+        </div>
+    {/if}
 
-                <input bind:value={form.email} class="border border-gray-400 p-2 w-full" type="email" name="email"
-                       id="email"/>
-                {#if errors.email}
-                    <p class="text-red-500 text-xs mt-1"> {errors.email} </p>
-                {/if}
-            </div>
+    <form on:submit|preventDefault={onSubmit}>
+        <div>
+            <BreezeLabel for="email" value="Email" />
+            <BreezeInput
+                id="email"
+                type="email"
+                class="mt-1 block w-full"
+                value={form.email}
+                required
+                autofocus
+                autocomplete="username"
+                on:input={(evt) => ($form.email = evt.detail)}
+            />
+        </div>
 
-            <div class="mb-6">
-                <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="password"> Password </label>
+        <div class="mt-4">
+            <BreezeLabel for="password" value="Password" />
+            <BreezeInput
+                id="password"
+                type="password"
+                class="mt-1 block w-full"
+                value={form.password}
+                required
+                autocomplete="current-password"
+                on:input={(evt) => ($form.password = evt.detail)}
+            />
+        </div>
 
-                <input bind:value={form.password} class="border border-gray-400 p-2 w-full" type="password"
-                       name="password"
-                       id="password"/>
-                {#if errors.password}
-                    <p class="text-red-500 text-xs mt-1"> {errors.password} </p>
-                {/if}
-            </div>
+        <div class="block mt-4">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
+            <label class="flex items-center">
+                <BreezeCheckbox name="remember" bind:checked={form.remember} />
+                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+            </label>
+        </div>
 
-            <div class="mb-6">
-                <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500">Login</button>
-            </div>
-        </form>
-    </section>
-</main>
+        <div class="flex items-center justify-end mt-4">
+            {#if canResetPassword}
+                <Link
+                    href="/password/reset"
+                    class="underline text-sm text-gray-600 hover:text-gray-900"
+                >
+                    Forgot your password?
+                </Link>
+            {/if}
+
+            <BreezeButton
+                class="ml-4"
+                sclass:opacity-25={form.processing}
+                disabled={form.processing}
+            >
+                Log in
+            </BreezeButton>
+        </div>
+    </form>
+</BreezeGuestLayout>
