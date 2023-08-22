@@ -14,7 +14,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 //Route::middleware('auth')->group(function () {
     Route::get('/', [TaskControler::class, 'index'])->name('tasks.index');
     Route::get('/tasks/{task:slug}', [TaskControler::class, 'show']);
-
+    Route::post('/tasks/{task}/like', [TaskControler::class, 'toggle']);
 
     Route::get('/users', function () {
         sleep(1);
@@ -44,7 +44,7 @@ Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth');
 
     Route::get('/users/create', function () {
         return Inertia::render('Users/Create');
-    })->can('create', 'App\Models\User');
+    });
 
     Route::post('/users', function () {
         $attributes = Request::validate([
