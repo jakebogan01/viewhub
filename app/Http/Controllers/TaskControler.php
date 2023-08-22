@@ -23,7 +23,6 @@ class TaskControler extends Controller
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
                 ->filter(request(['search', 'status', 'tag']))
-                ->latest()
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($task) => [
@@ -34,10 +33,10 @@ class TaskControler extends Controller
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
-                ]),
+            ]),
+            'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag']),
-            'statuses' => Status::all(),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby']),
             'tags' => Tag::all(),
             'user' => Auth::user()
         ]);
