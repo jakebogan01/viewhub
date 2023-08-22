@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class TaskControler extends Controller
 {
@@ -32,11 +33,13 @@ class TaskControler extends Controller
                     'description' => $task->description,
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
+                    'likes' => $task->likes->count(),
                 ]),
             // pass the search input to the view
             'filters' => request()->only(['search', 'status', 'tag']),
             'statuses' => Status::all(),
             'tags' => Tag::all(),
+            'user' => Auth::user()
         ]);
     }
 
@@ -63,10 +66,12 @@ class TaskControler extends Controller
     {
         return Inertia::render('Tasks/Show', [
             'task' => [
+                'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
+                'likes' => $task->likes->count(),
             ]
         ]);
     }
@@ -93,5 +98,11 @@ class TaskControler extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function toggle(Task $task)
+    {
+        $task->likes()->toggle(auth()->user()->id);
+        return redirect()->back();
     }
 }

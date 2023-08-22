@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\TaskLikes;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
@@ -19,11 +20,11 @@ class DatabaseSeeder extends Seeder
         $tags = ['UI', 'Enhancement', 'Bug', 'Feature', 'Marketing', 'Sales'];
         $statuses = ['Pending', 'In progress', 'Live'];
 
-        User::factory()->create([
-            'name' => 'test',
-            'email' => 'test@gmail.com',
-            'password' => bcrypt('12345678'),
-        ]);
+//        User::factory()->create([
+//            'name' => 'test',
+//            'email' => 'test@gmail.com',
+//            'password' => bcrypt('12345678'),
+//        ]);
 
         foreach ($statuses as $status) {
             Status::factory()->create(['name' => $status]);
@@ -34,5 +35,6 @@ class DatabaseSeeder extends Seeder
         }
 
         Task::factory(30)->create();
+        TaskLikes::factory(30)->create();
     }
 }
