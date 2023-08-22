@@ -1,5 +1,5 @@
 <script>
-    import { Link, page } from "@inertiajs/inertia-svelte";
+    import { inertia, Link, page } from "@inertiajs/inertia-svelte";
     export let canLogin;
     export let canRegister;
     export let laravelVersion;
@@ -15,6 +15,7 @@
 >
     {#if canLogin}
         <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
+            <a use:inertia href="/client" class="text-sm ml-4 text-gray-700 underline dark:text-white">Client</a>
             {#if $page.props.auth.user}
                 <Link
                     href="/dashboard"

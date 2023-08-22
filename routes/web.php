@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\TaskControler;
+use App\Models\User;
 
 
 /*
@@ -29,6 +31,10 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/client', [TaskControler::class, 'index'])->middleware(['auth', 'verified'])->name('tasks.index');
+Route::get('//tasks/{task:slug}', [TaskControler::class, 'show'])->middleware(['auth', 'verified'])->name('tasks.show');;
+Route::post('/tasks/{task}/like', [TaskControler::class, 'toggle'])->middleware(['auth', 'verified']);
 
 require __DIR__ . '/auth.php';
 

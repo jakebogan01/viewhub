@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -46,10 +47,18 @@ class User extends Authenticatable
     /**
      * The links that belong to the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Models\Link>
+     * @return HasMany<\App\Models\Link>
      */
-    public function links()
+    public function links(): HasMany
     {
         return $this->hasMany(Link::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
     }
 }
