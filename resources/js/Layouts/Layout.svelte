@@ -1,5 +1,5 @@
 <script>
-    import Nav from "../Components/Nav.svelte";
+    import Nav from "../Components/Navigation/Nav.svelte";
 </script>
 
 <section class="p-6 bg-gray-200">

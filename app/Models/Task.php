@@ -33,8 +33,8 @@ class Task extends Model
         // if status exists in filters, then search by name
         $query->when($filters['status'] ?? false, function($query, $search) {
             $query->whereHas('status', function($query) use ($search) {
-                    $query->where('name', $search);
-                });
+                $query->where('name', $search);
+            });
         });
 
         // if tag exists in filters, then search by name

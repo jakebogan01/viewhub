@@ -1,18 +1,20 @@
 import '../css/app.css';
 
-import {createInertiaApp} from "@inertiajs/inertia-svelte";
-import {InertiaProgress} from "@inertiajs/progress";
+import { createInertiaApp } from "@inertiajs/inertia-svelte";
+import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
+import { InertiaProgress } from "@inertiajs/progress";
 
 const appName = window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
 createInertiaApp({
-    title: title => `${title} - ${appName}`,
+    title: (title) => `${title} - ${appName}`,
+    // resolve: (name) => resolvePageComponent(`./Pages/${name}.svelte`, import.meta.glob('./Pages/**/*.svelte')),
     resolve: name => {
         const pages = import.meta.glob('./Pages/**/*.svelte', {eager: true})
         return pages[`./Pages/${name}.svelte`]
     },
-    setup({el, App, props}) {
-        new App({target: el, props});
+    setup({ el, App, props }) {
+        new App({ target: el, props });
     },
     progress: {
         // The delay after which the progress bar will appear, in milliseconds...
@@ -29,4 +31,4 @@ createInertiaApp({
     },
 });
 
-InertiaProgress.init({color: "#4B5563"});
+InertiaProgress.init({ color: "#000000" });

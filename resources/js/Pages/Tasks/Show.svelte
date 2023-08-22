@@ -27,5 +27,4 @@
     </div>
 </div>
 
-<a use:inertia={{ replace: true }} href="/">Go Back</a>
-
+<a use:inertia={{ replace: true }} href="/client">Go Back</a>
