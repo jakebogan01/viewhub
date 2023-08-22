@@ -43,6 +43,13 @@ class Task extends Model
                 $query->where('name', $search);
             });
         });
+
+        // if sort exists in filters, then sort by newest or oldest
+        if (request('sortby') === 'oldest') {
+            $query->oldest();
+        } else {
+            $query->latest();
+        }
     }
 
     /**

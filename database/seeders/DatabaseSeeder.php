@@ -19,8 +19,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $tags = ['UI', 'Enhancement', 'Bug', 'Feature', 'Marketing', 'Sales'];
-        $statuses = ['Pending', 'In progress', 'Live'];
+        $tags = ['ui', 'enhancement', 'bug', 'feature', 'marketing', 'sales'];
+        $statuses = ['pending', 'in progress', 'live'];
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Test User',
