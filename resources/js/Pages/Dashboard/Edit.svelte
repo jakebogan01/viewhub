@@ -20,7 +20,7 @@
         status_id: task.status,
         tag_id: task.tag
     });
-$:console.log($form)
+
     function submit() {
         $form.patch(`/dashboard/task/${task.id}`, {
             replace: true,

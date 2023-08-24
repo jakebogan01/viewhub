@@ -17,15 +17,16 @@ class DatabaseSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $tags = ['ui', 'enhancement', 'bug', 'feature', 'marketing', 'sales'];
         $statuses = ['pending', 'in progress', 'live'];
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'name' => 'test',
+            'email' => 'test@gmail.com',
+            'password' => bcrypt(123456789),
+        ]);
 
         foreach ($statuses as $status) {
             Status::factory()->create(['name' => $status]);

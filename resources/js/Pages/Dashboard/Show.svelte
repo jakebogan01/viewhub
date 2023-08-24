@@ -16,7 +16,8 @@
 <section class="p-6">
     <div class="max-w-3xl mx-auto">
         <div class="flex justify-end">
-            <a use:inertia href="/dashboard/task/{task.id}/edit" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit Task</a>
+            <a use:inertia href="/dashboard/task/{task.slug}/edit" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit Task</a>
+            <button type="button" use:inertia="{{ href: `/dashboard/task/${task.id}`, method: 'delete', replace: true, }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
         </div>
         <div class="space-y-4 mt-5">
             <div class="border border-gray-200 rounded p-4 my-2">
