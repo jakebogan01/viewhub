@@ -15,6 +15,9 @@
 
 <section class="p-6">
     <div class="max-w-3xl mx-auto">
+        <div class="flex justify-end">
+            <a use:inertia href="/dashboard/task/{task.id}/edit" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit Task</a>
+        </div>
         <div class="space-y-4 mt-5">
             <div class="border border-gray-200 rounded p-4 my-2">
                 <div class="flex justify-between items-center">

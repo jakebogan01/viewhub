@@ -18,6 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/tasks/{task:slug}', [DashboardController::class, 'show'])->name('dashboard.show');
     Route::get('/dashboard/task/create', [DashboardController::class, 'create'])->name('dashboard.create');
     Route::post('/dashboard/task/create', [DashboardController::class, 'store']);
+    Route::get('/dashboard/task/{task}/edit', [DashboardController::class, 'edit']);
+    Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::post('/dashboard/tasks/{task}/like', [DashboardController::class, 'toggle']);
 });
 
