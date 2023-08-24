@@ -6,7 +6,9 @@
     import BreezeResponsiveNavLink from "@/Components/ResponsiveNavLink.svelte";
     import { inertia, page, Link } from "@inertiajs/inertia-svelte";
     let showingNavigationDropdown = false;
-    export let user = $page.props.auth.user;
+
+    /* svelte-ignore unused-export-let */
+    export let auth;
 </script>
 
 <div>
@@ -41,12 +43,6 @@
                             >
                                 About
                             </BreezeNavLink>
-                            <BreezeNavLink
-                                href="/links"
-                                active={$page.component === "Links/Index"}
-                            >
-                                Links
-                            </BreezeNavLink>
                         </div>
                     </div>
 
@@ -64,7 +60,7 @@
                                         type="button"
                                         class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                     >
-                                        {user.name}
+                                        {auth.user.name}
 
                                         <svg
                                             class="ml-2 -mr-0.5 h-4 w-4"
@@ -149,22 +145,16 @@
                     >
                         About
                     </BreezeResponsiveNavLink>
-                    <BreezeResponsiveNavLink
-                        href="/links"
-                        active={$page.component === "Links/Index"}
-                    >
-                        Links
-                    </BreezeResponsiveNavLink>
                 </div>
 
                 <!-- Responsive Settings Options -->
                 <div class="pt-4 pb-1 border-t border-gray-200">
                     <div class="px-4">
                         <div class="font-medium text-base text-gray-800">
-                            {user.name}
+                            {auth.user.name}
                         </div>
                         <div class="font-medium text-sm text-gray-500">
-                            {user.email}
+                            {auth.user.email}
                         </div>
                     </div>
 
@@ -180,16 +170,6 @@
                 </div>
             </div>
         </nav>
-
-        <!-- Page Heading -->
-        {#if $$slots.header}
-            <!-- content here -->
-            <header class="bg-white shadow">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-        {/if}
 
         <!-- Page Content -->
         <main>
