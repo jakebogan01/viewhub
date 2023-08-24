@@ -3,8 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\TaskLikes;
-use App\Models\Task;
-use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -13,9 +12,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class TaskLikesFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * @return array
+     * @throws Exception
      */
     public function definition(): array
     {

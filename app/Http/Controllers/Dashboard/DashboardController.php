@@ -1,15 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
+use App\Http\Controllers\Controller;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
-class TaskControler extends Controller
+class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -19,7 +22,7 @@ class TaskControler extends Controller
         // view pagination results
         // return Task::latest()->paginate();
 
-        return Inertia::render('Tasks/Index', [
+        return Inertia::render('Dashboard/Index', [
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
                 ->filter(request(['search', 'status', 'tag']))
@@ -33,7 +36,7 @@ class TaskControler extends Controller
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
-            ]),
+                ]),
             'count' => Task::count(),
             // pass the search input to the view
             'filters' => request()->only(['search', 'status', 'tag', 'sortby']),
@@ -47,15 +50,30 @@ class TaskControler extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Dashboard/Create', [
+            'tags' => Tag::all(),
+            'statuses' => Status::all(),
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store()
     {
-        //
+        $attributes = request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'status_id' => ['required', Rule::exists('statuses', 'id')],
+            'tag_id' => ['required', Rule::exists('tags', 'id')],
+        ]);
+
+        $attributes['user_id'] = auth()->id();
+        $attributes['slug'] = Str::slug($attributes['title']);
+
+        Task::create($attributes);
+
+        return redirect('/dashboard/tasks/' . $attributes['slug']);
     }
 
     /**
@@ -63,7 +81,7 @@ class TaskControler extends Controller
      */
     public function show(Task $task)
     {
-        return Inertia::render('Tasks/Show', [
+        return Inertia::render('Dashboard/Show', [
             'task' => [
                 'id' => $task->id,
                 'title' => $task->title,
