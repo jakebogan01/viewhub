@@ -81,6 +81,7 @@ class DashboardController extends Controller
             'task' => [
                 'id' => $task->id,
                 'title' => $task->title,
+                'slug' => $task->slug,
                 'description' => $task->description,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
@@ -124,9 +125,10 @@ class DashboardController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return to_route('dashboard.index');
     }
 
     /**
