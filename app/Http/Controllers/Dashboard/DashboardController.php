@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -61,15 +62,10 @@ class DashboardController extends Controller
      */
     public function store()
     {
-        $attributes = request()->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'status_id' => ['required', Rule::exists('statuses', 'id')],
-            'tag_id' => ['required', Rule::exists('tags', 'id')],
-        ]);
+        $attributes = $this->validateTask();
 
         $attributes['user_id'] = auth()->id();
-        $attributes['slug'] = Str::slug($attributes['title']);
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . Task::latest('id')->first()->id;
 
         Task::create($attributes);
 
@@ -96,17 +92,33 @@ class DashboardController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Task $task)
     {
-        //
+        return Inertia::render('Dashboard/Edit', [
+            'task' => [
+                'id' => $task->id,
+                'title' => $task->title,
+                'description' => $task->description,
+                'tag' => $task->tag->id,
+                'status' => $task->status->id,
+            ],
+            'tags' => Tag::all(),
+            'statuses' => Status::all(),
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Task $task)
     {
-        //
+        $attributes = $this->validateTask($task);
+
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $task->id;
+
+        $task->update($attributes);
+
+        return redirect('/dashboard/tasks/' . $task->slug);
     }
 
     /**
@@ -117,9 +129,28 @@ class DashboardController extends Controller
         //
     }
 
-    public function toggle(Task $task)
+    /**
+     * @param Task $task
+     * @return RedirectResponse
+     */
+    public function toggle(Task $task) :RedirectResponse
     {
         $task->likes()->toggle(auth()->user()->id);
         return redirect()->back();
+    }
+
+    /**
+     * @param Task|null $task
+     * @return array
+     */
+    protected function validateTask(?Task $task = null): array
+    {
+        $task ??= new Task();
+        return request()->validate([
+            'title' => 'required',
+            'description' => 'required',
+            'status_id' => ['required', Rule::exists('statuses', 'id')],
+            'tag_id' => ['required', Rule::exists('tags', 'id')],
+        ]);
     }
 }
