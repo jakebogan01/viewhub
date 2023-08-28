@@ -10,6 +10,8 @@
     export let errors = {};
     /* svelte-ignore unused-export-let */
     export let auth = {};
+    /* svelte-ignore unused-export-let */
+    export let flash = {};
     export let tasks;
     export let count;
     export let filters;
@@ -53,6 +55,11 @@
 
 <section class="p-6">
     <div class="max-w-3xl mx-auto">
+
+        {#if flash.message}
+            <div class="text-green-500 font-bold">{flash.message}</div>
+        {/if}
+
         <div class="flex justify-between items-center mb-12">
             <div>
                 <p>Total: {count}</p>

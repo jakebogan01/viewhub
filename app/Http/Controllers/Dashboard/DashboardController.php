@@ -65,11 +65,12 @@ class DashboardController extends Controller
         $attributes = $this->validateTask();
 
         $attributes['user_id'] = auth()->id();
-        $attributes['slug'] = Str::slug($attributes['title']) . '-' . Task::latest('id')->first()->id;
+        $attributes['status_id'] = 1;
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         Task::create($attributes);
 
-        return redirect('/dashboard/tasks/' . $attributes['slug']);
+        return redirect('/dashboard/tasks/' . $attributes['slug'])->with('message', 'Task created successfully!');
     }
 
     /**
@@ -114,12 +115,12 @@ class DashboardController extends Controller
     public function update(Task $task)
     {
         $attributes = $this->validateTask($task);
-
-        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $task->id;
+        $attributes['status_id'] = $task->status_id;
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         $task->update($attributes);
 
-        return redirect('/dashboard/tasks/' . $task->slug);
+        return redirect('/dashboard/tasks/' . $task->slug)->with('message', 'Task updated successfully!');
     }
 
     /**
@@ -128,7 +129,7 @@ class DashboardController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        return to_route('dashboard.index');
+        return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 
     /**
@@ -151,8 +152,11 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
-            'status_id' => ['required', Rule::exists('statuses', 'id')],
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
+    }
+
+    protected function randomThreeDigitID() {
+        return rand(100, 999);
     }
 }

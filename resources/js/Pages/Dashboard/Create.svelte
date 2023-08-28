@@ -18,7 +18,7 @@
     let form = useForm({
         title: '',
         description: '',
-        status_id: 1,
+        // status_id: 1,
         tag_id: 1,
     });
 
@@ -51,19 +51,6 @@
                 <textarea bind:value={$form.description} name="description" id="description" rows="4" class="border border-gray-400 p-2 w-full"></textarea>
                 {#if $form.errors.description}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
-                <label for="status_id" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-
-                <select bind:value={$form.status_id} id="status_id" name="status_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    {#each statuses as status (status.id)}
-                        <option value={status.id}>{status.name}</option>
-                    {/each}
-                </select>
-                {#if $form.errors.status_id}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.status_id} </p>
                 {/if}
             </div>
 
