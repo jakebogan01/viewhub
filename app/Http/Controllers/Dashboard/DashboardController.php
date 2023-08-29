@@ -124,23 +124,40 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'description' => $task->description,
                 'tag' => $task->tag->id,
-                'status' => $task->status->id,
+                'images' => $task->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'name' => $image->name,
+                        'path' => $image->path,
+                    ];
+                }),
             ],
             'tags' => Tag::all(),
-            'statuses' => Status::all(),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Task $task)
+    public function update(Task $task, Request $request)
     {
         $attributes = $this->validateTask($task);
         $attributes['status_id'] = $task->status_id;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         $task->update($attributes);
+
+        $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
+        foreach($temporaryImages as $temporaryImage) {
+            Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            Image::create([
+                'task_id' => $task->id,
+                'name' => $temporaryImage->file,
+                'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
+            ]);
+            Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            $temporaryImage->delete();
+        }
 
         return redirect('/dashboard/tasks/' . $task->slug)->with('message', 'Task updated successfully!');
     }

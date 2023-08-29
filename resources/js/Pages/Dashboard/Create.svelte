@@ -5,20 +5,29 @@
 <script>
     import {Inertia, router} from '@inertiajs/inertia';
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
+    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
+    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+
+    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
     /* svelte-ignore unused-export-let */
     export let errors;
     /* svelte-ignore unused-export-let */
     export let auth;
     export let tags;
-    export let statuses;
     export let csrf_token;
 
-    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
-    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
-    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
-    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
-    let pond;
+    // sort tags by id in ascending order
+    tags.sort((a, b) => a.id - b.id);
+
+    let form = useForm({
+        title: '',
+        description: '',
+        tag_id: 1,
+        images: [],
+    });
+
     let options = {
         url: '',
         process: {
@@ -31,17 +40,6 @@
             'X-CSRF-TOKEN': csrf_token
         }
     }
-
-    // sort tags and statuses by id in ascending order
-    tags.sort((a, b) => a.id - b.id);
-    statuses.sort((a, b) => a.id - b.id);
-
-    let form = useForm({
-        title: '',
-        description: '',
-        tag_id: 1,
-        images: [],
-    });
 
     function handleFilePondLoad(response) {
         $form.images.push(response);
@@ -110,7 +108,6 @@
             <div class="mb-6">
                 <div class="app">
                     <FilePond
-                        bind:this={pond}
                         class="my-pond"
                         name="image"
                         server={options}
