@@ -44,7 +44,7 @@ class ImageController extends Controller
     {
         $image = Image::find($image->id);
         Storage::delete('tasks/images/' . $image->path);
-        Storage::deleteDirectory('tasks/images/' . $image->path);
+        Storage::deleteDirectory('tasks/images');
         $image->delete();
 
         return '';
