@@ -8,6 +8,7 @@
     import FilePond, { registerPlugin, supported } from 'svelte-filepond';
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    import 'filepond/dist/filepond.min.css';
 
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 

@@ -39,6 +39,5 @@ class DatabaseSeeder extends Seeder
 
         Task::factory(30)->create();
         TaskLikes::factory(30)->create();
-        Image::factory(30)->create();
     }
 }

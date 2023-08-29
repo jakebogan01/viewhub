@@ -8,6 +8,7 @@
     import FilePond, { registerPlugin, supported } from 'svelte-filepond';
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    import 'filepond/dist/filepond.min.css';
 
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
@@ -128,10 +129,15 @@
             </div>
 
             {#if task.images.length > 0}
-                <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
+                <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3 lg:mx-0 lg:max-w-none">
                     {#each task.images as image}
-                        <li>
-                                <img src="/tasks/images/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
+                        <li class="relative rounded-md overflow-hidden">
+                            {image.id}
+                            <div class="absolute inset-0 w-full h-full bg-black bg-opacity-20"></div>
+                            <button type="button" use:inertia="{{ href: `/dashboard/task/delete/${image.id}`, method: 'delete', replace: true, }}" class="absolute top-0 right-0 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <img src="/tasks/images/{image.path}" class="aspect-[3/2] w-full object-cover" alt={image.name}>
                         </li>
                     {/each}
                 </ul>

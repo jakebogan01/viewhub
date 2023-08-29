@@ -6,9 +6,6 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Styles -->
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-
     <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
 

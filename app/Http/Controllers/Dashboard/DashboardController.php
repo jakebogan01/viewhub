@@ -167,7 +167,6 @@ class DashboardController extends Controller
      */
     public function destroy(Task $task)
     {
-        // delete the related images and tasks/images directory from storage and database before deleting task
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
             Storage::delete('tasks/images/' . $image->path);
