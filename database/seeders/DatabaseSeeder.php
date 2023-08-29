@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Image;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\TaskLikes;
 use App\Models\Status;
@@ -38,5 +39,6 @@ class DatabaseSeeder extends Seeder
 
         Task::factory(30)->create();
         TaskLikes::factory(30)->create();
+        Image::factory(30)->create();
     }
 }

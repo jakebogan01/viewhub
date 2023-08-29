@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
@@ -15,7 +16,7 @@ class Task extends Model
 
     protected $guarded = [];
 
-    protected $with = ['tag', 'user', 'status', 'likes'];
+    protected $with = ['tag', 'user', 'status', 'likes', 'images'];
 
     /**
      * @param $query
@@ -84,5 +85,13 @@ class Task extends Model
     public function likes(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'task_likes')->withTimestamps();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Image::class);
     }
 }

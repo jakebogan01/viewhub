@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Image;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TemporaryImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
@@ -60,7 +63,7 @@ class DashboardController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(Request $request)
     {
         $attributes = $this->validateTask();
 
@@ -68,7 +71,19 @@ class DashboardController extends Controller
         $attributes['status_id'] = 1;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
-        Task::create($attributes);
+        $task = Task::create($attributes);
+
+        $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
+        foreach($temporaryImages as $temporaryImage) {
+            Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            Image::create([
+                'task_id' => $task->id,
+                'name' => $temporaryImage->file,
+                'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
+            ]);
+            Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            $temporaryImage->delete();
+        }
 
         return redirect('/dashboard/tasks/' . $attributes['slug'])->with('message', 'Task created successfully!');
     }
@@ -87,6 +102,13 @@ class DashboardController extends Controller
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'likes' => $task->likes->count(),
+                'images' => $task->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'name' => $image->name,
+                        'path' => $image->path,
+                    ];
+                }),
             ]
         ]);
     }
@@ -128,6 +150,14 @@ class DashboardController extends Controller
      */
     public function destroy(Task $task)
     {
+        // delete the related images and tasks/images directory from storage and database before deleting task
+        $images = Image::where('task_id', $task->id)->get();
+        foreach($images as $image) {
+            Storage::delete('tasks/images/' . $image->path);
+            Storage::deleteDirectory('tasks/images/' . $image->path);
+            $image->delete();
+        }
+
         $task->delete();
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }

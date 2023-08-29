@@ -3,13 +3,34 @@
 </script>
 
 <script>
-    import {Inertia} from '@inertiajs/inertia';
+    import {Inertia, router} from '@inertiajs/inertia';
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
 
+    /* svelte-ignore unused-export-let */
     export let errors;
+    /* svelte-ignore unused-export-let */
     export let auth;
     export let tags;
     export let statuses;
+    export let csrf_token;
+
+    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
+    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+    let pond;
+    let options = {
+        url: '',
+        process: {
+            url: '/dashboard/task/upload',
+            method: 'POST',
+            onload: handleFilePondLoad
+        },
+        revert: handleFilePondRevert,
+        headers: {
+            'X-CSRF-TOKEN': csrf_token
+        }
+    }
 
     // sort tags and statuses by id in ascending order
     tags.sort((a, b) => a.id - b.id);
@@ -18,9 +39,28 @@
     let form = useForm({
         title: '',
         description: '',
-        // status_id: 1,
         tag_id: 1,
+        images: [],
     });
+
+    function handleFilePondLoad(response) {
+        $form.images.push(response);
+        return response;
+    }
+
+    function handleFilePondRevert(uniqueId, load, error) {
+        $form.images = $form.images.filter((image) => image !== uniqueId);
+
+        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                console.log('image deleted');
+            }
+        });
+
+        load();
+    }
 
     function submit() {
         $form.post(`/dashboard/task/create`, {
@@ -35,7 +75,7 @@
 
 <section class="p-6">
     <div class="max-w-3xl mx-auto">
-        <form on:submit|preventDefault={submit} class="max-w-md mx-auto mt-8">
+        <form on:submit|preventDefault={submit} class="max-w-md mx-auto mt-8" enctype="multipart/form-data">
             <div class="mb-6">
                 <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="title"> Title </label>
 
@@ -68,9 +108,26 @@
             </div>
 
             <div class="mb-6">
+                <div class="app">
+                    <FilePond
+                        bind:this={pond}
+                        class="my-pond"
+                        name="image"
+                        server={options}
+                        allowMultiple={true}
+                        acceptedFileTypes={['image/*']}
+                    />
+                </div>
+            </div>
+
+            <div class="mb-6">
                 <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500" disabled={$form.processing}>Create</button>
                 <a use:inertia href="/dashboard" class="bg-red-400 text-white rounded py-2 px-4 hover:bg-red-500">Cancel</a>
             </div>
         </form>
     </div>
 </section>
+
+<style global>
+    @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+</style>
