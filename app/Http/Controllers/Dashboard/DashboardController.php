@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Image;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TemporaryImage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
@@ -60,16 +63,29 @@ class DashboardController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store()
+    public function store(Request $request)
     {
         $attributes = $this->validateTask();
 
         $attributes['user_id'] = auth()->id();
-        $attributes['slug'] = Str::slug($attributes['title']) . '-' . Task::latest('id')->first()->id;
+        $attributes['status_id'] = 1;
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
-        Task::create($attributes);
+        $task = Task::create($attributes);
 
-        return redirect('/dashboard/tasks/' . $attributes['slug']);
+        $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
+        foreach($temporaryImages as $temporaryImage) {
+            Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            Image::create([
+                'task_id' => $task->id,
+                'name' => $temporaryImage->file,
+                'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
+            ]);
+            Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            $temporaryImage->delete();
+        }
+
+        return redirect('/dashboard/tasks/' . $attributes['slug'])->with('message', 'Task created successfully!');
     }
 
     /**
@@ -86,6 +102,13 @@ class DashboardController extends Controller
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'likes' => $task->likes->count(),
+                'images' => $task->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'name' => $image->name,
+                        'path' => $image->path,
+                    ];
+                }),
             ]
         ]);
     }
@@ -101,25 +124,42 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'description' => $task->description,
                 'tag' => $task->tag->id,
-                'status' => $task->status->id,
+                'images' => $task->images->map(function($image) {
+                    return [
+                        'id' => $image->id,
+                        'name' => $image->name,
+                        'path' => $image->path,
+                    ];
+                }),
             ],
             'tags' => Tag::all(),
-            'statuses' => Status::all(),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Task $task)
+    public function update(Task $task, Request $request)
     {
         $attributes = $this->validateTask($task);
-
-        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $task->id;
+        $attributes['status_id'] = $task->status_id;
+        $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         $task->update($attributes);
 
-        return redirect('/dashboard/tasks/' . $task->slug);
+        $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
+        foreach($temporaryImages as $temporaryImage) {
+            Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            Image::create([
+                'task_id' => $task->id,
+                'name' => $temporaryImage->file,
+                'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
+            ]);
+            Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            $temporaryImage->delete();
+        }
+
+        return redirect('/dashboard/tasks/' . $task->slug)->with('message', 'Task updated successfully!');
     }
 
     /**
@@ -127,8 +167,15 @@ class DashboardController extends Controller
      */
     public function destroy(Task $task)
     {
+        $images = Image::where('task_id', $task->id)->get();
+        foreach($images as $image) {
+            Storage::delete('tasks/images/' . $image->path);
+            Storage::deleteDirectory('tasks/images/' . $image->path);
+            $image->delete();
+        }
+
         $task->delete();
-        return to_route('dashboard.index');
+        return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 
     /**
@@ -151,8 +198,11 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
-            'status_id' => ['required', Rule::exists('statuses', 'id')],
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
+    }
+
+    protected function randomThreeDigitID() {
+        return rand(100, 999);
     }
 }

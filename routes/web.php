@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\ImageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
     Route::post('/dashboard/tasks/{task}/like', [DashboardController::class, 'toggle']);
+
+    Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
+    Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
+    Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
 });
 
 Route::get('/about', function () {

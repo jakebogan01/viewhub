@@ -4,22 +4,62 @@
 
 <script>
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
+    import {Inertia, router} from '@inertiajs/inertia';
+    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
+    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    import 'filepond/dist/filepond.min.css';
 
+    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+
+    /* svelte-ignore unused-export-let */
     export let errors;
     export let tags;
-    export let statuses;
+    export let csrf_token;
     export let task;
 
-    // sort tags and statuses by id in ascending order
+    // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
-    statuses.sort((a, b) => a.id - b.id);
 
     let form = useForm({
         title: task.title,
         description: task.description,
-        status_id: task.status,
-        tag_id: task.tag
+        tag_id: task.tag,
+        images: [],
     });
+
+    let options = {
+        url: '',
+        process: {
+            url: '/dashboard/task/upload',
+            method: 'POST',
+            onload: handleFilePondLoad
+        },
+        revert: handleFilePondRevert,
+        headers: {
+            'X-CSRF-TOKEN': csrf_token
+        }
+    }
+
+    function handleFilePondLoad(response) {
+        $form.images.push(response);
+
+        return response;
+    }
+
+    function handleFilePondRevert(uniqueId, load, error) {
+        $form.images = $form.images.filter((image) => image !== uniqueId);
+
+        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                console.log('image deleted');
+            }
+        });
+
+        load();
+    }
 
     function submit() {
         $form.patch(`/dashboard/task/${task.id}`, {
@@ -60,23 +100,6 @@
             </div>
 
             <div class="mb-6">
-                <label for="status_id" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-
-                <select bind:value={task.status_id} on:input={(e)=>{$form.status_id = parseInt(e.target.value)}} id="status_id" name="status_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    {#each statuses as status (status.id)}
-                        {#if task.status === status.id}
-                            <option value={status.id} selected>{status.name}</option>
-                        {:else}
-                            <option value={status.id}>{status.name}</option>
-                        {/if}
-                    {/each}
-                </select>
-                {#if $form.errors.status_id}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.status_id} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
                 <label for="tag_id" class="block text-sm font-medium leading-6 text-gray-900">Tag</label>
 
                 <select bind:value={task.tag_id} on:input={(e)=>{$form.tag_id = parseInt(e.target.value)}} id="tag_id" name="tag_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -92,6 +115,33 @@
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.tag_id} </p>
                 {/if}
             </div>
+
+            <div class="mb-6">
+                <div class="app">
+                    <FilePond
+                        class="my-pond"
+                        name="image"
+                        server={options}
+                        allowMultiple={true}
+                        acceptedFileTypes={['image/*']}
+                    />
+                </div>
+            </div>
+
+            {#if task.images.length > 0}
+                <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3 lg:mx-0 lg:max-w-none">
+                    {#each task.images as image}
+                        <li class="relative rounded-md overflow-hidden">
+                            {image.id}
+                            <div class="absolute inset-0 w-full h-full bg-black bg-opacity-20"></div>
+                            <button type="button" use:inertia="{{ href: `/dashboard/task/delete/${image.id}`, method: 'delete', replace: true, }}" class="absolute top-0 right-0 text-white">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
+                            </button>
+                            <img src="/tasks/images/{image.path}" class="aspect-[3/2] w-full object-cover" alt={image.name}>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
 
             <div class="mb-6">
                 <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500" disabled={$form.processing}>Update</button>

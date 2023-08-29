@@ -3,24 +3,63 @@
 </script>
 
 <script>
-    import {Inertia} from '@inertiajs/inertia';
+    import {Inertia, router} from '@inertiajs/inertia';
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
+    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
+    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    import 'filepond/dist/filepond.min.css';
 
+    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
+
+    /* svelte-ignore unused-export-let */
     export let errors;
+    /* svelte-ignore unused-export-let */
     export let auth;
     export let tags;
-    export let statuses;
+    export let csrf_token;
 
-    // sort tags and statuses by id in ascending order
+    // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
-    statuses.sort((a, b) => a.id - b.id);
 
     let form = useForm({
         title: '',
         description: '',
-        status_id: 1,
         tag_id: 1,
+        images: [],
     });
+
+    let options = {
+        url: '',
+        process: {
+            url: '/dashboard/task/upload',
+            method: 'POST',
+            onload: handleFilePondLoad
+        },
+        revert: handleFilePondRevert,
+        headers: {
+            'X-CSRF-TOKEN': csrf_token
+        }
+    }
+
+    function handleFilePondLoad(response) {
+        $form.images.push(response);
+        return response;
+    }
+
+    function handleFilePondRevert(uniqueId, load, error) {
+        $form.images = $form.images.filter((image) => image !== uniqueId);
+
+        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                console.log('image deleted');
+            }
+        });
+
+        load();
+    }
 
     function submit() {
         $form.post(`/dashboard/task/create`, {
@@ -35,7 +74,7 @@
 
 <section class="p-6">
     <div class="max-w-3xl mx-auto">
-        <form on:submit|preventDefault={submit} class="max-w-md mx-auto mt-8">
+        <form on:submit|preventDefault={submit} class="max-w-md mx-auto mt-8" enctype="multipart/form-data">
             <div class="mb-6">
                 <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="title"> Title </label>
 
@@ -55,19 +94,6 @@
             </div>
 
             <div class="mb-6">
-                <label for="status_id" class="block text-sm font-medium leading-6 text-gray-900">Status</label>
-
-                <select bind:value={$form.status_id} id="status_id" name="status_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    {#each statuses as status (status.id)}
-                        <option value={status.id}>{status.name}</option>
-                    {/each}
-                </select>
-                {#if $form.errors.status_id}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.status_id} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
                 <label for="tag_id" class="block text-sm font-medium leading-6 text-gray-900">Tag</label>
 
                 <select bind:value={$form.tag_id} id="tag_id" name="tag_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -81,9 +107,25 @@
             </div>
 
             <div class="mb-6">
+                <div class="app">
+                    <FilePond
+                        class="my-pond"
+                        name="image"
+                        server={options}
+                        allowMultiple={true}
+                        acceptedFileTypes={['image/*']}
+                    />
+                </div>
+            </div>
+
+            <div class="mb-6">
                 <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500" disabled={$form.processing}>Create</button>
                 <a use:inertia href="/dashboard" class="bg-red-400 text-white rounded py-2 px-4 hover:bg-red-500">Cancel</a>
             </div>
         </form>
     </div>
 </section>
+
+<style global>
+    @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+</style>
