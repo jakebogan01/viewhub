@@ -170,7 +170,7 @@ class DashboardController extends Controller
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
             Storage::delete('tasks/images/' . $image->path);
-            Storage::deleteDirectory('tasks/images/' . $image->path);
+            Storage::deleteDirectory('tasks/images');
             $image->delete();
         }
 

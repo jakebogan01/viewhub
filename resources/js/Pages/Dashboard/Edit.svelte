@@ -130,7 +130,7 @@
 
             {#if task.images.length > 0}
                 <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3 lg:mx-0 lg:max-w-none">
-                    {#each task.images as image}
+                    {#each task.images as image (image.id)}
                         <li class="relative rounded-md overflow-hidden">
                             {image.id}
                             <div class="absolute inset-0 w-full h-full bg-black bg-opacity-20"></div>
