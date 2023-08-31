@@ -32,6 +32,7 @@
     let updateStatusDropdownSelection = filters.status || 'All';
     let updateSortByDropdownSelection = filters.sortby || 'Newest';
     let timer;
+    let rotateArrow = false;
 
     // debounce search input
     const debounce = v => {
@@ -94,29 +95,6 @@
                     </div>
                 </div>
 
-                <!--sort by likes and date-->
-                <div>
-                    <div class="relative mt-2">
-                        <label for class="font-bold">Sort By:</label>
-                        <button on:click={()=>{ showSortByDropdown = !showSortByDropdown }} type="button" class="relative w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
-                            <span class="block truncate">{@html updateSortByDropdownSelection}</span>
-                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd"/></svg>
-                        </span>
-                        </button>
-
-                        {#if showSortByDropdown}
-                            <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-0">
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Newest</button>
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status, sortby: 'oldest' }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Oldest</button>
-                                <!--                        <button type="button" use:inertia="{{ href: '/client', method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Most Upvotes</button>-->
-                                <!--                        <button type="button" use:inertia="{{ href: '/client', method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Least Upvotes</button>-->
-                            </div>
-                        {/if}
-                    </div>
-                </div>
-
                 <!--list of tags-->
                 <div class="mt-4">
                     <div class="bg-gray-300 p-6 min-w-[15.9375rem] max-w-[15.9375rem] rounded-[0.625rem]">
@@ -137,6 +115,13 @@
                     <h1 class="text-3xl">All Tasks</h1>
                     <input on:keyup={({ target: { value } }) => debounce(value)} value={search} type="text"
                            placeholder="Search by Title or Tag" class="border px-2 rounded-lg"/>
+                </div>
+
+                <!--sort by oldest and newest-->
+                <div class="flex justify-end">
+                    <button type="button" on:click={()=>{rotateArrow = !rotateArrow}} use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status, sortby: rotateArrow ? 'oldest' : '' }, replace: true, }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 transform transition-transform {rotateArrow ? 'rotate-180' : 'rotate-0'}"><path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clip-rule="evenodd" /></svg>
+                    </button>
                 </div>
 
                 <!--list of tasks-->
