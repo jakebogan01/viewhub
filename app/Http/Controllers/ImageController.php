@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\TemporaryImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class ImageController extends Controller
 {
@@ -16,7 +17,7 @@ class ImageController extends Controller
             $image = $request->file('image');
             $filename = $image->getClientOriginalName();
             $folder = uniqid('image', true);
-            $image->storeAs('tasks/images/tmp/' . $folder, $filename);
+            $image->storeAs('tasks/images/' . $folder, $filename, ['disk' => 'public']);
 
             TemporaryImage::create([
                 'folder' => $folder,
@@ -33,7 +34,7 @@ class ImageController extends Controller
     {
         $temporaryImage = TemporaryImage::where('folder', $folder)->firstOrFail();
         if ($temporaryImage) {
-            Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            File::deleteDirectory(public_path('tasks/images/' . $temporaryImage->folder));
             $temporaryImage->delete();
         }
 
@@ -43,8 +44,8 @@ class ImageController extends Controller
     public function destroy(Image $image)
     {
         $image = Image::find($image->id);
-        Storage::delete('tasks/images/' . $image->path);
-        Storage::deleteDirectory('tasks/images');
+        File::delete(public_path('tasks/images/' . $image->path));
+        File::deleteDirectory(public_path('tasks/images'));
         $image->delete();
 
         return '';
