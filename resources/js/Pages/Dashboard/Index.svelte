@@ -38,7 +38,17 @@
     const debounce = v => {
         clearTimeout(timer);
         timer = setTimeout(() => {
-            Inertia.get(route, {search: v, status: filters.status, tag: filters.tag, sortby: filters.sortby}, {
+            if (v !== '') {
+                Inertia.get(route, {search: v, status: filters.status, tag: filters.tag, sortby: filters.sortby}, {
+                    // search input doesn't reload the page and lose focus
+                    preserveState: true,
+                    // prevents the browser's history from being updated
+                    replace: true,
+                    // preserve scroll position on back navigation
+                    preserveScroll: true,
+                });
+            } else {
+                Inertia.get(route, {status: filters.status, tag: filters.tag, sortby: filters.sortby}, {
                 // search input doesn't reload the page and lose focus
                 preserveState: true,
                 // prevents the browser's history from being updated
@@ -46,7 +56,24 @@
                 // preserve scroll position on back navigation
                 preserveScroll: true,
             });
+            }
         }, 300);
+    }
+
+
+    $: filterByDateData = {
+        search: filters.search, 
+        tag: filters.tag, 
+        status: filters.status,
+        ...(!rotateArrow) && {sortby: 'oldest'},
+    }
+
+    const test = () => {
+        rotateArrow = !rotateArrow;
+        Inertia.get(route, filterByDateData, {
+            // prevents the browser's history from being updated
+            replace: true,
+        });
     }
 </script>
 
@@ -119,7 +146,8 @@
 
                 <!--sort by oldest and newest-->
                 <div class="flex justify-end">
-                    <button type="button" on:click={()=>{rotateArrow = !rotateArrow}} use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status, sortby: rotateArrow ? 'oldest' : '' }, replace: true, }}">
+                    <!-- use:inertia="{{ href: route, method: 'get', data: data, replace: true }}" -->
+                    <button type="button" on:click={test}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 transform transition-transform {rotateArrow ? 'rotate-180' : 'rotate-0'}"><path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clip-rule="evenodd" /></svg>
                     </button>
                 </div>
