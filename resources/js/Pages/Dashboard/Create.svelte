@@ -109,11 +109,9 @@
             <div class="mb-6">
                 <div class="app">
                     <FilePond
-                        class="my-pond"
                         name="image"
                         server={options}
                         allowMultiple={true}
-                        acceptedFileTypes={['image/*']}
                     />
                 </div>
             </div>

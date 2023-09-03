@@ -55,6 +55,9 @@ class DashboardController extends Controller
      */
     public function create()
     {
+        // removes all images from the tmpimages folder
+        File::cleanDirectory(public_path() . '/tmpimages');
+
         return Inertia::render('Dashboard/Create', [
             'tags' => Tag::all(),
             'statuses' => Status::all(),
@@ -76,13 +79,13 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            // Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            // Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
             $temporaryImage->delete();
         }
 
@@ -119,6 +122,9 @@ class DashboardController extends Controller
      */
     public function edit(Task $task)
     {
+        // removes all images from the tmpimages folder
+        File::cleanDirectory(public_path() . '/tmpimages');
+
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
@@ -150,13 +156,13 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            // Storage::copy('tasks/images/tmp/' . $temporaryImage->folder . '/' . $temporaryImage->file, 'tasks/images/' . $temporaryImage->folder . '/' . $temporaryImage->file);
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            // Storage::deleteDirectory('tasks/images/tmp/' . $temporaryImage->folder);
+            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
             $temporaryImage->delete();
         }
 
@@ -170,8 +176,7 @@ class DashboardController extends Controller
     {
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
-            File::delete(public_path('tasks/images/' . $image->path));
-            File::deleteDirectory(public_path('tasks/images'));
+            File::delete(public_path('images/tasks/' . $image->path));
             $image->delete();
         }
 

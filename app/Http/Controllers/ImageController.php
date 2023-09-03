@@ -17,7 +17,7 @@ class ImageController extends Controller
             $image = $request->file('image');
             $filename = $image->getClientOriginalName();
             $folder = uniqid('image', true);
-            $image->storeAs('tasks/images/' . $folder, $filename, ['disk' => 'public']);
+            $image->storeAs('tmpimages/' . $folder, $filename, ['disk' => 'public']);
 
             TemporaryImage::create([
                 'folder' => $folder,
@@ -34,7 +34,7 @@ class ImageController extends Controller
     {
         $temporaryImage = TemporaryImage::where('folder', $folder)->firstOrFail();
         if ($temporaryImage) {
-            File::deleteDirectory(public_path('tasks/images/' . $temporaryImage->folder));
+            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
             $temporaryImage->delete();
         }
 
@@ -44,8 +44,7 @@ class ImageController extends Controller
     public function destroy(Image $image)
     {
         $image = Image::find($image->id);
-        File::delete(public_path('tasks/images/' . $image->path));
-        File::deleteDirectory(public_path('tasks/images'));
+        File::delete(public_path('images/tasks/' . $image->path));
         $image->delete();
 
         return '';
