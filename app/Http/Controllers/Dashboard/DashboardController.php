@@ -44,7 +44,7 @@ class DashboardController extends Controller
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date']),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date', 'liked']),
             'tags' => Tag::all(),
             'user' => Auth::user()
         ]);

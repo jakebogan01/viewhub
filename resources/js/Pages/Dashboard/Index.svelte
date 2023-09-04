@@ -30,7 +30,7 @@
     let showSortByDropdown = false;
     let search = filters.search || '';
     let updateStatusDropdownSelection = filters.status || 'All';
-    let updateSortByDropdownSelection = filters.date ? 'Due Date' : 'All';
+    let updateSortByDropdownSelection = filters.date ? 'Due Date' : filters.liked ? 'Most Popular' : 'All';
     let timer;
     let rotateArrow = false;
 
@@ -39,7 +39,7 @@
         clearTimeout(timer);
         timer = setTimeout(() => {
             if (v !== '') {
-                Inertia.get(route, {search: v, status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date}, {
+                Inertia.get(route, {search: v, status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked}, {
                     // search input doesn't reload the page and lose focus
                     preserveState: true,
                     // prevents the browser's history from being updated
@@ -48,7 +48,7 @@
                     preserveScroll: true,
                 });
             } else {
-                Inertia.get(route, {status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date}, {
+                Inertia.get(route, {status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked}, {
                 // search input doesn't reload the page and lose focus
                 preserveState: true,
                 // prevents the browser's history from being updated
@@ -66,6 +66,7 @@
         tag: filters.tag,
         status: filters.status,
         date: filters.date,
+        liked: filters.liked,
         ...(!rotateArrow) && {sortby: 'oldest'},
     }
 
@@ -116,6 +117,7 @@
                             <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">
                                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>All</button>
                                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, date: true }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Due Date</button>
+                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, liked: true}, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Most Popular</button>
                             </div>
                         {/if}
                     </div>
@@ -135,9 +137,9 @@
 
                         {#if showStatusDropdown}
                             <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, date: filters.date }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>All</button>
+                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>All</button>
                                 {#each statuses as status}
-                                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status, tag: filters.tag, sortby: filters.sortby, date: filters.date }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>{status}</button>
+                                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked }, replace: true, }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>{status}</button>
                                 {/each}
                             </div>
                         {/if}
@@ -148,10 +150,10 @@
                 <div class="mt-4">
                     <div class="bg-gray-300 p-6 min-w-[15.9375rem] max-w-[15.9375rem] rounded-[0.625rem]">
                         <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
-                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, date: filters.date }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
+                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, date: filters.date, liked: filters.liked }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
 
                             {#each tags as tag (tag.id)}
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, date: filters.date }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
+                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, date: filters.date, liked: filters.liked }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
                             {/each}
                         </div>
                     </div>

@@ -62,6 +62,11 @@ class Task extends Model
         if (request('date')) {
             $query->orderBy('due_date', 'desc');
         }
+
+        // if liked exists in filters, then sort by count likes
+        if (request('liked')) {
+            $query->withCount('likes')->orderByDesc('likes_count');
+        }
     }
 
     /**
