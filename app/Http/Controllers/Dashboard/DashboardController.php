@@ -71,6 +71,9 @@ class DashboardController extends Controller
     {
         $attributes = $this->validateTask();
 
+        if ($request->due_date !== null) {
+            $attributes['due_date'] = $this->validateDueDate();
+        }
         $attributes['user_id'] = auth()->id();
         $attributes['status_id'] = 1;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
@@ -103,7 +106,7 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'slug' => $task->slug,
                 'description' => $task->description,
-                'due_date' => $task->due_date->format('m/d/y'),
+                'due_date' => $task->due_date ? $task->due_date->format('m/d/y') : null,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'likes' => $task->likes->count(),
@@ -131,6 +134,7 @@ class DashboardController extends Controller
                 'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
+                'due_date' => $task->due_date,
                 'tag' => $task->tag->id,
                 'images' => $task->images->map(function($image) {
                     return [
@@ -150,6 +154,11 @@ class DashboardController extends Controller
     public function update(Task $task, Request $request)
     {
         $attributes = $this->validateTask($task);
+        if ($request->due_date !== null) {
+            $attributes['due_date'] = $this->validateDueDate();
+        } else {
+            $attributes['due_date'] = null;
+        }
         $attributes['status_id'] = $task->status_id;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
@@ -205,12 +214,18 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
-            'due_date' => 'date|after_or_equal:today',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
     }
 
     protected function randomThreeDigitID() {
         return rand(100, 999);
+    }
+
+    private function validateDueDate()
+    {
+        return request()->validate([
+            'due_date' => 'date|after_or_equal:today',
+        ])['due_date'];
     }
 }

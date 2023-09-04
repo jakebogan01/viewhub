@@ -56,7 +56,9 @@
                     <a use:inertia={{ replace: true }} href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
                     <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', replace: true, preserveScroll: true, }}">Like</button>
                     <span>{task.likes}</span>
-                    <span class="ml-4 font-bold text-blue-500">Due on: {task.due_date}</span>
+                    {#if task.due_date}
+                        <span class="ml-4 font-bold text-blue-500">Due on: {task.due_date}</span>
+                    {/if}
                 </div>
             </div>
         </div>
