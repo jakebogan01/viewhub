@@ -9,6 +9,7 @@
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
     import 'filepond/dist/filepond.min.css';
+    import { DateInput } from 'date-picker-svelte';
 
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
@@ -25,6 +26,7 @@
     let form = useForm({
         title: '',
         description: '',
+        due_date: new Date(),
         tag_id: 1,
         images: [],
     });
@@ -90,6 +92,13 @@
                 <textarea bind:value={$form.description} name="description" id="description" rows="4" class="border border-gray-400 p-2 w-full"></textarea>
                 {#if $form.errors.description}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
+                {/if}
+            </div>
+
+            <div class="mb-6">
+                <DateInput bind:value={$form.due_date} format="MM-dd-yyyy" closeOnSelection="true" browseWithoutSelecting="true" />
+                {#if $form.errors.due_date}
+                    <p class="text-red-500 text-xs mt-1"> {$form.errors.due_date} </p>
                 {/if}
             </div>
 

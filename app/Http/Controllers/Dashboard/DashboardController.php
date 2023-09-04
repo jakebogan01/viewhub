@@ -205,6 +205,7 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
+            'due_date' => 'date|after_or_equal:today',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
     }
