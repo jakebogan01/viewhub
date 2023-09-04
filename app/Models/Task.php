@@ -18,6 +18,7 @@ class Task extends Model
 
     protected $casts = [
         'due_date' => 'datetime',
+        'priority' => 'boolean'
     ];
 
     protected $with = ['tag', 'user', 'status', 'likes', 'images'];
@@ -66,6 +67,11 @@ class Task extends Model
         // if liked exists in filters, then sort by count likes
         if (request('liked')) {
             $query->withCount('likes')->orderByDesc('likes_count');
+        }
+
+        // if priority is in filters, then sort by priority value of 1
+        if (request('priority')) {
+            $query->where('priority', 1);
         }
     }
 

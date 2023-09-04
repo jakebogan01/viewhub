@@ -24,16 +24,24 @@
     tags.sort((a, b) => a.id - b.id);
 
     let includeDate = false;
+    let makePriority = 0;
 
     let form = useForm({
         title: '',
         description: '',
+        priority: 0,
         due_date: null,
         tag_id: 1,
         images: [],
     });
 
     $: {
+        if (!makePriority) {
+            $form.priority = 0;
+        } else {
+            $form.priority = 1;
+        }
+
         if (!includeDate) {
             $form.due_date = null;
         } else {
@@ -110,7 +118,7 @@
             </div>
 
             <div class="mb-6">
-                <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="description"> Description </label>
+                <label class="block mb-2 uppercase font-bold text-xs text-gray-700"> Description </label>
 
                 <Editor
                     apiKey="c6nd39g8lr6fi2qj6ed3jl7xyimi98cd389sbn1crir27xph"
@@ -136,6 +144,15 @@
                     {#if $form.errors.due_date}
                         <p class="text-red-500 text-xs mt-1"> {$form.errors.due_date} </p>
                     {/if}
+                {/if}
+            </div>
+
+            <div class="flex items-center mb-6">
+                <label for="priority" class="mr-6 ml-1">High Priority</label>
+                <input type="checkbox" id="priority" name="priority" bind:value={$form.priority} on:click={()=>{makePriority = !makePriority}}>
+
+                {#if $form.errors.priority}
+                    <p class="text-red-500 text-xs mt-1"> {$form.errors.priority} </p>
                 {/if}
             </div>
 

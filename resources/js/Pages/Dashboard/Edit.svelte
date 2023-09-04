@@ -24,24 +24,30 @@
     tags.sort((a, b) => a.id - b.id);
 
     let includeDate = task.due_date !== null;
+    let makePriority = task.priority;
 
     let form = useForm({
         title: task.title,
         description: task.description,
+        priority: makePriority,
         due_date: includeDate ? new Date(task.due_date) : null,
         tag_id: task.tag,
         images: [],
     });
 
     $: {
+        if (!makePriority) {
+            $form.priority = 0;
+        } else {
+            $form.priority = 1;
+        }
+
         if (!includeDate) {
             $form.due_date = null;
         } else {
             $form.due_date = task.due_date ? new Date(task.due_date) : new Date();
         }
     }
-
-    $: console.log($form.due_date)
 
     let options = {
         url: '',
@@ -74,6 +80,7 @@
         });
 
         load();
+        console.log(error);
     }
 
     function submit() {
@@ -132,7 +139,6 @@
                     name="description"
                     {conf}
                 />
-<!--                <textarea on:input={(e)=>{$form.description = e.target.value}} name="description" id="description" rows="4" class="border border-gray-400 p-2 w-full">{task.description}</textarea>-->
                 {#if $form.errors.description}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
                 {/if}
@@ -147,6 +153,15 @@
                     {#if $form.errors.due_date}
                         <p class="text-red-500 text-xs mt-1"> {$form.errors.due_date} </p>
                     {/if}
+                {/if}
+            </div>
+
+            <div class="flex items-center mb-6">
+                <label for="priority" class="mr-6 ml-1">High Priority</label>
+                <input type="checkbox" id="priority" name="priority" value={makePriority} on:click={()=>{makePriority = !makePriority}} checked={makePriority}>
+
+                {#if $form.errors.priority}
+                    <p class="text-red-500 text-xs mt-1"> {$form.errors.priority} </p>
                 {/if}
             </div>
 
