@@ -9,6 +9,7 @@
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
     import 'filepond/dist/filepond.min.css';
+    import {DateInput} from "date-picker-svelte";
 
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
@@ -21,12 +22,25 @@
     // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
 
+    let includeDate = task.due_date !== null;
+
     let form = useForm({
         title: task.title,
         description: task.description,
+        due_date: includeDate ? new Date(task.due_date) : null,
         tag_id: task.tag,
         images: [],
     });
+
+    $: {
+        if (!includeDate) {
+            $form.due_date = null;
+        } else {
+            $form.due_date = task.due_date ? new Date(task.due_date) : new Date();
+        }
+    }
+
+    $: console.log($form.due_date)
 
     let options = {
         url: '',
@@ -96,6 +110,18 @@
                 <textarea on:input={(e)=>{$form.description = e.target.value}} name="description" id="description" rows="4" class="border border-gray-400 p-2 w-full">{task.description}</textarea>
                 {#if $form.errors.description}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
+                {/if}
+            </div>
+
+            <div class="flex items-center mb-6">
+                <input type="checkbox" id="includeDate" name="includeDate" value={includeDate} on:click={()=>{includeDate = !includeDate}} checked={includeDate}>
+                <label for="includeDate" class="mr-6 ml-1">Include a Due Date</label>
+
+                {#if includeDate}
+                    <DateInput bind:value={$form.due_date} format="MM-dd-yyyy" closeOnSelection="true" browseWithoutSelecting="true" disabled={!includeDate} />
+                    {#if $form.errors.due_date}
+                        <p class="text-red-500 text-xs mt-1"> {$form.errors.due_date} </p>
+                    {/if}
                 {/if}
             </div>
 

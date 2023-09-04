@@ -16,6 +16,10 @@ class Task extends Model
 
     protected $guarded = [];
 
+    protected $casts = [
+        'due_date' => 'datetime',
+    ];
+
     protected $with = ['tag', 'user', 'status', 'likes', 'images'];
 
     /**
@@ -52,6 +56,11 @@ class Task extends Model
             $query->oldest();
         } else {
             $query->latest();
+        }
+
+        // if date exists in filters, then sort by date
+        if (request('date')) {
+            $query->orderBy('due_date', 'desc');
         }
     }
 
