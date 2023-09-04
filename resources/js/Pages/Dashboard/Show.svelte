@@ -17,6 +17,11 @@
         viewImage = true;
         imageSrc = image;
     }
+
+    const back = () =>
+    {
+        window.history.back();
+    }
 </script>
 
 <svelte:head>
@@ -40,7 +45,7 @@
 
                     <span>Created by: {task.user}</span>
                 </div>
-                <p>{task.description}</p>
+                <p>{@html task.description}</p>
 
                 {#if task.images.length > 0}
                     <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
@@ -74,6 +79,6 @@
             </div>
         {/if}
 
-        <a use:inertia={{ replace: true }} href="/dashboard">Go Back</a>
+        <a use:inertia={{ replace: true }} href="#" on:click={back}>Go Back</a>
     </div>
 </section>

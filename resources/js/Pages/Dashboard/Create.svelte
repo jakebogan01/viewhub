@@ -10,7 +10,7 @@
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
     import 'filepond/dist/filepond.min.css';
     import { DateInput } from 'date-picker-svelte';
-
+    import Editor from '@tinymce/tinymce-svelte';
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
     /* svelte-ignore unused-export-let */
@@ -79,6 +79,18 @@
             replace: true,
         })
     }
+
+    let conf = {
+        height: 300,
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'preview',
+            'anchor', 'code'
+        ],
+        toolbar: 'bold italic backcolor | alignleft aligncenter ' +
+            'alignright alignjustify | code |  bullist numlist outdent indent | ',
+        menubar: '',
+        statusbar: false
+    }
 </script>
 
 <svelte:head>
@@ -100,7 +112,16 @@
             <div class="mb-6">
                 <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="description"> Description </label>
 
-                <textarea bind:value={$form.description} name="description" id="description" rows="4" class="border border-gray-400 p-2 w-full"></textarea>
+                <Editor
+                    apiKey="c6nd39g8lr6fi2qj6ed3jl7xyimi98cd389sbn1crir27xph"
+                    id="description"
+                    inline=false
+                    disabled=false
+                    bind:value={$form.description}
+                    text="readonly-text-output"
+                    name="description"
+                    {conf}
+                />
                 {#if $form.errors.description}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
                 {/if}

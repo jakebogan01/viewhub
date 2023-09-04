@@ -188,7 +188,7 @@
                                     </a>
                                     <span class="whitespace-nowrap">Status: <span class="text-[#3bba2d] bg-[#d4facf] p-2 rounded">{task.status}</span></span>
                                 </div>
-                                <p class="mt-4">{task.description}</p>
+                                <p class="mt-4">{@html task.description}</p>
                                 <a use:inertia href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
                                 <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', replace: true, preserveScroll: true, }}">Like</button>
                                 <span>{task.likes}</span>
