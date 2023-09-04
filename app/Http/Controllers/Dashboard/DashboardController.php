@@ -44,7 +44,7 @@ class DashboardController extends Controller
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby']),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date']),
             'tags' => Tag::all(),
             'user' => Auth::user()
         ]);
@@ -103,6 +103,7 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'slug' => $task->slug,
                 'description' => $task->description,
+                'due_date' => $task->due_date->format('m/d/y'),
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'likes' => $task->likes->count(),

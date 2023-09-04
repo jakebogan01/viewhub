@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
+            $table->timestamp('due_date')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

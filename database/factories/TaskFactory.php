@@ -29,6 +29,7 @@ class TaskFactory extends Factory
             'title' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
             'description' => fake()->paragraphs(6, true),
+            'due_date' => fake()->dateTimeBetween('now', '+1 year'),
         ];
     }
 }
