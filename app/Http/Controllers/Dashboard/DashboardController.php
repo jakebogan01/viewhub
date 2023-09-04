@@ -38,13 +38,14 @@ class DashboardController extends Controller
                     'title' => $task->title,
                     'slug' => $task->slug,
                     'description' => $task->description,
+                    'priority' => $task->priority,
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date', 'liked']),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
             'tags' => Tag::all(),
             'user' => Auth::user()
         ]);
@@ -106,6 +107,7 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'slug' => $task->slug,
                 'description' => $task->description,
+                'priority' => $task->priority,
                 'due_date' => $task->due_date ? $task->due_date->format('m/d/y') : null,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
@@ -134,6 +136,7 @@ class DashboardController extends Controller
                 'id' => $task->id,
                 'title' => $task->title,
                 'description' => $task->description,
+                'priority' => $task->priority,
                 'due_date' => $task->due_date,
                 'tag' => $task->tag->id,
                 'images' => $task->images->map(function($image) {
@@ -214,6 +217,7 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
+            'priority' => 'required|integer|between:0,1',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
     }

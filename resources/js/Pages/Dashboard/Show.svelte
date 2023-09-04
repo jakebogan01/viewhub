@@ -8,7 +8,6 @@
     export let task;
     /* svelte-ignore unused-export-let */
     export let flash = {};
-    console.log(task);
 
     let viewImage = false;
     let imageSrc = '';
@@ -39,8 +38,13 @@
             <button type="button" use:inertia="{{ href: `/dashboard/task/${task.id}`, method: 'delete', replace: true, }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
         </div>
         <div class="space-y-4 mt-5">
-            <div class="border border-gray-200 rounded p-4 my-2">
+            <div class="relative border border-gray-200 rounded p-4 my-2">
                 <div class="flex justify-between items-center">
+                    {#if task.priority}
+                        <span class="absolute right-1 top-1 text-purple-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0-10.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.249-8.25-3.286zm0 13.036h.008v.008H12v-.008z" /></svg>
+                        </span>
+                    {/if}
                     <h2 class="text-2xl font-bold pb-3">{task.title}</h2>
 
                     <span>Created by: {task.user}</span>
