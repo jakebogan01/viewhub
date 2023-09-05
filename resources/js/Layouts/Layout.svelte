@@ -1,11 +1,8 @@
 <script>
     import Nav from "../Components/Navigation/Nav.svelte";
-
-    /* svelte-ignore unused-export-let */
-    export let auth;
 </script>
 
-<div class="{auth.user.dark_mode ? 'dark' : ''}">
+<div>
     <section class="p-6 bg-gray-200">
         <header class="flex justify-between max-w-6xl mx-auto">
             <h1 class="text-lg font-bold">My App</h1>
