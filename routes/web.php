@@ -27,6 +27,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
     Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
+
+    Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
 });
 
 Route::get('/about', function () {

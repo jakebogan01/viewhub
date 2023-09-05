@@ -8,6 +8,7 @@ use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
 use App\Models\TemporaryImage;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -195,6 +196,26 @@ class DashboardController extends Controller
 
         $task->delete();
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
+    }
+
+    /**
+     * Updates dark mode.
+     */
+    public function enableDarkMode()
+    {
+        $attributes = request()->validate([
+            'dark_mode' => 'required|boolean',
+        ]);
+
+        if ($attributes['dark_mode']) {
+            $attributes['dark_mode'] = 1;
+        } else {
+            $attributes['dark_mode'] = 0;
+        }
+
+        auth()->user()->update($attributes);
+
+        return redirect()->back();
     }
 
     /**

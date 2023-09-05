@@ -12,7 +12,7 @@
 </script>
 
 <div>
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gray-100 {auth.user.dark_mode ? 'dark' : ''}">
         <nav class="bg-white border-b border-gray-100">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
