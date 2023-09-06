@@ -7,7 +7,10 @@ use App\Models\Image;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
+use App\Models\TaskLikes;
 use App\Models\TemporaryImage;
+use App\Models\User;
+use App\Notifications\TaskLiked;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +45,7 @@ class DashboardController extends Controller
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
+                    'owner_id' => $task->user->id,
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
@@ -112,6 +116,7 @@ class DashboardController extends Controller
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'likes' => $task->likes->count(),
+                'owner_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
                     return [
                         'id' => $image->id,
@@ -198,11 +203,39 @@ class DashboardController extends Controller
     }
 
     /**
+     * Updates dark mode.
+     */
+    public function enableDarkMode()
+    {
+        $attributes = request()->validate([
+            'dark_mode' => 'required|boolean',
+        ]);
+
+        if ($attributes['dark_mode']) {
+            $attributes['dark_mode'] = 1;
+        } else {
+            $attributes['dark_mode'] = 0;
+        }
+
+        auth()->user()->update($attributes);
+
+        return redirect()->back();
+    }
+
+    /**
      * @param Task $task
      * @return RedirectResponse
      */
     public function toggle(Task $task) :RedirectResponse
     {
+        $owner_id = request('user');
+        $record = TaskLikes::where('user_id', auth()->user()->id)->where('task_id', $task->id)->first();
+
+        if (auth()->user()->id !== $owner_id && !$record) {
+            $notifiedUser = User::find($owner_id);
+            $notifiedUser->notify(new TaskLiked(auth()->user(), $task->slug));
+        }
+
         $task->likes()->toggle(auth()->user()->id);
         return redirect()->back();
     }

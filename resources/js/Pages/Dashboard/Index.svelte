@@ -33,6 +33,7 @@
     let updateSortByDropdownSelection = filters.date ? 'Due Date' : filters.liked ? 'Most Popular' : filters.priority ? 'High Priority' :  'All';
     let timer;
     let rotateArrow = false;
+    let enableDarkMode = true;
 
     // debounce search input
     const debounce = v => {
@@ -84,7 +85,7 @@
     <title>Dashboard</title>
 </svelte:head>
 
-<section class="p-6">
+<section class="p-6 dark:bg-gray-500">
     <div class="max-w-3xl mx-auto">
 
         {#if flash.message}
@@ -160,6 +161,10 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-4">
+                    <button type="button" use:inertia="{{ href: '/update-dark-mode', method: 'post', data: { dark_mode: enableDarkMode }, replace: true, preserveScroll: true }}" on:click={()=>{enableDarkMode = !enableDarkMode}} class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">Enable Dark Mode</button>
+                </div>
             </div>
 
             <div class="basis-full">
@@ -197,7 +202,7 @@
                                 </div>
                                 <p class="mt-4">{@html task.description}</p>
                                 <a use:inertia href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
-                                <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', replace: true, preserveScroll: true, }}">Like</button>
+                                <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
                                 <span>{task.likes}</span>
                             </div>
                         {:else}
