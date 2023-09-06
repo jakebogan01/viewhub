@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\ImageController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
 
     Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
+    Route::post('/notification-mark-read', NotificationController::class);
 });
 
 Route::get('/about', function () {
