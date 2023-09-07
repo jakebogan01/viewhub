@@ -126,6 +126,7 @@ class DashboardController extends Controller
                 }),
                 // add comments with pagination
                 'comments' => $task->comments()
+                    ->orderByDesc('created_at')
                     ->simplePaginate(5)
                     ->withQueryString()
                     ->through(fn($comment) => [
@@ -133,7 +134,7 @@ class DashboardController extends Controller
                         'body' => $comment->body,
                         'user' => $comment->user->name,
                         'created_at' => $comment->created_at->format('F j, Y, g:i a'),
-                ]),
+                    ])
             ]
         ]);
     }

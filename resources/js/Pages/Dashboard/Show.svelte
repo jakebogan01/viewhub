@@ -3,12 +3,24 @@
 </script>
 
 <script>
-    import {inertia} from "@inertiajs/inertia-svelte";
+    import {useForm, inertia} from "@inertiajs/inertia-svelte";
 
     export let task;
     /* svelte-ignore unused-export-let */
     export let flash = {};
     console.log(task);
+
+    let form = useForm({
+        task_id: task.id,
+        body: '',
+    });
+
+    function submit() {
+        $form.post(`/dashboard/comment/create`, {
+            replace: true,
+            preserveScroll: true,
+        })
+    }
 
     let viewImage = false;
     let imageSrc = '';
@@ -63,7 +75,7 @@
                 {/if}
 
                 <div>
-                    <a use:inertia={{ replace: true }} href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
+                    <a use:inertia={{ replace: true }} href="/dashboard?tag={task.tag}" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
                     <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
                     <span>{task.likes}</span>
                     {#if task.due_date}
@@ -88,13 +100,16 @@
     </div>
 
     <div class="border border-gray-200 p-6 rounded-xl max-w-3xl mx-auto">
-        <form action="/posts/autem-laboriosam-aperiam-a-laboriosam-numquam/comments" method="POST">
+        <form on:submit|preventDefault={submit}>
             <div class="mt-6">
-                <textarea name="body" id="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" placeholder="Quick, think of something to say!" required></textarea>
+                <textarea bind:value={$form.body} name="body" id="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" placeholder="Quick, think of something to say!" ></textarea>
             </div>
+            {#if $form.errors.body}
+                <p class="text-red-500 text-xs mt-1">{$form.errors.body}</p>
+            {/if}
 
             <div class="flex justify-end mt-6 pt-6 border-t border-gray-200">
-                <button type="submit" class="bg-blue-500 text-white uppercase font-semibold text-xs py-2 px-10 rounded-2xl hover:bg-blue-600 transition ease-in-out duration-150">Comment</button>
+                <button type="submit" class="bg-blue-500 text-white uppercase font-semibold text-xs py-2 px-10 rounded-2xl hover:bg-blue-600 transition ease-in-out duration-150" disabled={$form.processing}>Post</button>
             </div>
         </form>
     </div>

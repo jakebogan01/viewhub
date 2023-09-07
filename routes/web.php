@@ -3,9 +3,7 @@
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\NotificationController;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Shared\CommentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +14,8 @@ Route::get('/', function() {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    // dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/dashboard/tasks/{task:slug}', [DashboardController::class, 'show'])->name('dashboard.show');
     Route::get('/dashboard/task/create', [DashboardController::class, 'create'])->name('dashboard.create');
@@ -24,11 +24,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
     Route::post('/dashboard/tasks/{task}/like', [DashboardController::class, 'toggle']);
-
     Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
     Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
 
+    // comments
+    Route::post('/dashboard/comment/create', [CommentController::class, 'store']);
+
+    // miscellaneous
     Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
     Route::post('/notification-mark-read', NotificationController::class);
 });
