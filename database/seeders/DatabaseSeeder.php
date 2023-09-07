@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Image;
+use App\Models\Comment;
+use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\TaskLikes;
 use App\Models\Status;
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      *
      * @return void
+     * @throws Exception
      */
     public function run(): void
     {
@@ -39,5 +41,6 @@ class DatabaseSeeder extends Seeder
 
         Task::factory(30)->create();
         TaskLikes::factory(30)->create();
+        Comment::factory(30)->create();
     }
 }

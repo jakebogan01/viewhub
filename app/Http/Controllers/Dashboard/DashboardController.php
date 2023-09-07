@@ -124,6 +124,16 @@ class DashboardController extends Controller
                         'path' => $image->path,
                     ];
                 }),
+                // add comments with pagination
+                'comments' => $task->comments()
+                    ->simplePaginate(5)
+                    ->withQueryString()
+                    ->through(fn($comment) => [
+                        'id' => $comment->id,
+                        'body' => $comment->body,
+                        'user' => $comment->user->name,
+                        'created_at' => $comment->created_at->format('F j, Y, g:i a'),
+                ]),
             ]
         ]);
     }

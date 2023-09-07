@@ -21,7 +21,7 @@ class Task extends Model
         'priority' => 'boolean'
     ];
 
-    protected $with = ['tag', 'user', 'status', 'likes', 'images'];
+    protected $with = ['tag', 'user', 'status', 'likes', 'images', 'comments'];
 
     /**
      * @param $query
@@ -113,5 +113,13 @@ class Task extends Model
     public function images(): HasMany
     {
         return $this->hasMany(Image::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
     }
 }

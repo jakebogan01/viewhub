@@ -8,6 +8,7 @@
     export let task;
     /* svelte-ignore unused-export-let */
     export let flash = {};
+    console.log(task);
 
     let viewImage = false;
     let imageSrc = '';
@@ -84,5 +85,50 @@
         {/if}
 
         <a use:inertia={{ replace: true }} href="#" on:click={back}>Go Back</a>
+    </div>
+
+    <div class="border border-gray-200 p-6 rounded-xl max-w-3xl mx-auto">
+        <form action="/posts/autem-laboriosam-aperiam-a-laboriosam-numquam/comments" method="POST">
+            <div class="mt-6">
+                <textarea name="body" id="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" placeholder="Quick, think of something to say!" required></textarea>
+            </div>
+
+            <div class="flex justify-end mt-6 pt-6 border-t border-gray-200">
+                <button type="submit" class="bg-blue-500 text-white uppercase font-semibold text-xs py-2 px-10 rounded-2xl hover:bg-blue-600 transition ease-in-out duration-150">Comment</button>
+            </div>
+        </form>
+    </div>
+
+    {#each task.comments.data as comment (comment.id)}
+        <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto">
+            <article class="flex space-x-4">
+                <div class="flex-shrink-0">
+                    <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
+                </div>
+
+                <div>
+                    <header class="mb-4">
+                        <h3 class="font-bold">{comment.user}</h3>
+                        <p class="text-xs">Posted <time>{comment.created_at}</time></p>
+                    </header>
+                    <p>
+                        {comment.body}
+                    </p>
+                </div>
+            </article>
+        </div>
+    {/each}
+
+    <!--pagination-->
+    <div>
+        <div class="mt-6">
+            {#if task.comments.prev_page_url}
+                <a use:inertia={{ replace: true }} href="{task.comments.prev_page_url}" class="px-1">&laquo; Prev</a>
+            {/if}
+
+            {#if task.comments.next_page_url}
+                <a use:inertia={{ replace: true }} href="{task.comments.next_page_url}" class="px-1">Next &raquo;</a>
+            {/if}
+        </div>
     </div>
 </section>
