@@ -11,10 +11,13 @@
     export let canResetPassword;
     export let status;
 
+    console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
+
     const form = useForm({
         email: null,
         password: null,
         remember: false,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
     });
 
     $: {

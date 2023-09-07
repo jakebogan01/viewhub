@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'test',
             'email' => 'test@gmail.com',
             'password' => bcrypt(123456789),
+            'timezone' => 'America/New_York',
         ]);
 
         foreach ($statuses as $status) {

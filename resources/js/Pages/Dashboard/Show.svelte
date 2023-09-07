@@ -20,6 +20,8 @@
             replace: true,
             preserveScroll: true,
         })
+
+        $form.body = '';
     }
 
     let viewImage = false;

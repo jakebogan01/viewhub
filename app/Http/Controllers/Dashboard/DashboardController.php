@@ -133,7 +133,9 @@ class DashboardController extends Controller
                         'id' => $comment->id,
                         'body' => $comment->body,
                         'user' => $comment->user->name,
-                        'created_at' => $comment->created_at->format('F j, Y, g:i a'),
+                        'created_at' => $comment->created_at
+                            ->setTimezone(auth()->user()->timezone)
+                            ->format('F j, Y, g:i a'),
                     ])
             ]
         ]);
@@ -210,6 +212,7 @@ class DashboardController extends Controller
         }
 
         $task->delete();
+        $task->comments()->delete();
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 

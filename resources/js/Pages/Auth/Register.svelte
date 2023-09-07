@@ -12,6 +12,7 @@
         email: null,
         password: null,
         password_confirmation: null,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
         terms: false,
     });
 
