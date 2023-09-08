@@ -25,4 +25,13 @@ class CommentController extends Controller
 
         return redirect()->back();
     }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Comment $comment)
+    {
+        $comment->delete();
+        return redirect()->back();
+    }
 }

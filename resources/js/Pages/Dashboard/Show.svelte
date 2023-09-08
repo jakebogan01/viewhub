@@ -133,6 +133,10 @@
                     </p>
                 </div>
             </article>
+            <div class="flex justify-end">
+                <a use:inertia href="/dashboard/task/{task.slug}/edit" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit</a>
+                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
+            </div>
         </div>
     {/each}
 

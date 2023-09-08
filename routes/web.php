@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'store']);
+    Route::delete('/dashboard/comment/{comment}', [CommentController::class, 'destroy']);
 
     // miscellaneous
     Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
