@@ -124,7 +124,6 @@ class DashboardController extends Controller
                         'path' => $image->path,
                     ];
                 }),
-                // add comments with pagination
                 'comments' => $task->comments()
                     ->orderByDesc('created_at')
                     ->simplePaginate(5)
@@ -132,10 +131,20 @@ class DashboardController extends Controller
                     ->through(fn($comment) => [
                         'id' => $comment->id,
                         'body' => $comment->body,
-                        'user' => $comment->user->name,
+                        'user' => $comment->user->only('id', 'name'),
                         'created_at' => $comment->created_at
                             ->setTimezone(auth()->user()->timezone)
                             ->format('F j, Y, g:i a'),
+                        'replies' => $comment->replies
+                            ->map(fn($reply) => [
+                                'id' => $reply->id,
+                                'body' => $reply->body,
+                                'user' => $reply->user->name,
+                                'recipient' => $reply->recipient->name,
+                                'created_at' => $reply->created_at
+                                    ->setTimezone(auth()->user()->timezone)
+                                    ->format('F j, Y, g:i a'),
+                            ])
                     ])
             ]
         ]);

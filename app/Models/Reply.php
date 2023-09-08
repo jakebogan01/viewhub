@@ -5,23 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Comment extends Model
+class Reply extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    protected $with = ['replies'];
+    protected $with = ['recipient'];
 
     /**
      * @return BelongsTo
      */
-    public function task(): BelongsTo
+    public function comment(): BelongsTo
     {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(Comment::class);
     }
 
     /**
@@ -33,10 +32,10 @@ class Comment extends Model
     }
 
     /**
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function replies(): HasMany
+    public function recipient(): BelongsTo
     {
-        return $this->hasMany(Reply::class)->orderByDesc('created_at');
+        return $this->belongsTo(User::class, 'recipient_id');
     }
 }

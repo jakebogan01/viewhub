@@ -29,9 +29,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
 
     // comments
-    Route::post('/dashboard/comment/create', [CommentController::class, 'store']);
-    Route::delete('/dashboard/comment/{comment}', [CommentController::class, 'destroy']);
-    Route::patch('/dashboard/comment/{comment}', [CommentController::class, 'update']);
+    Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);
+    Route::post('/dashboard/comment/reply/create', [CommentController::class, 'storeReply']);
+    Route::delete('/dashboard/comment/{comment}', [CommentController::class, 'destroyComment']);
+    Route::delete('/dashboard/comment/reply/{reply}', [CommentController::class, 'destroyReply']);
+    Route::patch('/dashboard/comment/{comment}', [CommentController::class, 'updateComment']);
+    Route::patch('/dashboard/comment/reply/{reply}', [CommentController::class, 'updateReply']);
 
     // miscellaneous
     Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
