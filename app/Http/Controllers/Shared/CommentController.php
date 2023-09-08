@@ -34,4 +34,21 @@ class CommentController extends Controller
         $comment->delete();
         return redirect()->back();
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Comment $comment, Request $request)
+    {
+        $attributes = request()->validate([
+            'task_id' => ['required', Rule::exists('tasks', 'id')],
+            'body' => 'required|max:255'
+        ]);
+
+        $attributes['user_id'] = auth()->id();
+
+        $comment->update($attributes);
+
+        return redirect()->back();
+    }
 }

@@ -9,8 +9,14 @@
     /* svelte-ignore unused-export-let */
     export let flash = {};
     console.log(task);
+    let editTask = false;
 
     let form = useForm({
+        task_id: task.id,
+        body: '',
+    });
+
+    let editForm = useForm({
         task_id: task.id,
         body: '',
     });
@@ -22,6 +28,18 @@
         })
 
         $form.body = '';
+    }
+
+    function submitEdit(id) {
+        $editForm.patch(`/dashboard/comment/${id}`, {
+            replace: true,
+            preserveScroll: true,
+        })
+
+        if (!$editForm.errors.body) {
+            editTask = false;
+        }
+        $editForm.body = '';
     }
 
     let viewImage = false;
@@ -118,25 +136,40 @@
 
     {#each task.comments.data as comment (comment.id)}
         <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto">
-            <article class="flex space-x-4">
+            <div class="flex space-x-4">
                 <div class="flex-shrink-0">
                     <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
                 </div>
 
-                <div>
+                <div class="flex-1">
                     <header class="mb-4">
                         <h3 class="font-bold">{comment.user}</h3>
                         <p class="text-xs">Posted <time>{comment.created_at}</time></p>
                     </header>
-                    <p>
-                        {comment.body}
-                    </p>
+                    {#if editTask}
+                        <form on:submit|preventDefault={()=>{submitEdit(comment.id)}}>
+                            <textarea on:input={(e)=>{$editForm.body = e.target.value}} name="body" id="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" autofocus>{comment.body}</textarea>
+                            {#if $editForm.errors.body}
+                                <p class="text-red-500 text-xs mt-1">{$editForm.errors.body}</p>
+                            {/if}
+
+                            <div class="flex justify-end">
+                                <button type="submit" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-blue-500" disabled={$form.processing}>Update</button>
+                            </div>
+                        </form>
+                    {:else}
+                        <p>
+                            {comment.body}
+                        </p>
+                    {/if}
                 </div>
-            </article>
-            <div class="flex justify-end">
-                <a use:inertia href="/dashboard/task/{task.slug}/edit" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit</a>
-                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
             </div>
+            {#if !editTask}
+                <div class="flex justify-end">
+                    <button type="button" use:inertia={{ href: '#', replace: true, preserveScroll: true }} on:click={()=>{editTask = !editTask}} class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Edit</button>
+                    <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
+                </div>
+            {/if}
         </div>
     {/each}
 
