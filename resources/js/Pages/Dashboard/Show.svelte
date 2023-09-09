@@ -249,7 +249,7 @@
         </div>
 
         {#if comment.replies.length > 0}
-            {#each comment.replies.reverse() as reply (reply.id)}
+            {#each comment.replies as reply (reply.id)}
                 <div class="max-w-3xl mx-auto border-l-2 border-dashed border-blue-200">
                     <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">
                         <div class="flex space-x-4">

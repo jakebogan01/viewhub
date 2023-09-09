@@ -145,7 +145,7 @@ class DashboardController extends Controller
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)
                                     ->format('F j, Y, g:i a'),
-                            ])
+                            ])->sortBy('created_at')->reverse()->values(),
                     ])
             ]
         ]);
