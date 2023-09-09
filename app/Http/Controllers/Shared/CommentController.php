@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Shared;
 
 use App\Http\Controllers\Controller;
 use App\Models\Reply;
+use App\Notifications\CommentReceived;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Comment;
@@ -22,7 +23,11 @@ class CommentController extends Controller
 
         $attributes['user_id'] = auth()->id();
 
-        Comment::create($attributes);
+        $comment = Comment::create($attributes);
+
+        if (auth()->user()->id !== $comment->task->user->id) {
+            $comment->task->user->notify(new CommentReceived(auth()->user(), $comment->task->slug));
+        }
 
         return redirect()->back();
     }

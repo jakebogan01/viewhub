@@ -23,7 +23,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/task/{task:slug}/edit', [DashboardController::class, 'edit']);
     Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
-    Route::post('/dashboard/tasks/{task}/like', [DashboardController::class, 'toggle']);
     Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
     Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
@@ -38,7 +37,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // miscellaneous
     Route::post('/update-dark-mode', [DashboardController::class, 'enableDarkMode']);
-    Route::post('/notification-mark-read', NotificationController::class);
+    Route::post('/notification-mark-read', [NotificationController::class, 'markRead']);
+    Route::post('/notification/{task}/like', [NotificationController::class, 'toggle']);
 });
 
 Route::get('/about', function () {

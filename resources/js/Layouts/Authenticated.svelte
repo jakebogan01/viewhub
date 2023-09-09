@@ -79,7 +79,11 @@
                                             <div class="p-4">
                                                 <div class="flex items-start">
                                                     <div class="ml-3 w-0 flex-1 pt-0.5">
-                                                        <p class="mt-1 text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
+                                                        {#if notification.type === 'App\\Notifications\\CommentReceived'}
+                                                            <p class="mt-1 text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a></p>
+                                                        {:else}
+                                                            <p class="mt-1 text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
+                                                        {/if}
                                                     </div>
                                                     <div class="ml-4 flex flex-shrink-0">
                                                         <button type="button" use:inertia="{{ href: '/notification-mark-read', method: 'post', data: { id: notification.id }, replace: true, }}" class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
