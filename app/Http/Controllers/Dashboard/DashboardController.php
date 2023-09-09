@@ -124,6 +124,29 @@ class DashboardController extends Controller
                         'path' => $image->path,
                     ];
                 }),
+                'comments' => $task->comments()
+                    ->orderByDesc('created_at')
+                    ->simplePaginate(5)
+                    ->withQueryString()
+                    ->through(fn($comment) => [
+                        'id' => $comment->id,
+                        'body' => $comment->body,
+                        'user' => $comment->user->only('id', 'name'),
+                        'created_at' => $comment->created_at
+                            ->setTimezone(auth()->user()->timezone)
+                            ->format('F j, Y, g:i a'),
+                        // pass replies in descending order not paginated
+                        'replies' => $comment->replies
+                            ->map(fn($reply) => [
+                                'id' => $reply->id,
+                                'body' => $reply->body,
+                                'user' => $reply->user->name,
+                                'recipient' => $reply->recipient->name,
+                                'created_at' => $reply->created_at
+                                    ->setTimezone(auth()->user()->timezone)
+                                    ->format('F j, Y, g:i a'),
+                            ])->sortBy('created_at')->reverse()->values(),
+                    ])
             ]
         ]);
     }
@@ -199,6 +222,7 @@ class DashboardController extends Controller
         }
 
         $task->delete();
+        $task->comments()->delete();
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 
