@@ -135,6 +135,7 @@ class DashboardController extends Controller
                         'created_at' => $comment->created_at
                             ->setTimezone(auth()->user()->timezone)
                             ->format('F j, Y, g:i a'),
+                        // pass replies in descending order not paginated
                         'replies' => $comment->replies
                             ->map(fn($reply) => [
                                 'id' => $reply->id,

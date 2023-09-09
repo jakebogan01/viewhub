@@ -33,7 +33,7 @@ class CommentController extends Controller
     public function storeReply(Request $request)
     {
         $attributes = request()->validate([
-            'comment_id' => ['required', Rule::exists('tasks', 'id')],
+            'comment_id' => ['required', Rule::exists('comments', 'id')],
             'recipient_id' => ['required', Rule::exists('users', 'id')],
             'body' => 'required'
         ]);
@@ -87,7 +87,7 @@ class CommentController extends Controller
     public function updateReply(Reply $reply, Request $request)
     {
         $attributes = request()->validate([
-            'comment_id' => ['required', Rule::exists('tasks', 'id')],
+            'comment_id' => ['required', Rule::exists('comments', 'id')],
             'recipient_id' => ['required', Rule::exists('users', 'id')],
             'body' => 'required'
         ]);
