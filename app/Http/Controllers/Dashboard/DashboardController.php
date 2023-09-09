@@ -140,7 +140,8 @@ class DashboardController extends Controller
                             ->map(fn($reply) => [
                                 'id' => $reply->id,
                                 'body' => $reply->body,
-                                'user' => $reply->user->name,
+                                'user_id' => $reply->user->id,
+                                'user_name' => $reply->user->name,
                                 'recipient' => $reply->recipient->name,
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)
@@ -243,24 +244,6 @@ class DashboardController extends Controller
 
         auth()->user()->update($attributes);
 
-        return redirect()->back();
-    }
-
-    /**
-     * @param Task $task
-     * @return RedirectResponse
-     */
-    public function toggle(Task $task) :RedirectResponse
-    {
-        $owner_id = request('user');
-        $record = TaskLikes::where('user_id', auth()->user()->id)->where('task_id', $task->id)->first();
-
-        if (auth()->user()->id !== $owner_id && !$record) {
-            $notifiedUser = User::find($owner_id);
-            $notifiedUser->notify(new TaskLiked(auth()->user(), $task->slug));
-        }
-
-        $task->likes()->toggle(auth()->user()->id);
         return redirect()->back();
     }
 

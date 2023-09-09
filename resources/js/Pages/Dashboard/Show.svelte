@@ -108,7 +108,7 @@
 
         $submitReplyForm.comment_id = comment_id;
         $submitReplyForm.recipient_id = user_id;
-        $submitReplyForm.post(`/dashboard/comment/reply/create`, {
+        $submitReplyForm.post(`/dashboard/comment/comment-reply/create`, {
             replace: true,
             preserveScroll: true,
         })
@@ -171,7 +171,7 @@
 
                 <div>
                     <a use:inertia={{ replace: true }} href="/dashboard?tag={task.tag}" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
-                    <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
+                    <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
                     <span>{task.likes}</span>
                     {#if task.due_date}
                         <span class="ml-4 font-bold text-blue-500">Due on: {task.due_date}</span>
@@ -258,7 +258,8 @@
                             </div>
                             <div class="flex-1">
                                 <header class="mb-4">
-                                    <h3 class="font-bold">{reply.user}</h3>
+                                    <h3 class="font-bold">{reply.user_name}</h3>
+                                    {reply.user_id}
                                     <p class="text-xs">Posted
                                         <time>{reply.created_at}</time>
                                     </p>
@@ -285,7 +286,7 @@
                         </div>
                         {#if !editReplyTask}
                             <div class="flex justify-end">
-                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = comment.user.id}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-purple-400 ml-4">Reply</button>
+                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-purple-400 ml-4">Reply</button>
                                 <button type="button" use:inertia={{ href: '#', replace: true, preserveScroll: true }} on:click={()=>{editReplyTask = true}} class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white ml-4">Edit</button>
                                 <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>
                             </div>

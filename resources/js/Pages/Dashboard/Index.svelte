@@ -202,7 +202,7 @@
                                 </div>
                                 <p class="mt-4">{@html task.description}</p>
                                 <a use:inertia href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
-                                <button type="button" use:inertia="{{ href: `/dashboard/tasks/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
+                                <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
                                 <span>{task.likes}</span>
                             </div>
                         {:else}
