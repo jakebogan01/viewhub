@@ -248,7 +248,7 @@
         </div>
 
         {#if comment.replies.length > 0}
-            {#each comment.replies as reply (reply.id)}
+            {#each comment.replies.sort() as reply (reply.id)}
                 <div class="max-w-3xl mx-auto border-l-2 border-dashed border-blue-200" id={reply.id}>
                     <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">
                         <div class="flex space-x-4">
@@ -258,7 +258,6 @@
                             <div class="flex-1">
                                 <header class="mb-4">
                                     <h3 class="font-bold">{reply.user_name}</h3>
-                                    {reply.user_id}
                                     <p class="text-xs">Posted
                                         <time>{reply.created_at}</time>
                                     </p>

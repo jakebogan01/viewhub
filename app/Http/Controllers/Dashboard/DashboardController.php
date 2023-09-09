@@ -125,7 +125,7 @@ class DashboardController extends Controller
                     ];
                 }),
                 'comments' => $task->comments()
-                    ->orderBy('created_at')
+                    ->orderByDesc('created_at')
                     ->simplePaginate(5)
                     ->withQueryString()
                     ->through(fn($comment) => [
