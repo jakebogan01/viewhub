@@ -33,6 +33,13 @@ class DatabaseSeeder extends Seeder
             'timezone' => 'America/New_York',
         ]);
 
+        User::factory()->create([
+            'name' => 'jake',
+            'email' => 'jake@gmail.com',
+            'password' => bcrypt(123456789),
+            'timezone' => 'America/New_York',
+        ]);
+
         foreach ($statuses as $status) {
             Status::factory()->create(['name' => $status]);
         }

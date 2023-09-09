@@ -26,9 +26,7 @@ class CommentController extends Controller
 
         $comment = Comment::create($attributes);
 
-        if (auth()->user()->id !== $comment->task->user->id) {
-            $comment->task->user->notify(new CommentReceived(auth()->user(), $comment->task->slug));
-        }
+        $comment->task->user->notify(new CommentReceived(auth()->user(), $comment->task->slug, $comment->id));
 
         return redirect()->back();
     }
@@ -48,9 +46,7 @@ class CommentController extends Controller
 
         $reply = Reply::create($attributes);
 
-        if (auth()->user()->id !== $reply->comment->user->id) {
-            $reply->comment->user->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug));
-        }
+        $reply->comment->user->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug, $reply->id));
 
         return redirect()->back();
     }
@@ -70,9 +66,7 @@ class CommentController extends Controller
 
         $reply = Reply::create($attributes);
 
-        if (auth()->user()->id !== $reply->comment->user->id) {
-            $reply->recipient->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug));
-        }
+        $reply->recipient->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug, $reply->id));
 
         return redirect()->back();
     }

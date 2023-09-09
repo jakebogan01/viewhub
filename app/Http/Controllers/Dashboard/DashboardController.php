@@ -125,7 +125,7 @@ class DashboardController extends Controller
                     ];
                 }),
                 'comments' => $task->comments()
-                    ->orderByDesc('created_at')
+                    ->orderBy('created_at')
                     ->simplePaginate(5)
                     ->withQueryString()
                     ->through(fn($comment) => [
@@ -135,7 +135,6 @@ class DashboardController extends Controller
                         'created_at' => $comment->created_at
                             ->setTimezone(auth()->user()->timezone)
                             ->format('F j, Y, g:i a'),
-                        // pass replies in descending order not paginated
                         'replies' => $comment->replies
                             ->map(fn($reply) => [
                                 'id' => $reply->id,
@@ -146,7 +145,7 @@ class DashboardController extends Controller
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)
                                     ->format('F j, Y, g:i a'),
-                            ])->sortBy('created_at')->reverse()->values(),
+                            ])->sortByDesc('created_at')->reverse()->values(),
                     ])
             ]
         ]);

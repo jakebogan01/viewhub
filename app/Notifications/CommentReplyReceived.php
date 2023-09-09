@@ -14,14 +14,16 @@ class CommentReplyReceived extends Notification
 
     private User $user;
     private string $task_slug;
+    private int $reply_id;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user, $task_slug)
+    public function __construct(User $user, $task_slug, $reply_id)
     {
         $this->user = $user;
         $this->task_slug = $task_slug;
+        $this->reply_id = $reply_id;
     }
 
     /**
@@ -42,6 +44,7 @@ class CommentReplyReceived extends Notification
     public function toDatabase(): array
     {
         return [
+            'reply_id' => $this->reply_id,
             'task_slug' => $this->task_slug,
             'user' => $this->user->name,
         ];

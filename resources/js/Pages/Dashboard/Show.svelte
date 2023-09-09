@@ -13,10 +13,9 @@
     let editReplyTask = false;
     let replyNow = false;
     let replyToComment = false;
-    let comment_id, user_id, recipient_id;
+    let comment_id, user_id;
     $: comment_id = null;
     $: user_id = null;
-    $: recipient_id = null;
 
     let form = useForm({
         task_id: task.id,
@@ -85,14 +84,14 @@
         $replyForm.body = '';
     }
 
-    function submitReplyEdit(comment_id, comment_user_id, reply_id) {
+    function submitReplyEdit(comment, comment_user, replied_user) {
         if ($editReplyForm.body === '') {
             return;
         }
 
-        $editReplyForm.comment_id = comment_id;
-        $editReplyForm.recipient_id = comment_user_id;
-        $editReplyForm.patch(`/dashboard/comment/reply/${reply_id}`, {
+        $editReplyForm.comment_id = comment;
+        $editReplyForm.recipient_id = comment_user;
+        $editReplyForm.patch(`/dashboard/comment/reply/${replied_user}`, {
             replace: true,
             preserveScroll: true,
         })
@@ -210,7 +209,7 @@
     </div>
 
     {#each task.comments.data as comment (comment.id)}
-        <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto">
+        <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto" id={comment.id}>
             <div class="flex space-x-4">
                 <div class="flex-shrink-0">
                     <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
@@ -250,7 +249,7 @@
 
         {#if comment.replies.length > 0}
             {#each comment.replies as reply (reply.id)}
-                <div class="max-w-3xl mx-auto border-l-2 border-dashed border-blue-200">
+                <div class="max-w-3xl mx-auto border-l-2 border-dashed border-blue-200" id={reply.id}>
                     <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">
                         <div class="flex space-x-4">
                             <div class="flex-shrink-0">
