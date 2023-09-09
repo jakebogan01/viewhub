@@ -81,6 +81,8 @@
                                                     <div class="ml-3 w-0 flex-1 pt-0.5">
                                                         {#if notification.type === 'App\\Notifications\\CommentReceived'}
                                                             <p class="mt-1 text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a></p>
+                                                        {:else if notification.type === 'App\\Notifications\\CommentReplyReceived'}
+                                                            <p class="mt-1 text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">comment</a></p>
                                                         {:else}
                                                             <p class="mt-1 text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
                                                         {/if}

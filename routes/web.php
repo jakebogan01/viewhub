@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);
     Route::post('/dashboard/comment/reply/create', [CommentController::class, 'storeReply']);
+    Route::post('/dashboard/comment/comment-reply/create', [CommentController::class, 'storeCommentReply']);
     Route::delete('/dashboard/comment/{comment}', [CommentController::class, 'destroyComment']);
     Route::delete('/dashboard/comment/reply/{reply}', [CommentController::class, 'destroyReply']);
     Route::patch('/dashboard/comment/{comment}', [CommentController::class, 'updateComment']);

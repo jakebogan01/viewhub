@@ -36,6 +36,6 @@ class Reply extends Model
      */
     public function recipient(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'recipient_id');
+        return $this->belongsTo(User::class);
     }
 }

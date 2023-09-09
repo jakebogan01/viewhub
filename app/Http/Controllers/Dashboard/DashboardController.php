@@ -140,7 +140,8 @@ class DashboardController extends Controller
                             ->map(fn($reply) => [
                                 'id' => $reply->id,
                                 'body' => $reply->body,
-                                'user' => $reply->user->name,
+                                'user_id' => $reply->user->id,
+                                'user_name' => $reply->user->name,
                                 'recipient' => $reply->recipient->name,
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)

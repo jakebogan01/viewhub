@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Shared;
 use App\Http\Controllers\Controller;
 use App\Models\Reply;
 use App\Notifications\CommentReceived;
+use App\Notifications\CommentReplyReceived;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Models\Comment;
@@ -45,7 +46,33 @@ class CommentController extends Controller
 
         $attributes['user_id'] = auth()->id();
 
-        Reply::create($attributes);
+        $reply = Reply::create($attributes);
+
+        if (auth()->user()->id !== $reply->comment->user->id) {
+            $reply->comment->user->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug));
+        }
+
+        return redirect()->back();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function storeCommentReply(Request $request)
+    {
+        $attributes = request()->validate([
+            'comment_id' => ['required', Rule::exists('comments', 'id')],
+            'recipient_id' => ['required', Rule::exists('users', 'id')],
+            'body' => 'required'
+        ]);
+
+        $attributes['user_id'] = auth()->id();
+
+        $reply = Reply::create($attributes);
+
+        if (auth()->user()->id !== $reply->comment->user->id) {
+            $reply->recipient->notify(new CommentReplyReceived(auth()->user(), $reply->comment->task->slug));
+        }
 
         return redirect()->back();
     }
