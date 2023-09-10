@@ -5,6 +5,7 @@
 <script>
     import {inertia} from "@inertiajs/inertia-svelte";
     import {Inertia} from "@inertiajs/inertia";
+    import IntersectionObserver from "svelte-intersection-observer";
 
     /* svelte-ignore unused-export-let */
     export let errors = {};
@@ -34,6 +35,22 @@
     let timer;
     let rotateArrow = false;
     let enableDarkMode = true;
+    let element;
+    let allTasks = [];
+    allTasks = [...tasks.data];
+
+    const load = () => {
+        if (tasks.next_page_url) {
+            Inertia.get(tasks.next_page_url, {search: filters.search, status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority}, {
+                preserveState: true,
+                replace: true,
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    allTasks = [...allTasks, ...page.props.tasks.data];
+                }
+            })
+        }
+    }
 
     // debounce search input
     const debounce = v => {
@@ -187,7 +204,7 @@
                     {#if tasks.data.length < 1}
                         <p>There currently are no tasks</p>
                     {:else}
-                        {#each tasks.data as task (task.id)}
+                        {#each allTasks as task (task.id)}
                             <div class="relative border border-gray-200 rounded p-4 my-2">
                                 {#if task.priority}
                                     <span class="absolute right-1 top-1 text-purple-500">
@@ -210,21 +227,11 @@
                         {/each}
                     {/if}
                 </div>
-
-                <!--pagination-->
-                <div>
-                    <div class="mt-6">
-                        {#if tasks.prev_page_url}
-                            <a use:inertia={{ replace: true }} href="{tasks.first_page_url}" class="px-1">First Page</a>
-                            <a use:inertia={{ replace: true }} href="{tasks.prev_page_url}" class="px-1">&laquo; Prev</a>
-                        {/if}
-
-                        {#if tasks.next_page_url}
-                            <a use:inertia={{ replace: true }} href="{tasks.next_page_url}" class="px-1">Next &raquo;</a>
-                        {/if}
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </section>
+
+<IntersectionObserver {element} on:intersect={load}>
+    <div bind:this={element}>Load More</div>
+</IntersectionObserver>
