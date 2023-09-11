@@ -50,20 +50,14 @@
         timer = setTimeout(() => {
             if (v !== '') {
                 Inertia.get(route, {search: v, status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority}, {
-                    // search input doesn't reload the page and lose focus
                     preserveState: true,
-                    // prevents the browser's history from being updated
                     replace: true,
-                    // preserve scroll position on back navigation
                     preserveScroll: true,
                 });
             } else {
                 Inertia.get(route, {status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority}, {
-                // search input doesn't reload the page and lose focus
                 preserveState: true,
-                // prevents the browser's history from being updated
                 replace: true,
-                // preserve scroll position on back navigation
                 preserveScroll: true,
             });
             }

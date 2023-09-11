@@ -272,4 +272,9 @@ class DashboardController extends Controller
             'due_date' => 'date|after_or_equal:today',
         ])['due_date'];
     }
+
+    public function settings()
+    {
+        return Inertia::render('Dashboard/Settings');
+    }
 }
