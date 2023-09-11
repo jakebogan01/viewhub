@@ -329,11 +329,11 @@
     <div>
         <div class="mt-6">
             {#if task.comments.prev_page_url}
-                <a use:inertia={{ replace: true }} href="{task.comments.prev_page_url}" class="px-1">&laquo; Prev</a>
+                <a use:inertia href="{task.comments.prev_page_url}" class="px-1">&laquo; Prev</a>
             {/if}
 
             {#if task.comments.next_page_url}
-                <a use:inertia={{ replace: true }} href="{task.comments.next_page_url}" class="px-1">Next &raquo;</a>
+                <a use:inertia href="{task.comments.next_page_url}" class="px-1">Next &raquo;</a>
             {/if}
         </div>
     </div>
