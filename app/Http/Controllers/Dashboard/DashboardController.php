@@ -231,6 +231,7 @@ class DashboardController extends Controller
      */
     public function enableDarkMode()
     {
+//        dd(request()->all());
         $attributes = request()->validate([
             'dark_mode' => 'required|boolean',
         ]);

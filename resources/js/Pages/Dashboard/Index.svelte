@@ -33,7 +33,16 @@
     let updateSortByDropdownSelection = filters.date ? 'Due Date' : filters.liked ? 'Most Popular' : filters.priority ? 'High Priority' :  'All';
     let timer;
     let rotateArrow = false;
-    let enableDarkMode = true;
+    let enableDarkMode = auth.user.dark_mode;
+
+    const toggleDarkMode = () => {
+        enableDarkMode = !enableDarkMode;
+
+        Inertia.post('/update-dark-mode', { dark_mode: enableDarkMode }, {
+            replace: true,
+            preserveScroll: true,
+        });
+    }
 
     // debounce search input
     const debounce = v => {
@@ -161,8 +170,9 @@
                     </div>
                 </div>
 
+                <!--dark mode-->
                 <div class="mt-4">
-                    <button type="button" use:inertia="{{ href: '/update-dark-mode', method: 'post', data: { dark_mode: enableDarkMode }, replace: true, preserveScroll: true }}" on:click={()=>{enableDarkMode = !enableDarkMode}} class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">Enable Dark Mode</button>
+                    <button type="button" on:click={toggleDarkMode} class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">Enable Dark Mode</button>
                 </div>
             </div>
 
