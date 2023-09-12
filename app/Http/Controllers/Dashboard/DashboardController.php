@@ -61,7 +61,7 @@ class DashboardController extends Controller
     public function create()
     {
         // removes all images from the tmpimages folder
-        File::cleanDirectory(public_path() . '/tmpimages');
+//        File::cleanDirectory(public_path() . '/tmpimages');
 
         return Inertia::render('Dashboard/Create', [
             'tags' => Tag::all(),
@@ -93,7 +93,7 @@ class DashboardController extends Controller
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
+            File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
             $temporaryImage->delete();
         }
 
@@ -115,6 +115,7 @@ class DashboardController extends Controller
                 'due_date' => $task->due_date ? $task->due_date->format('m/d/y') : null,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
+                'user_id' => $task->user->id,
                 'likes' => $task->likes->count(),
                 'owner_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
@@ -156,9 +157,6 @@ class DashboardController extends Controller
      */
     public function edit(Task $task)
     {
-        // removes all images from the tmpimages folder
-        File::cleanDirectory(public_path() . '/tmpimages');
-
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
@@ -167,6 +165,7 @@ class DashboardController extends Controller
                 'priority' => $task->priority,
                 'due_date' => $task->due_date,
                 'tag' => $task->tag->id,
+                'user_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
                     return [
                         'id' => $image->id,
@@ -203,7 +202,7 @@ class DashboardController extends Controller
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
+            File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
             $temporaryImage->delete();
         }
 

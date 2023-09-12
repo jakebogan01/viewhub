@@ -162,7 +162,7 @@
                     <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
                         {#each task.images as image}
                             <li on:click={()=>{inspectImage(image)}} on:keydown>
-                                <img src="/images/tasks/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
+                                <img src="/images/tasks/user{task.user_id}/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
                             </li>
                         {/each}
                     </ul>
@@ -185,7 +185,7 @@
                     <span on:click={()=>{viewImage = false;}} on:keydown class="absolute right-2 top-2 text-white cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
                     </span>
-                    <img src="/images/tasks/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
+                    <img src="/images/tasks/user{task.user_id}/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
                 </div>
             </div>
         {/if}
