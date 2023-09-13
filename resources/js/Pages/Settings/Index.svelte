@@ -3,8 +3,13 @@
 </script>
 
 <script>
-    import {inertia} from "@inertiajs/inertia-svelte";
+    import {useForm, inertia} from "@inertiajs/inertia-svelte";
     import {Inertia} from "@inertiajs/inertia";
+    import FilePond, { registerPlugin, supported } from 'svelte-filepond';
+    import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+    import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+    import 'filepond/dist/filepond.min.css';
+    registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
     /* svelte-ignore unused-export-let */
     export let errors = {};
@@ -12,6 +17,68 @@
     export let auth = {};
     /* svelte-ignore unused-export-let */
     export let flash = {};
+    /* svelte-ignore unused-export-let */
+    export let csrf_token;
+    /* svelte-ignore unused-export-let */
+    export let user;
+
+    let options = {
+        url: '',
+        process: {
+            url: '/dashboard/task/upload',
+            method: 'POST',
+            onload: handleFilePondLoad
+        },
+        revert: handleFilePondRevert,
+        headers: {
+            'X-CSRF-TOKEN': csrf_token
+        }
+    }
+
+    let conf = {
+        height: 300,
+        plugins: [
+            'advlist', 'autolink', 'lists', 'link', 'preview',
+            'anchor', 'code'
+        ],
+        toolbar: 'bold italic backcolor | alignleft aligncenter ' +
+            'alignright alignjustify | code |  bullist numlist outdent indent | ',
+        menubar: '',
+        statusbar: false
+    }
+
+    let personalInformationForm = useForm({
+        images: [],
+        name: user.name,
+        email: user.email,
+        username: user.username,
+    });
+
+    function submitPersonalInformation() {
+        $personalInformationForm.patch(`/dashboard/settings/update/information`, {
+            replace: true,
+        })
+    }
+
+    function handleFilePondLoad(response) {
+        $personalInformationForm.images.push(response);
+        return response;
+    }
+
+    function handleFilePondRevert(uniqueId, load, error) {
+        $personalInformationForm.images = $personalInformationForm.images.filter((image) => image !== uniqueId);
+
+        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+            preserveScroll: true,
+            preserveState: true,
+            onSuccess: () => {
+                console.log('image deleted');
+            }
+        });
+
+        load();
+        console.log(error);
+    }
 </script>
 
 <svelte:head>
@@ -28,36 +95,53 @@
 -->
 <section class="p-6 bg-gray-900">
     <div class="max-w-7xl mx-auto">
+
+        {#if flash.message}
+            <div class="text-green-500 font-bold">{flash.message}</div>
+        {/if}
+
         <main>
             <!-- Settings forms -->
             <div class="divide-y divide-white/5">
                 <div class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
                     <div>
                         <h2 class="text-base font-semibold leading-7 text-white">Personal Information</h2>
-                        <p class="mt-1 text-sm leading-6 text-gray-400">Update your information and add a username.</p>
+                        <p class="mt-1 text-sm leading-6 text-gray-400">Update your information such as profile image and username.</p>
                     </div>
 
-                    <form class="md:col-span-2">
+                    <form on:submit|preventDefault={submitPersonalInformation} class="md:col-span-2" enctype="multipart/form-data">
                         <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
-                            <div class="col-span-full flex items-center gap-x-8">
-                                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover">
-                                <div>
-                                    <button type="button" class="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-white/20">Change avatar</button>
-                                    <p class="mt-2 text-xs leading-5 text-gray-400">PNG, JPG, JPEG. 1MB max.</p>
+                            <div class="col-span-full flex">
+                                <img src="https://leadmarvels.com/images/services/itguy.png" class="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover mr-8" alt="">
+                                <div class="flex-1 app">
+                                    <FilePond
+                                        name="image"
+                                        server={options}
+                                        allowMultiple={false}
+                                        allowRevert={true}
+                                        acceptedFileTypes={['image/png', 'image/jpeg', 'image/jpg']}
+                                        labelIdle='Drag & Drop your image or <span class="filepond--label-action">Browse</span>'
+                                    />
                                 </div>
                             </div>
 
                             <div class="sm:col-span-3">
-                                <label for="first-name" class="block text-sm font-medium leading-6 text-white">Name</label>
+                                <label for="name" class="block text-sm font-medium leading-6 text-white">Name</label>
                                 <div class="mt-2">
-                                    <input type="text" name="first-name" id="first-name" autocomplete="given-name" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input type="text" value={user.name} on:input={(e)=>{$personalInformationForm.name = e.target.value}} name="name" id="name" autocomplete="given-name" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    {#if $personalInformationForm.errors.name}
+                                        <p class="text-red-500 text-xs mt-1"> {$personalInformationForm.errors.name} </p>
+                                    {/if}
                                 </div>
                             </div>
 
                             <div class="sm:col-span-3">
                                 <label for="email" class="block text-sm font-medium leading-6 text-white">Email address</label>
                                 <div class="mt-2">
-                                    <input id="email" name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input id="email" value={user.email} on:input={(e)=>{$personalInformationForm.email = e.target.value}} name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    {#if $personalInformationForm.errors.email}
+                                        <p class="text-red-500 text-xs mt-1"> {$personalInformationForm.errors.email} </p>
+                                    {/if}
                                 </div>
                             </div>
 
@@ -66,14 +150,17 @@
                                 <div class="mt-2">
                                     <div class="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
                                         <span class="flex select-none items-center pl-3 text-gray-400 sm:text-sm">example/</span>
-                                        <input type="text" name="username" id="username" autocomplete="username" class="flex-1 border-0 bg-transparent py-1.5 pl-1 text-white focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith">
+                                        <input type="text" value={user.username} on:input={(e)=>{$personalInformationForm.username = e.target.value}} name="username" id="username" autocomplete="username" class="flex-1 border-0 bg-transparent py-1.5 pl-1 text-white focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith">
+                                        {#if $personalInformationForm.errors.username}
+                                            <p class="text-red-500 text-xs mt-1"> {$personalInformationForm.errors.username} </p>
+                                        {/if}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-8 flex">
-                            <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Save</button>
+                            <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled={$personalInformationForm.processing}>Save</button>
                         </div>
                     </form>
                 </div>
@@ -170,3 +257,6 @@
     </div>
 </section>
 
+<style global>
+    @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+</style>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Shared\CommentController;
 use App\Http\Controllers\Shared\ImageController;
@@ -26,7 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
     Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
     Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
-    Route::get('/dashboard/settings', [DashboardController::class, 'settings'])->name('dashboard.settings');
+
+    // settings
+    Route::get('/dashboard/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::patch('/dashboard/settings/update/information', [SettingsController::class, 'update']);
 
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);
