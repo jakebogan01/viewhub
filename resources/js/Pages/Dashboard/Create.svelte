@@ -52,7 +52,7 @@
     let options = {
         url: '',
         process: {
-            url: '/dashboard/task/upload',
+            url: '/dashboard/image/upload',
             method: 'POST',
             onload: handleFilePondLoad
         },
@@ -70,7 +70,7 @@
     function handleFilePondRevert(uniqueId, load, error) {
         $form.images = $form.images.filter((image) => image !== uniqueId);
 
-        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+        Inertia.delete(`/dashboard/image/revert/${uniqueId}`, {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {

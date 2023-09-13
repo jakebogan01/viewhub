@@ -60,9 +60,6 @@ class DashboardController extends Controller
      */
     public function create()
     {
-        // removes all images from the tmpimages folder
-//        File::cleanDirectory(public_path() . '/tmpimages');
-
         return Inertia::render('Dashboard/Create', [
             'tags' => Tag::all(),
             'statuses' => Status::all(),
@@ -87,7 +84,7 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
@@ -196,7 +193,7 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
@@ -216,7 +213,7 @@ class DashboardController extends Controller
     {
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
-            File::delete(public_path('images/tasks/' . $image->path));
+            File::delete(public_path('images/' . $image->path));
             $image->delete();
         }
 
@@ -230,7 +227,6 @@ class DashboardController extends Controller
      */
     public function enableDarkMode()
     {
-//        dd(request()->all());
         $attributes = request()->validate([
             'dark_mode' => 'required|boolean',
         ]);

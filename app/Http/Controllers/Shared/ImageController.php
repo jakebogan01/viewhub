@@ -43,7 +43,7 @@ class ImageController extends Controller
     public function destroy(Image $image)
     {
         $image = Image::find($image->id);
-        File::delete(public_path('images/tasks/user' . auth()->user()->id . '/' . $image->path));
+        File::delete(public_path('images/user' . auth()->user()->id . '/' . $image->path));
         $image->delete();
 
         return '';

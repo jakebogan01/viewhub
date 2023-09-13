@@ -3,8 +3,9 @@
 </script>
 
 <script>
-    import {useForm, inertia} from "@inertiajs/inertia-svelte";
-    import {Inertia} from "@inertiajs/inertia";
+    import { useForm, inertia } from "@inertiajs/inertia-svelte";
+    import { Inertia } from "@inertiajs/inertia";
+    import { router } from '@inertiajs/svelte'
     import FilePond, { registerPlugin, supported } from 'svelte-filepond';
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -25,9 +26,9 @@
     let options = {
         url: '',
         process: {
-            url: '/dashboard/task/upload',
+            url: '/dashboard/image/upload',
             method: 'POST',
-            onload: handleFilePondLoad
+            onload: handleFilePondLoad,
         },
         revert: handleFilePondRevert,
         headers: {
@@ -48,7 +49,7 @@
     }
 
     let personalInformationForm = useForm({
-        images: [],
+        image: null,
         name: user.name,
         email: user.email,
         username: user.username,
@@ -58,17 +59,18 @@
         $personalInformationForm.patch(`/dashboard/settings/update/information`, {
             replace: true,
         })
+        router.reload({ only: ['users'] })
     }
 
     function handleFilePondLoad(response) {
-        $personalInformationForm.images.push(response);
+        $personalInformationForm.image = response;
         return response;
     }
 
     function handleFilePondRevert(uniqueId, load, error) {
         $personalInformationForm.images = $personalInformationForm.images.filter((image) => image !== uniqueId);
 
-        Inertia.delete(`/dashboard/task/revert/${uniqueId}`, {
+        Inertia.delete(`/dashboard/image/revert/${uniqueId}`, {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
@@ -112,7 +114,16 @@
                     <form on:submit|preventDefault={submitPersonalInformation} class="md:col-span-2" enctype="multipart/form-data">
                         <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
                             <div class="col-span-full flex">
-                                <img src="https://leadmarvels.com/images/services/itguy.png" class="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover mr-8" alt="">
+                                {#if !user.avatar || user.avatar.includes('placeholder.com')}
+                                    <img src={user.default_avatar} class="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover mr-8" alt="">
+                                {:else}
+                                    <div class="relative mr-8">
+                                        <button type="button" use:inertia="{{ href: '/dashboard/settings/delete/avatar', method: 'delete', replace: true, preserveScroll: true }}" class="absolute -top-2 -right-2 text-white">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
+                                        </button>
+                                        <img src="/images/user{user.id}/{user.avatar}" class="h-24 w-24 flex-none rounded-lg bg-gray-800 object-cover" alt="">
+                                    </div>
+                                {/if}
                                 <div class="flex-1 app">
                                     <FilePond
                                         name="image"

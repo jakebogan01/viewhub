@@ -23,6 +23,8 @@ class SettingsController extends Controller
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
                 'username' => auth()->user()->username,
+                'avatar' => auth()->user()->avatar,
+                'default_avatar' => auth()->user()->getAvatar(),
             ],
         ]);
     }
@@ -38,8 +40,27 @@ class SettingsController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore(auth()->user()->id)],
         ]);
 
+        if (request('image')) {
+            $temporaryImage = TemporaryImage::where('folder', $request->image)->firstOrFail();
+            $attributes['avatar'] = $temporaryImage->folder . '/' .$temporaryImage->file;
+
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
+            File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
+            $temporaryImage->delete();
+        }
+
         auth()->user()->update($attributes);
 
-        return redirect('/dashboard/settings')->with('message', 'Personal information updated successfully!');
+        return to_route('settings.index')->with('message', 'Personal information updated successfully!');
+    }
+
+    public function destroy()
+    {
+        File::delete(public_path('images/user' . auth()->user()->id . '/' . auth()->user()->avatar));
+        auth()->user()->update([
+            'avatar' => null,
+        ]);
+
+        return to_route('settings.index')->with('message', 'Avatar deleted successfully!');
     }
 }
