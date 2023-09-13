@@ -67,8 +67,8 @@
         return response;
     }
 
-    function handleFilePondRevert(uniqueId, load, error) {
-        $personalInformationForm.images = $personalInformationForm.images.filter((image) => image !== uniqueId);
+    function handleFilePondRevert(uniqueId, load) {
+        $personalInformationForm.image = null;
 
         Inertia.delete(`/dashboard/image/revert/${uniqueId}`, {
             preserveScroll: true,
@@ -79,7 +79,6 @@
         });
 
         load();
-        console.log(error);
     }
 </script>
 
