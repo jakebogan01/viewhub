@@ -5,10 +5,11 @@
 <script>
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
 
-    export let task;
+    /* svelte-ignore unused-export-let */
+    export let auth = {};
     /* svelte-ignore unused-export-let */
     export let flash = {};
-    console.log(task);
+    export let task;
     let editTask = false;
     let editReplyTask = false;
     let replyNow = false;
@@ -17,6 +18,7 @@
     $: comment_id = null;
     $: user_id = null;
 
+    console.log(auth)
     let form = useForm({
         task_id: task.id,
         body: '',
@@ -212,7 +214,11 @@
         <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto" id={comment.id}>
             <div class="flex space-x-4">
                 <div class="flex-shrink-0">
-                    <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
+                    {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}
+                        <img src={comment.default_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">
+                    {:else}
+                        <img src="/images/user{comment.user.id}/{comment.user.avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">
+                    {/if}
                 </div>
                 <div class="flex-1">
                     <header class="mb-4">
@@ -253,7 +259,11 @@
                     <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">
                         <div class="flex space-x-4">
                             <div class="flex-shrink-0">
-                                <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
+                                {#if !reply.user_avatar || reply.user_avatar.includes('placeholder.com')}
+                                    <img src={reply.defaut_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">
+                                {:else}
+                                    <img src="/images/user{reply.user_id}/{reply.user_avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">
+                                {/if}
                             </div>
                             <div class="flex-1">
                                 <header class="mb-4">
