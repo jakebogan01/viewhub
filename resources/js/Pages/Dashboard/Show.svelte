@@ -222,7 +222,7 @@
                 </div>
                 <div class="flex-1">
                     <header class="mb-4">
-                        <h3 class="font-bold">{comment.user.name}</h3>
+                        <h3 class="font-bold lowercase">{comment.user.username}</h3>
                         <p class="text-xs">Posted <time>{comment.created_at}</time></p>
                     </header>
                     {#if editTask}
@@ -267,7 +267,7 @@
                             </div>
                             <div class="flex-1">
                                 <header class="mb-4">
-                                    <h3 class="font-bold">{reply.user_name}</h3>
+                                    <h3 class="font-bold lowercase">{reply.username}</h3>
                                     <p class="text-xs">Posted
                                         <time>{reply.created_at}</time>
                                     </p>

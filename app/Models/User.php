@@ -47,6 +47,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * @return string
+     */
     public function getAvatar(): string
     {
         $firstCharacter = $this->email[0];
@@ -69,6 +72,9 @@ class User extends Authenticatable
         return $this->hasMany(Task::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);

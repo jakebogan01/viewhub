@@ -129,7 +129,7 @@ class DashboardController extends Controller
                     ->through(fn($comment) => [
                         'id' => $comment->id,
                         'body' => $comment->body,
-                        'user' => $comment->user->only('id', 'name', 'avatar'),
+                        'user' => $comment->user->only('id', 'name', 'username', 'avatar'),
                         'default_avatar' => $comment->user->getAvatar(),
                         'created_at' => $comment->created_at
                             ->setTimezone(auth()->user()->timezone)
@@ -139,10 +139,10 @@ class DashboardController extends Controller
                                 'id' => $reply->id,
                                 'body' => $reply->body,
                                 'user_id' => $reply->user->id,
-                                'user_name' => $reply->user->name,
+                                'username' => $reply->user->username,
                                 'defaut_avatar' => $reply->user->getAvatar(),
                                 'user_avatar' => $reply->user->avatar,
-                                'recipient' => $reply->recipient->name,
+                                'recipient' => $reply->recipient->username,
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)
                                     ->format('F j, Y, g:i a'),
