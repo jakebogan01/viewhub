@@ -32,7 +32,7 @@ class SettingsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function updateinformation(Request $request)
     {
         $attributes = request()->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -52,6 +52,24 @@ class SettingsController extends Controller
         auth()->user()->update($attributes);
 
         return to_route('settings.index')->with('message', 'Personal information updated successfully!');
+    }
+
+    public function updatePassword()
+    {
+        $attributes = request()->validate([
+            'current_password' => ['required', 'string', 'min:8'],
+            'new_password' => ['required', 'string', 'min:8'],
+        ]);
+
+        if (!password_verify($attributes['current_password'], auth()->user()->password)) {
+            return back()->withErrors(['current_password' => 'The provided password does not match your current password.']);
+        }
+
+        auth()->user()->update([
+            'password' => bcrypt($attributes['new_password']),
+        ]);
+
+        return to_route('settings.index')->with('message', 'Password updated successfully!');
     }
 
     public function destroy()
