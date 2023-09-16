@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Image;
 use App\Models\TemporaryImage;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -72,7 +74,7 @@ class SettingsController extends Controller
         return to_route('settings.index')->with('message', 'Password updated successfully!');
     }
 
-    public function destroy()
+    public function deleteAvatar()
     {
         File::delete(public_path('images/user' . auth()->user()->id . '/' . auth()->user()->avatar));
         auth()->user()->update([
@@ -80,5 +82,21 @@ class SettingsController extends Controller
         ]);
 
         return to_route('settings.index')->with('message', 'Avatar deleted successfully!');
+    }
+
+    public function deleteAccount(Request $request)
+    {
+        File::cleanDirectory(public_path() . '/images/user' . auth()->user()->id);
+
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        $user = User::find(request('user'));
+        $user->delete();
+
+        return redirect('/')->with('message', 'Account deleted successfully!');
     }
 }

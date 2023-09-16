@@ -34,7 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::patch('/dashboard/settings/update/information', [SettingsController::class, 'updateinformation']);
     Route::patch('/dashboard/settings/update/password', [SettingsController::class, 'updatePassword']);
-    Route::delete('/dashboard/settings/delete/avatar', [SettingsController::class, 'destroy']);
+    Route::delete('/dashboard/settings/delete/avatar', [SettingsController::class, 'deleteAvatar']);
+    Route::delete('/dashboard/settings/delete/account', [SettingsController::class, 'deleteAccount']);
 
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);
