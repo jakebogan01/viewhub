@@ -221,7 +221,7 @@ class DashboardController extends Controller
         }
 
         $task->delete();
-        $task->comments()->delete();
+
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 
