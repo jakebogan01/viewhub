@@ -25,7 +25,6 @@ return new class extends Migration
             $table->string('timezone')->nullable();
             $table->rememberToken();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreignId('recipient_id')->constrained('users')->cascadeOnDelete();
             $table->text('body');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

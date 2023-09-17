@@ -22,7 +22,6 @@ return new class extends Migration
             $table->boolean('priority')->default(0);
             $table->timestamp('due_date')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
