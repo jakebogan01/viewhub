@@ -220,6 +220,12 @@ class DashboardController extends Controller
             $image->delete();
         }
 
+        foreach($task->comments as $comment) {
+            foreach($comment->replies as $reply) {
+                $reply->delete();
+            }
+            $comment->delete();
+        }
         $task->delete();
 
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');

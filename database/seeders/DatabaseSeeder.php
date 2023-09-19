@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'test',
             'email' => 'test@gmail.com',
+            'username' => 'test',
             'password' => bcrypt(123456789),
             'timezone' => 'America/New_York',
         ]);
@@ -36,6 +37,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'jake',
             'email' => 'jake@gmail.com',
+            'username' => 'jake',
             'password' => bcrypt(123456789),
             'timezone' => 'America/New_York',
         ]);

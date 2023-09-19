@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Dashboard;
 
-use App\Models\Image;
+use App\Http\Controllers\Controller;
 use App\Models\TemporaryImage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
@@ -95,6 +94,9 @@ class SettingsController extends Controller
         $request->session()->regenerateToken();
 
         $user = User::find(request('user'));
+        $user->update([
+            'avatar' => null,
+        ]);
         $user->delete();
 
         return redirect('/')->with('message', 'Account deleted successfully!');

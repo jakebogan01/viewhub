@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('task_likes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->constrained()->cascadeOnDelete();
-            $table->unsignedBigInteger('task_id')->constrained()->cascadeOnDelete();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('task_id');
             $table->timestamps();
         });
     }

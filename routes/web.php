@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\Dashboard\SettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Shared\CommentController;
 use App\Http\Controllers\Shared\ImageController;
