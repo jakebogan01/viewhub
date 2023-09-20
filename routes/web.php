@@ -1,9 +1,10 @@
 <?php
 
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\ImageController;
+use App\Http\Controllers\Dashboard\SettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Shared\CommentController;
+use App\Http\Controllers\Shared\ImageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -23,9 +24,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/task/{task:slug}/edit', [DashboardController::class, 'edit']);
     Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
-    Route::post('/dashboard/task/upload', [ImageController::class, 'upload']);
-    Route::delete('/dashboard/task/revert/{folder}', [ImageController::class, 'revert']);
-    Route::delete('/dashboard/task/delete/{image}', [ImageController::class, 'destroy']);
+
+    // images
+    Route::post('/dashboard/image/upload', [ImageController::class, 'upload']);
+    Route::delete('/dashboard/image/revert/{folder}', [ImageController::class, 'revert']);
+    Route::delete('/dashboard/image/delete/{image}', [ImageController::class, 'destroy']);
+
+    // settings
+    Route::get('/dashboard/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::patch('/dashboard/settings/update/information', [SettingsController::class, 'updateinformation']);
+    Route::patch('/dashboard/settings/update/password', [SettingsController::class, 'updatePassword']);
+    Route::delete('/dashboard/settings/delete/avatar', [SettingsController::class, 'deleteAvatar']);
+    Route::delete('/dashboard/settings/delete/account', [SettingsController::class, 'deleteAccount']);
+    Route::post('/dashboard/settings/create/review', [SettingsController::class, 'store']);
 
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);

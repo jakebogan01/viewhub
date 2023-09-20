@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shared;
 
+use App\Http\Controllers\Controller;
 use App\Models\Image;
-use App\Models\Task;
 use App\Models\TemporaryImage;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
 class ImageController extends Controller
@@ -17,7 +16,7 @@ class ImageController extends Controller
             $image = $request->file('image');
             $filename = $image->getClientOriginalName();
             $folder = uniqid('image', true);
-            $image->storeAs('tmpimages/' . $folder, $filename, ['disk' => 'public']);
+            $image->storeAs('tmpimages/user' . auth()->user()->id . '/' . $folder, $filename, ['disk' => 'public']);
 
             TemporaryImage::create([
                 'folder' => $folder,
@@ -34,7 +33,7 @@ class ImageController extends Controller
     {
         $temporaryImage = TemporaryImage::where('folder', $folder)->firstOrFail();
         if ($temporaryImage) {
-            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
+            File::deleteDirectory(public_path('tmpimages/user' . auth()->user()->id . '/' . $temporaryImage->folder));
             $temporaryImage->delete();
         }
 
@@ -44,7 +43,7 @@ class ImageController extends Controller
     public function destroy(Image $image)
     {
         $image = Image::find($image->id);
-        File::delete(public_path('images/tasks/' . $image->path));
+        File::delete(public_path('images/user' . auth()->user()->id . '/' . $image->path));
         $image->delete();
 
         return '';

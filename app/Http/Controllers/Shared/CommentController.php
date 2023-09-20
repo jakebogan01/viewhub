@@ -89,7 +89,6 @@ class CommentController extends Controller
     public function destroyComment(Comment $comment)
     {
         $comment->delete();
-        $comment->replies()->delete();
         return redirect()->back();
     }
 

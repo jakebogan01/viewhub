@@ -5,10 +5,11 @@
 <script>
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
 
-    export let task;
+    /* svelte-ignore unused-export-let */
+    export let auth = {};
     /* svelte-ignore unused-export-let */
     export let flash = {};
-    console.log(task);
+    export let task;
     let editTask = false;
     let editReplyTask = false;
     let replyNow = false;
@@ -17,6 +18,7 @@
     $: comment_id = null;
     $: user_id = null;
 
+    console.log(auth)
     let form = useForm({
         task_id: task.id,
         body: '',
@@ -162,7 +164,7 @@
                     <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
                         {#each task.images as image}
                             <li on:click={()=>{inspectImage(image)}} on:keydown>
-                                <img src="/images/tasks/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
+                                <img src="/images/user{task.user_id}/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
                             </li>
                         {/each}
                     </ul>
@@ -185,7 +187,7 @@
                     <span on:click={()=>{viewImage = false;}} on:keydown class="absolute right-2 top-2 text-white cursor-pointer">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
                     </span>
-                    <img src="/images/tasks/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
+                    <img src="/images/user{task.user_id}/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
                 </div>
             </div>
         {/if}
@@ -212,11 +214,15 @@
         <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto" id={comment.id}>
             <div class="flex space-x-4">
                 <div class="flex-shrink-0">
-                    <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
+                    {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}
+                        <img src={comment.default_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">
+                    {:else}
+                        <img src="/images/user{comment.user.id}/{comment.user.avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">
+                    {/if}
                 </div>
                 <div class="flex-1">
                     <header class="mb-4">
-                        <h3 class="font-bold">{comment.user.name}</h3>
+                        <h3 class="font-bold lowercase">{comment.user.username}</h3>
                         <p class="text-xs">Posted <time>{comment.created_at}</time></p>
                     </header>
                     {#if editTask}
@@ -253,11 +259,15 @@
                     <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">
                         <div class="flex space-x-4">
                             <div class="flex-shrink-0">
-                                <img src="https://i.pravatar.cc/60?u=2" alt="" width="60" height="60" class="rounded-xl">
+                                {#if !reply.user_avatar || reply.user_avatar.includes('placeholder.com')}
+                                    <img src={reply.defaut_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">
+                                {:else}
+                                    <img src="/images/user{reply.user_id}/{reply.user_avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">
+                                {/if}
                             </div>
                             <div class="flex-1">
                                 <header class="mb-4">
-                                    <h3 class="font-bold">{reply.user_name}</h3>
+                                    <h3 class="font-bold lowercase">{reply.username}</h3>
                                     <p class="text-xs">Posted
                                         <time>{reply.created_at}</time>
                                     </p>

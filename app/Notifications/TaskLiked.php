@@ -44,7 +44,7 @@ class TaskLiked extends Notification
     {
         return [
             'task_slug' => $this->task_slug,
-            'user' => $this->user->name,
+            'user' => $this->user->username,
         ];
     }
 

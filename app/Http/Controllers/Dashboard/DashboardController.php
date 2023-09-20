@@ -60,9 +60,6 @@ class DashboardController extends Controller
      */
     public function create()
     {
-        // removes all images from the tmpimages folder
-        File::cleanDirectory(public_path() . '/tmpimages');
-
         return Inertia::render('Dashboard/Create', [
             'tags' => Tag::all(),
             'statuses' => Status::all(),
@@ -87,13 +84,13 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
+            File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
             $temporaryImage->delete();
         }
 
@@ -115,6 +112,7 @@ class DashboardController extends Controller
                 'due_date' => $task->due_date ? $task->due_date->format('m/d/y') : null,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
+                'user_id' => $task->user->id,
                 'likes' => $task->likes->count(),
                 'owner_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
@@ -131,7 +129,8 @@ class DashboardController extends Controller
                     ->through(fn($comment) => [
                         'id' => $comment->id,
                         'body' => $comment->body,
-                        'user' => $comment->user->only('id', 'name'),
+                        'user' => $comment->user->only('id', 'name', 'username', 'avatar'),
+                        'default_avatar' => $comment->user->getAvatar(),
                         'created_at' => $comment->created_at
                             ->setTimezone(auth()->user()->timezone)
                             ->format('F j, Y, g:i a'),
@@ -140,8 +139,10 @@ class DashboardController extends Controller
                                 'id' => $reply->id,
                                 'body' => $reply->body,
                                 'user_id' => $reply->user->id,
-                                'user_name' => $reply->user->name,
-                                'recipient' => $reply->recipient->name,
+                                'username' => $reply->user->username,
+                                'defaut_avatar' => $reply->user->getAvatar(),
+                                'user_avatar' => $reply->user->avatar,
+                                'recipient' => $reply->recipient->username,
                                 'created_at' => $reply->created_at
                                     ->setTimezone(auth()->user()->timezone)
                                     ->format('F j, Y, g:i a'),
@@ -156,9 +157,6 @@ class DashboardController extends Controller
      */
     public function edit(Task $task)
     {
-        // removes all images from the tmpimages folder
-        File::cleanDirectory(public_path() . '/tmpimages');
-
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
@@ -167,6 +165,7 @@ class DashboardController extends Controller
                 'priority' => $task->priority,
                 'due_date' => $task->due_date,
                 'tag' => $task->tag->id,
+                'user_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
                     return [
                         'id' => $image->id,
@@ -197,13 +196,13 @@ class DashboardController extends Controller
 
         $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
         foreach($temporaryImages as $temporaryImage) {
-            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images/tasks');
+            File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
             Image::create([
                 'task_id' => $task->id,
                 'name' => $temporaryImage->file,
                 'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
             ]);
-            File::deleteDirectory(public_path('tmpimages/' . $temporaryImage->folder));
+            File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
             $temporaryImage->delete();
         }
 
@@ -217,12 +216,15 @@ class DashboardController extends Controller
     {
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
-            File::delete(public_path('images/tasks/' . $image->path));
+            File::delete(public_path('images/' . $image->path));
             $image->delete();
         }
 
+        $task->comments->each(function($comment) {
+            $comment->delete();
+        });
         $task->delete();
-        $task->comments()->delete();
+
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
     }
 
@@ -231,7 +233,6 @@ class DashboardController extends Controller
      */
     public function enableDarkMode()
     {
-//        dd(request()->all());
         $attributes = request()->validate([
             'dark_mode' => 'required|boolean',
         ]);

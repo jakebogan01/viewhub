@@ -46,7 +46,7 @@ class CommentReceived extends Notification
         return [
             'comment_id' => $this->comment_id,
             'task_slug' => $this->task_slug,
-            'user' => $this->user->name,
+            'user' => $this->user->username,
         ];
     }
 
