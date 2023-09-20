@@ -61,6 +61,11 @@
         confirm_password : '',
     });
 
+    let reviewForm = useForm({
+        rating : null,
+        review : null,
+    });
+
     function submitPersonalInformation() {
         $personalInformationForm.patch(`/dashboard/settings/update/information`, {
             replace: true,
@@ -81,6 +86,16 @@
         $passwordForm.current_password = '';
         $passwordForm.new_password = '';
         $passwordForm.confirm_password = '';
+    }
+
+    function submitReview() {
+        $reviewForm.post(`/dashboard/settings/create/review`, {
+            replace: true,
+            preserveScroll: true,
+        });
+
+        $reviewForm.rating = null;
+        $reviewForm.review = null;
     }
 
     function handleFilePondLoad(response) {
@@ -266,37 +281,31 @@
                         <p class="mt-1 text-sm leading-6 text-gray-400">We value your feedback. Please rate your experience and comment on your experience.</p>
                     </div>
 
-                    <form class="md:col-span-2">
+                    <form on:submit|preventDefault={submitReview} class="md:col-span-2">
                         <div class="grid grid-cols-1 gap-x-6 gap-y-8 sm:max-w-xl sm:grid-cols-6">
-                            <div class="flex items-center">
-                                <!-- Active: "text-yellow-400", Inactive: "text-gray-200" -->
-                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                </svg>
-                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                </svg>
-                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                </svg>
-                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                </svg>
-                                <svg class="text-yellow-400 h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd" />
-                                </svg>
+                            <div class="star-rating">
+                                <input type="radio" checked={$reviewForm.rating===5} on:change={(e)=>{$reviewForm.rating = e.currentTarget.value;}} id="5-stars" name="rating" value="5" />
+                                <label for="5-stars" class="star">&#9733;</label>
+                                <input type="radio" checked={$reviewForm.rating===4} on:change={(e)=>{$reviewForm.rating = e.currentTarget.value;}} id="4-stars" name="rating" value="4" />
+                                <label for="4-stars" class="star">&#9733;</label>
+                                <input type="radio" checked={$reviewForm.rating===3} on:change={(e)=>{$reviewForm.rating = e.currentTarget.value;}} id="3-stars" name="rating" value="3" />
+                                <label for="3-stars" class="star">&#9733;</label>
+                                <input type="radio" checked={$reviewForm.rating===2} on:change={(e)=>{$reviewForm.rating = e.currentTarget.value;}} id="2-stars" name="rating" value="2" />
+                                <label for="2-stars" class="star">&#9733;</label>
+                                <input type="radio" checked={$reviewForm.rating===1} on:change={(e)=>{$reviewForm.rating = e.currentTarget.value;}} id="1-star" name="rating" value="1" />
+                                <label for="1-star" class="star">&#9733;</label>
                             </div>
 
                             <div class="col-span-full">
-                                <label for="review-message" class="block text-sm font-medium leading-6 text-white">Your review</label>
+                                <label for="review" class="block text-sm font-medium leading-6 text-white">Your review</label>
                                 <div class="mt-2">
-                                    <textarea id="review-message" name="password" cols="30" rows="4" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"></textarea>
+                                    <textarea id="review" bind:value={$reviewForm.review} name="review" cols="30" rows="4" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"></textarea>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-8 flex">
-                            <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Submit</button>
+                            <button type="submit" class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled={$reviewForm.processing}>Submit</button>
                         </div>
                     </form>
                 </div>
@@ -307,4 +316,32 @@
 
 <style global>
     @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+
+    .star-rating {
+        display:flex;
+        flex-direction: row-reverse;
+        font-size:1.3rem;
+        justify-content:space-around;
+        padding:0 .2em;
+        text-align:center;
+        width:5em;
+    }
+
+    .star-rating input {
+        display:none;
+    }
+
+    .star-rating label {
+        color:#ccc;
+        cursor:pointer;
+    }
+
+    .star-rating :checked ~ label {
+        color:#f90;
+    }
+
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color:#fc0;
+    }
 </style>

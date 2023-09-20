@@ -36,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/dashboard/settings/update/password', [SettingsController::class, 'updatePassword']);
     Route::delete('/dashboard/settings/delete/avatar', [SettingsController::class, 'deleteAvatar']);
     Route::delete('/dashboard/settings/delete/account', [SettingsController::class, 'deleteAccount']);
+    Route::post('/dashboard/settings/create/review', [SettingsController::class, 'store']);
 
     // comments
     Route::post('/dashboard/comment/create', [CommentController::class, 'storeComment']);

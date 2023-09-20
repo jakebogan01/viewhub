@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Review;
 use App\Models\TemporaryImage;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -100,5 +101,17 @@ class SettingsController extends Controller
         $user->delete();
 
         return redirect('/')->with('message', 'Account deleted successfully!');
+    }
+
+    public function store(Request $request)
+    {
+        $attributes = request()->validate([
+            'rating' => ['numeric', 'min:1', 'max:5'],
+            'review' => ['string'],
+        ]);
+
+        $attributes['user_id'] = auth()->user()->id;
+
+        Review::create($attributes);
     }
 }
