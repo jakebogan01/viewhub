@@ -30,6 +30,24 @@ class Task extends Model
      */
     public function scopeFilter($query, array $filters): void
     {
+        if (!request('project')) {
+            $query->whereHas('project', function($query) {
+                $query->where('name', Project::first()->name);
+            });
+        } else {
+            $query->when($filters['project'] ?? false, function($query, $search) {
+                $query->whereHas('project', function($query) use ($search) {
+                    $query->where('name', $search);
+                });
+            });
+        }
+
+//        $query->when($filters['project'] ?? false, function($query, $search) {
+//            $query->whereHas('project', function($query) use ($search) {
+//                $query->where('name', $search);
+//            });
+//        });
+
         // if search exists in filters, then search by title or tag name
         $query->when($filters['search'] ?? false, function($query, $search) {
             $query->where('title', 'LIKE', "%$search%")
@@ -121,5 +139,13 @@ class Task extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
     }
 }

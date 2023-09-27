@@ -15,12 +15,14 @@
     export let tasks;
     export let count;
     export let filters;
+    export let projects;
     export let tags;
     export let user;
 
     console.log('Filters: ', filters);
     console.log('Count: ', count);
     console.log('Tasks: ', tasks);
+    console.log('Projects: ', projects);
     console.log('Tags: ', tags);
     console.log('User: ', user);
 
@@ -159,6 +161,17 @@
 
                             {#each tags as tag (tag.id)}
                                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
+                            {/each}
+                        </div>
+                    </div>
+                </div>
+
+                <!--list of projects-->
+                <div class="mt-4">
+                    <div class="bg-gray-300 p-6 min-w-[15.9375rem] max-w-[15.9375rem] rounded-[0.625rem]">
+                        <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
+                            {#each projects as project (project.id)}
+                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: filters.name, project: project.name, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{project.name}</button>
                             {/each}
                         </div>
                     </div>

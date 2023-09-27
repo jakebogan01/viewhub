@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;
+use App\Models\Project;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
@@ -33,7 +34,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Index', [
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
-                ->filter(request(['search', 'status', 'tag']))
+                ->filter(request(['project', 'search', 'status', 'tag']))
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($task) => [
@@ -49,7 +50,8 @@ class DashboardController extends Controller
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
+            'filters' => request()->only(['project', 'search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
+            'projects' => Project::all()->map->only('id', 'name'),
             'tags' => Tag::all(),
             'user' => Auth::user()
         ]);
