@@ -55,6 +55,6 @@ class DatabaseSeeder extends Seeder
         TaskLikes::factory(30)->create();
         Comment::factory(30)->create();
         Reply::factory(30)->create();
-        Project::factory(4)->create();
+        Project::factory(30)->create();
     }
 }

@@ -57,6 +57,19 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function allProjects()
+    {
+        return Inertia::render('Dashboard/Projects', [
+            'projects' => Project::
+                simplePaginate(6)
+                ->withQueryString()
+                ->through(fn($project) => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                ]),
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      */
