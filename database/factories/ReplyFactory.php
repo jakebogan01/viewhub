@@ -18,8 +18,8 @@ class ReplyFactory extends Factory
     {
         return [
             'comment_id' => random_int(1, 30),
-            'user_id' => random_int(1, 30),
-            'recipient_id' => random_int(1, 30),
+            'user_id' => random_int(1, 60),
+            'recipient_id' => random_int(1, 60),
             'body' => fake()->paragraph(),
         ];
     }

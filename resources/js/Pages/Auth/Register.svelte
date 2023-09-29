@@ -8,6 +8,7 @@
     export let errors = {};
 
     let form = useForm({
+        teamname: null,
         name: null,
         email: null,
         password: null,
@@ -37,6 +38,20 @@
     <BreezeValidationErrors class="mb-4" errors={err} />
 
     <form on:submit|preventDefault={submit}>
+        <div>
+            <BreezeLabel for="teamname" value="teamname" />
+            <BreezeInput
+                id="teamname"
+                type="text"
+                class="mt-1 block w-full"
+                value={form.teamname}
+                required
+                autofocus
+                autocomplete="name"
+                on:input={(evt) => ($form.teamname = evt.detail)}
+            />
+        </div>
+
         <div>
             <BreezeLabel for="name" value="Name" />
             <BreezeInput

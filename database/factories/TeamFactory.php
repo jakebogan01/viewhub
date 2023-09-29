@@ -2,27 +2,23 @@
 
 namespace Database\Factories;
 
-use App\Models\Comment;
-use Exception;
+use App\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Comment>
+ * @extends Factory<Team>
  */
-class CommentFactory extends Factory
+class TeamFactory extends Factory
 {
     /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
-     * @throws Exception
      */
     public function definition(): array
     {
         return [
-            'task_id' => random_int(1, 60),
-            'user_id' => random_int(1, 60),
-            'body' => fake()->paragraph(),
+            'name' => fake()->unique()->word(),
         ];
     }
 }

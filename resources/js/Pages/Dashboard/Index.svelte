@@ -171,6 +171,8 @@
                 <div class="mt-4">
                     <div class="bg-gray-300 p-6 min-w-[15.9375rem] max-w-[15.9375rem] rounded-[0.625rem]">
                         <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
+                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: filters.tag, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
+
                             {#each projects as project (project.id)}
                                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: filters.tag, project: project.name, sortby: filters.sortby, date: filters.date, liked: filters.liked, priority: filters.priority }, replace: true, }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{project.name}</button>
                             {/each}

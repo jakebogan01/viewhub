@@ -26,6 +26,14 @@ class Project extends Model
     /**
      * @return BelongsTo
      */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class)->withTrashed();

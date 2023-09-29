@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -15,10 +16,12 @@ class UserFactory extends Factory
      * Define the model's default state.
      *
      * @return array<string, mixed>
+     * @throws Exception
      */
     public function definition(): array
     {
         return [
+            'team_id' => random_int(1, 10),
             'name' => $this->faker->name(),
             'username' => $this->faker->unique()->userName(),
             'avatar' => $this->faker->imageUrl(200, 200),

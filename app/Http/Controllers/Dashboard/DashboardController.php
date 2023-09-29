@@ -32,8 +32,9 @@ class DashboardController extends Controller
         // return Task::latest()->paginate();
 
         return Inertia::render('Dashboard/Index', [
-            'tasks' => Task::query()
-                // if you find something for the search input, append to the query
+            'tasks' => Task::query()->whereHas('project', function($query) {
+                    $query->where('team_id', auth()->user()->team_id);
+                })
                 ->filter(request(['project', 'search', 'status', 'tag']))
                 ->simplePaginate(6)
                 ->withQueryString()
@@ -48,11 +49,16 @@ class DashboardController extends Controller
                     'likes' => $task->likes->count(),
                     'owner_id' => $task->user->id,
                 ]),
-            'count' => Task::count(),
-            // pass the search input to the view
+            'count' => Task::whereHas('project', function($query) {
+                $query->where('team_id', auth()->user()->team_id);
+            })->count(),
             'filters' => request()->only(['project', 'search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
-            'projects' => Project::all()->map->only('id', 'name'),
-            'tags' => Tag::all(),
+            'projects' => Project::where('team_id', auth()->user()->team_id)->get(['id', 'name']),
+            'tags' => Tag::whereHas('tasks', function($query) {
+                $query->whereHas('project', function($query) {
+                    $query->where('team_id', auth()->user()->team_id);
+                });
+            })->get(['id', 'name']),
             'user' => Auth::user()
         ]);
     }
@@ -61,7 +67,8 @@ class DashboardController extends Controller
     {
         return Inertia::render('Dashboard/Projects', [
             'projects' => Project::
-                simplePaginate(6)
+                where('team_id', auth()->user()->team_id)
+                ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($project) => [
                     'id' => $project->id,
