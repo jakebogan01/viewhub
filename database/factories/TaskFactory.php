@@ -22,6 +22,7 @@ class TaskFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
+            'project_id' => random_int(1, 30),
             'tag_id' => random_int(1, 6),
 //            'tag_id' => Tag::factory(),
             'status_id' => random_int(1, 3),

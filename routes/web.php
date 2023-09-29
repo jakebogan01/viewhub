@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/task/{task:slug}/edit', [DashboardController::class, 'edit']);
     Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
     Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
+    Route::get('/dashboard/projects', [DashboardController::class, 'allProjects'])->name('dashboard.projects');
 
     // images
     Route::post('/dashboard/image/upload', [ImageController::class, 'upload']);

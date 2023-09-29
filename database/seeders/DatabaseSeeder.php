@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Comment;
+use App\Models\Project;
 use App\Models\Reply;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -54,5 +55,6 @@ class DatabaseSeeder extends Seeder
         TaskLikes::factory(30)->create();
         Comment::factory(30)->create();
         Reply::factory(30)->create();
+        Project::factory(30)->create();
     }
 }

@@ -38,6 +38,11 @@
                                 active={$page.component === "About"}>
                                 About
                             </BreezeNavLink>
+                            <BreezeNavLink
+                                href="/dashboard/projects"
+                                active={$page.component === "Projects"}>
+                                Projects
+                            </BreezeNavLink>
                         </div>
                     </div>
 

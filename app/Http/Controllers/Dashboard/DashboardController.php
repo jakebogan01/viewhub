@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Image;
+use App\Models\Project;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
@@ -33,7 +34,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Index', [
             'tasks' => Task::query()
                 // if you find something for the search input, append to the query
-                ->filter(request(['search', 'status', 'tag']))
+                ->filter(request(['project', 'search', 'status', 'tag']))
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($task) => [
@@ -49,9 +50,27 @@ class DashboardController extends Controller
                 ]),
             'count' => Task::count(),
             // pass the search input to the view
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
+            'filters' => request()->only(['project', 'search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
+            'projects' => Project::all()->map->only('id', 'name'),
             'tags' => Tag::all(),
             'user' => Auth::user()
+        ]);
+    }
+
+    public function allProjects()
+    {
+        return Inertia::render('Dashboard/Projects', [
+            'projects' => Project::
+                simplePaginate(6)
+                ->withQueryString()
+                ->through(fn($project) => [
+                    'id' => $project->id,
+                    'name' => $project->name,
+                    'description' => $project->description,
+                    'number_of_tasks' => $project->tasks->count(),
+                    'created_at' => $project->created_at->format('F j, Y'),
+                    'creator' => $project->user->name,
+                ]),
         ]);
     }
 
