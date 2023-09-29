@@ -17,7 +17,9 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => random_int(1, 30),
             'name' => fake()->unique()->word(),
+            'description' => fake()->paragraphs(1, true),
         ];
     }
 }

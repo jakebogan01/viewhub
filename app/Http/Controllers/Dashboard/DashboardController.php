@@ -66,6 +66,10 @@ class DashboardController extends Controller
                 ->through(fn($project) => [
                     'id' => $project->id,
                     'name' => $project->name,
+                    'description' => $project->description,
+                    'number_of_tasks' => $project->tasks->count(),
+                    'created_at' => $project->created_at->format('F j, Y'),
+                    'creator' => $project->user->name,
                 ]),
         ]);
     }

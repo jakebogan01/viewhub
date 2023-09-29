@@ -16,6 +16,8 @@
     /* svelte-ignore unused-export-let */
     export let projects;
 
+    console.log(projects)
+
     let element;
     let allProjects = [];
     allProjects = [...projects.data];
@@ -53,8 +55,12 @@
 
         <div class="grid grid-cols-2 gap-4">
             {#each allProjects as project (project.id)}
-                <div class="flex justify-center items-center border border-red-500 h-[200px] w-full">
+                <div class="flex flex-col justify-center items-center border border-red-500 h-[200px] w-full">
                     <a use:inertia href="/dashboard?project={project.name}">{project.name}</a>
+                    <p>{project.number_of_tasks} tasks</p>
+                    <p>Created on {project.created_at}</p>
+                    <p>Creator {project.creator}</p>
+                    <p>Creator {project.description}</p>
                 </div>
             {/each}
         </div>
