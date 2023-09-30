@@ -36,8 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/dashboard/task/create', [DashboardController::class, 'store']);
         Route::get('/dashboard/task/{task:slug}/edit', [DashboardController::class, 'edit']);
         Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
-        Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroy']);
+        Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroyTask']);
         Route::get('/dashboard/projects', [DashboardController::class, 'allProjects'])->name('dashboard.projects');
+        Route::delete('/dashboard/project/{project}', [DashboardController::class, 'destroyProject']);
 
         // images
         Route::post('/dashboard/image/upload', [ImageController::class, 'upload']);

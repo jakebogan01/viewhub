@@ -90,6 +90,13 @@
                 </Link>
             {/if}
 
+            <Link
+                href="/register"
+                class="underline text-sm text-gray-600 ml-3 hover:text-gray-900"
+            >
+                Register
+            </Link>
+
             <BreezeButton
                 class="ml-4"
                 sclass:opacity-25={form.processing}

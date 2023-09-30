@@ -66,12 +66,14 @@ class DashboardController extends Controller
     public function allProjects()
     {
         return Inertia::render('Dashboard/Projects', [
+            'client_d' => auth()->user()->id,
             'projects' => Project::
                 where('team_id', auth()->user()->team_id)
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($project) => [
                     'id' => $project->id,
+                    'user_id' => $project->user->id,
                     'name' => $project->name,
                     'description' => $project->description,
                     'number_of_tasks' => $project->tasks->count(),
@@ -87,6 +89,7 @@ class DashboardController extends Controller
     public function create()
     {
         return Inertia::render('Dashboard/Create', [
+            'projects' => Project::where('team_id', auth()->user()->team_id)->get(),
             'tags' => Tag::all(),
             'statuses' => Status::all(),
         ]);
@@ -128,7 +131,10 @@ class DashboardController extends Controller
      */
     public function show(Task $task)
     {
+        $this->authorize('view', $task);
+
         return Inertia::render('Dashboard/Show', [
+            'client_d' => auth()->user()->id,
             'task' => [
                 'id' => $task->id,
                 'title' => $task->title,
@@ -183,6 +189,10 @@ class DashboardController extends Controller
      */
     public function edit(Task $task)
     {
+        if ($task->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
@@ -209,6 +219,10 @@ class DashboardController extends Controller
      */
     public function update(Task $task, Request $request)
     {
+        if ($task->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
         $attributes = $this->validateTask($task);
         if ($request->due_date !== null) {
             $attributes['due_date'] = $this->validateDueDate();
@@ -238,8 +252,12 @@ class DashboardController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task)
+    public function destroyTask(Task $task)
     {
+        if ($task->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
         $images = Image::where('task_id', $task->id)->get();
         foreach($images as $image) {
             File::delete(public_path('images/' . $image->path));
@@ -252,6 +270,32 @@ class DashboardController extends Controller
         $task->delete();
 
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroyProject(Project $project)
+    {
+        if ($project->user_id !== auth()->user()->id) {
+            abort(403);
+        }
+
+        $tasks = Task::where('project_id', $project->id)->get();
+        foreach($tasks as $task) {
+            $images = Image::where('task_id', $task->id)->get();
+            foreach($images as $image) {
+                File::delete(public_path('images/' . $image->path));
+                $image->delete();
+            }
+            $task->comments->each(function($comment) {
+                $comment->delete();
+            });
+            $task->delete();
+        }
+        $project->delete();
+
+        return to_route('dashboard.index')->with('message', 'Project deleted successfully!');
     }
 
     /**
@@ -286,6 +330,7 @@ class DashboardController extends Controller
             'description' => 'required',
             'priority' => 'required|integer|between:0,1',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
+            'project_id' => ['required', Rule::exists('projects', 'id')],
         ]);
     }
 
