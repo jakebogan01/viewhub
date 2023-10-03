@@ -26,9 +26,9 @@ class Project extends Model
     /**
      * @return BelongsTo
      */
-    public function team(): BelongsTo
+    public function company(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Company::class);
     }
 
     /**

@@ -11,8 +11,8 @@ use Inertia\Inertia;
 require __DIR__ . '/auth.php';
 
 Route::get('/', function() {
-    return to_route('dashboard.index');
-});
+    return Inertia::render('Index');
+})->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::group([

@@ -4,29 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Team extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
-
-    protected $with = ['users', 'projects'];
-
-    /**
-     * @return HasMany
-     */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+    protected $fillable = [
+        'name',
+    ];
 
     /**
-     * @return HasMany
+     * The users that belong to the role.
      */
-    public function projects(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(Project::class);
+        return $this->belongsToMany(User::class);
     }
 }

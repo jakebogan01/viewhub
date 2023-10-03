@@ -6,6 +6,7 @@ use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,7 +25,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'team_id',
+        'company_id',
         'name',
         'username',
         'avatar',
@@ -72,11 +73,11 @@ class User extends Authenticatable
     }
 
     /**
-     * @return BelongsTo
+     * The roles that belong to the user.
      */
-    public function user(): BelongsTo
+    public function teams(): BelongsToMany
     {
-        return $this->belongsTo(Team::class)->withTrashed();
+        return $this->belongsToMany(Team::class);
     }
 
     /**

@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\Comment;
 use App\Models\Project;
 use App\Models\Reply;
-use App\Models\Team;
+use App\Models\Company;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\TaskLikes;
@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
             Tag::factory()->create(['name' => $tag]);
         }
 
-        Team::factory(10)->create();
+        Company::factory(10)->create();
         Task::factory(60)->create();
         TaskLikes::factory(60)->create();
         Comment::factory(30)->create();

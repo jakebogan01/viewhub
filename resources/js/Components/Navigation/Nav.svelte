@@ -12,9 +12,6 @@
             <li>
                 <a href="/dashboard" use:inertia class="text-black hover:underline">dashboard</a>
             </li>
-            <li>
-                <button type="button" use:inertia="{{ href: '/logout', method: 'post', replace: true, }}" class="inline text-black hover:underline">Logout</button>
-            </li>
         </ul>
     </div>
 </nav>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Team;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -39,25 +40,27 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'teamname' => 'required|string|max:255',
+            'team_name' => 'max:255',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'timezone' => 'string|timezone',
         ]);
 
-        $team = Team::create([
-            'name' => $request->teamname,
-        ]);
-
         $user = User::create([
-            'team_id' => $team->id,
             'name' => $request->name,
             'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'timezone' => $request->timezone,
         ]);
+
+        if (!$request->is_solo) {
+            $team = Team::create([
+                'name' => $request->team_name,
+            ]);
+            $team->users()->attach($user->id);
+        }
 
         event(new Registered($user));
 

@@ -33,7 +33,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard/Index', [
             'tasks' => Task::query()->whereHas('project', function($query) {
-                    $query->where('team_id', auth()->user()->team_id);
+                    $query->where('company_id', auth()->user()->company_id);
                 })
                 ->filter(request(['project', 'search', 'status', 'tag']))
                 ->simplePaginate(6)
@@ -50,13 +50,13 @@ class DashboardController extends Controller
                     'owner_id' => $task->user->id,
                 ]),
             'count' => Task::whereHas('project', function($query) {
-                $query->where('team_id', auth()->user()->team_id);
+                $query->where('company_id', auth()->user()->company_id);
             })->count(),
             'filters' => request()->only(['project', 'search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
-            'projects' => Project::where('team_id', auth()->user()->team_id)->get(['id', 'name']),
+            'projects' => Project::where('company_id', auth()->user()->company_id)->get(['id', 'name']),
             'tags' => Tag::whereHas('tasks', function($query) {
                 $query->whereHas('project', function($query) {
-                    $query->where('team_id', auth()->user()->team_id);
+                    $query->where('company_id', auth()->user()->company_id);
                 });
             })->get(['id', 'name']),
             'user' => Auth::user()
@@ -68,7 +68,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Projects', [
             'client_d' => auth()->user()->id,
             'projects' => Project::
-                where('team_id', auth()->user()->team_id)
+                where('company_id', auth()->user()->company_id)
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($project) => [
@@ -89,7 +89,7 @@ class DashboardController extends Controller
     public function create()
     {
         return Inertia::render('Dashboard/Create', [
-            'projects' => Project::where('team_id', auth()->user()->team_id)->get(),
+            'projects' => Project::where('company_id', auth()->user()->company_id)->get(),
             'tags' => Tag::all(),
             'statuses' => Status::all(),
         ]);
