@@ -21,12 +21,10 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
-            'project_id' => random_int(1, 30),
+            'user_id' => 1,
+            'project_id' => 1,
             'tag_id' => random_int(1, 6),
-//            'tag_id' => Tag::factory(),
             'status_id' => random_int(1, 3),
-//            'status_id' => Status::factory(),
             'title' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
             'description' => fake()->paragraphs(6, true),

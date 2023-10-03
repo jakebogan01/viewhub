@@ -19,6 +19,10 @@ class CompanyFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
+            'slug' => fake()->unique()->slug(),
+            'employee_count' => fake()->numberBetween(1, 1000),
+            'url' => fake()->url(),
+            'logo' => fake()->imageUrl(),
         ];
     }
 }

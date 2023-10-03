@@ -20,10 +20,10 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => random_int(1, 60),
-            'company_id' => random_int(1, 10),
+            'company_id' => 1,
             'name' => fake()->unique()->word(),
             'description' => fake()->paragraphs(1, true),
+            'duration' => fake()->numberBetween(1, 100),
         ];
     }
 }

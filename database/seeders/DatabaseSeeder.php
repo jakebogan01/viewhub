@@ -52,11 +52,11 @@ class DatabaseSeeder extends Seeder
             Tag::factory()->create(['name' => $tag]);
         }
 
-        Company::factory(10)->create();
-        Task::factory(60)->create();
-        TaskLikes::factory(60)->create();
-        Comment::factory(30)->create();
-        Reply::factory(30)->create();
-        Project::factory(30)->create();
+        Company::factory()->create();
+        Project::factory()->create();
+        Task::factory()->create();
+        TaskLikes::factory()->create();
+        Comment::factory()->create();
+        Reply::factory()->create();
     }
 }

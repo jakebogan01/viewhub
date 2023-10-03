@@ -20,8 +20,8 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [
-            'task_id' => random_int(1, 60),
-            'user_id' => random_int(1, 60),
+            'task_id' => 1,
+            'user_id' => 1,
             'body' => fake()->paragraph(),
         ];
     }

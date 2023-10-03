@@ -12,15 +12,7 @@ class Company extends Model
 
     protected $guarded = [];
 
-    protected $with = ['users', 'projects'];
-
-    /**
-     * @return HasMany
-     */
-    public function users(): HasMany
-    {
-        return $this->hasMany(User::class);
-    }
+    protected $with = ['projects'];
 
     /**
      * @return HasMany

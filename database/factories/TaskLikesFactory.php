@@ -18,8 +18,8 @@ class TaskLikesFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => random_int(1, 60),
-            'task_id' => random_int(1, 60),
+            'user_id' => 1,
+            'task_id' => 1,
         ];
     }
 }
