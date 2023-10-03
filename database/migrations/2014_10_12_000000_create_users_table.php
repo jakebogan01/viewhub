@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->boolean('dark_mode')->default(0);
-            $table->boolean('is_admin')->default(0);
+            $table->boolean('dark_mode')->default(false);
+            $table->boolean('is_admin')->default(false);
             $table->string('timezone')->nullable();
             $table->rememberToken();
             $table->timestamps();

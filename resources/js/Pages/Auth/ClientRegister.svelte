@@ -14,7 +14,6 @@
         password: null,
         password_confirmation: null,
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
-        terms: false,
     });
 
     let err = {};
@@ -24,7 +23,7 @@
     }
 
     const submit = () => {
-        $form.post("/register", {
+        $form.post("/register/new-company", {
             onSuccess: () => $form.reset("password", "password_confirmation"),
         });
     };

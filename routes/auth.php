@@ -9,6 +9,14 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Models\Company;
+use App\Models\Team;
+use App\Models\User;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,6 +50,29 @@ Route::middleware('guest')->group(function () {
                 'slug' => $company->slug,
             ],
         ]);
+    });
+
+    Route::post('register/new-company', function (Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'timezone' => 'string|timezone',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'timezone' => $request->timezone,
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect(RouteServiceProvider::HOME);
     });
 
     Route::get('login/company/{company:slug}', function (Company $company) {
