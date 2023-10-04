@@ -21,7 +21,7 @@ class Project extends Model
         'created_at' => 'datetime',
     ];
 
-    protected $with = ['tasks'];
+    protected $with = ['tasks', 'company', 'user'];
 
     /**
      * @return BelongsTo

@@ -5,8 +5,18 @@ use App\Http\Controllers\User\SettingsController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Shared\CommentController;
 use App\Http\Controllers\Shared\ImageController;
+use App\Models\Image;
+use App\Models\Project;
+use App\Models\Tag;
+use App\Models\Task;
+use App\Models\TemporaryImage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+
 
 require __DIR__ . '/auth.php';
 
@@ -36,8 +46,59 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 return to_route('dashboard.projects');
             }
 
-            return Inertia::render('Auth/ClientOnboarding');
+            return Inertia::render('Auth/ClientOnboarding', [
+                'tags' => Tag::all(),
+            ]);
         })->name('Auth.ClientOnboarding');
+
+        Route::post('/project/create', function (Request $request) {
+
+            $request->validate([
+                'project_name' => 'required|string|max:255',
+            ]);
+
+            $attributes = request()->validate([
+                'title' => 'required',
+                'description' => 'required',
+                'priority' => 'required|integer|between:0,1',
+                'tag_id' => ['required', Rule::exists('tags', 'id')],
+            ]);
+
+            $project = Project::create([
+                'company_id' => 1,
+                'name' => $request->project_name,
+            ]);
+
+            if ($request->due_date !== null) {
+                $attributes['due_date'] = request()->validate([
+                    'due_date' => 'date|after_or_equal:today',
+                ])['due_date'];
+            }
+            $attributes['project_id'] = $project->id;
+            $attributes['user_id'] = auth()->id();
+            $attributes['status_id'] = 1;
+            $attributes['slug'] = Str::slug($attributes['title']) . '-' . rand(100, 999);
+
+            $task = Task::create($attributes);
+
+            $temporaryImages = TemporaryImage::whereIn('folder', $request->images)->get();
+            foreach($temporaryImages as $temporaryImage) {
+                File::copyDirectory(public_path() . '/tmpimages', public_path() . '/images');
+                Image::create([
+                    'task_id' => $task->id,
+                    'name' => $temporaryImage->file,
+                    'path' => $temporaryImage->folder . '/' . $temporaryImage->file,
+                ]);
+                File::cleanDirectory(public_path() . '/tmpimages/user' . auth()->user()->id);
+                $temporaryImage->delete();
+            }
+
+            auth()->user()->update([
+                'onboarded' => true,
+            ]);
+
+            return to_route('dashboard.projects')->with('message', 'Project created successfully!');
+        });
 
         // dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
