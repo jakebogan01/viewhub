@@ -3,8 +3,8 @@
 </script>
 
 <script>
-    import {inertia} from "@inertiajs/inertia-svelte";
-    import {Inertia} from "@inertiajs/inertia";
+    import {Inertia, router} from '@inertiajs/inertia';
+    import {useForm, inertia} from "@inertiajs/inertia-svelte";
 
     /* svelte-ignore unused-export-let */
     export let errors = {};
@@ -12,6 +12,17 @@
     export let auth = {};
     /* svelte-ignore unused-export-let */
     export let flash = {};
+    let showProjectInput = false;
+
+    let form = useForm({
+        project_name: null,
+    });
+
+    function submit() {
+        $form.post(`/dashboard/task/create`, {
+            replace: true,
+        })
+    }
 </script>
 
 <svelte:head>
@@ -27,10 +38,20 @@
 
         <a use:inertia href="/dashboard/projects">View Dashboard</a>
         <span class="block">or</span>
-        <button type="button">Create Task</button>
 
-        <form>
-            <input type="text" id="project_name" name="project_name" placeholder="Project Name">
+        {#if !showProjectInput}
+            <button type="button" on:click={()=>{showProjectInput = true}}>Create Task</button>
+        {/if}
+
+        <form on:submit|preventDefault={submit} enctype="multipart/form-data">
+            {#if showProjectInput}
+                <input bind:value={$form.project_name} type="text" id="project_name" name="project_name" placeholder="Project Name">
+                {#if $form.errors.project_name}
+                    <p class="text-red-500 text-xs mt-1"> {$form.errors.project_name} </p>
+                {/if}
+
+                <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500" disabled={$form.processing}>Create</button>
+            {/if}
         </form>
     </div>
 </section>
