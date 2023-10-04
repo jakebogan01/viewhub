@@ -65,6 +65,10 @@ class DashboardController extends Controller
 
     public function allProjects()
     {
+        auth()->user()->update([
+            'onboarded' => true,
+        ]);
+
         return Inertia::render('Dashboard/Projects', [
             'client_d' => auth()->user()->id,
             'projects' => Project::

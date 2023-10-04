@@ -65,6 +65,7 @@ Route::middleware('guest')->group(function () {
             'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'onboarded' => false,
             'timezone' => $request->timezone,
         ]);
 
@@ -72,7 +73,7 @@ Route::middleware('guest')->group(function () {
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return to_route('Auth.ClientOnboarding');
     });
 
     Route::get('login/company/{company:slug}', function (Company $company) {

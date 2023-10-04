@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('dark_mode')->default(false);
             $table->boolean('is_admin')->default(false);
+            $table->boolean('onboarded')->default(true);
             $table->string('timezone')->nullable();
             $table->rememberToken();
             $table->timestamps();

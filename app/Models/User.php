@@ -33,6 +33,7 @@ class User extends Authenticatable
         'password',
         'dark_mode',
         'is_admin',
+        'onboarded',
         'timezone'
     ];
 

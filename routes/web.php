@@ -29,6 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //        'prefix' => 'client',
 //        'as' => 'client.',
     ], function () {
+        // client intro
+        Route::get('/project/create', function () {
+
+            if (auth()->user()->onboarded) {
+                return to_route('dashboard.projects');
+            }
+
+            return Inertia::render('Auth/ClientOnboarding');
+        })->name('Auth.ClientOnboarding');
+
         // dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
         Route::get('/dashboard/tasks/{task:slug}', [DashboardController::class, 'show'])->name('dashboard.show');

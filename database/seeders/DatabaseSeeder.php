@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt(123456789),
             'dark_mode' => false,
             'is_admin' => true,
+            'onboarded' => false,
             'timezone' => 'America/New_York',
         ]);
 
