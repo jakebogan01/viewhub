@@ -12,8 +12,6 @@ class Company extends Model
 
     protected $guarded = [];
 
-    protected $with = ['projects'];
-
     /**
      * @return HasMany
      */
