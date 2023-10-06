@@ -9,6 +9,7 @@
     export let errors = {};
 
     let form = useForm({
+        company_id: company.id,
         name: null,
         email: null,
         password: null,

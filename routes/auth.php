@@ -46,6 +46,7 @@ Route::middleware('guest')->group(function () {
     Route::get('register/new-company/{company:slug}', function (Company $company) {
         return Inertia::render('Auth/ClientRegister', [
             'company' => [
+                'id' => $company->id,
                 'name' => $company->name,
                 'slug' => $company->slug,
             ],
@@ -61,6 +62,7 @@ Route::middleware('guest')->group(function () {
         ]);
 
         $user = User::create([
+            'company_id' => $request->company_id,
             'name' => $request->name,
             'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
             'email' => $request->email,
