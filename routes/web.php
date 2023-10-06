@@ -65,7 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ]);
 
             $project = Project::create([
-                'company_id' => 1,
+                'company_id' => auth()->user()->company_id,
                 'name' => $request->project_name,
             ]);
 
