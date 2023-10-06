@@ -102,7 +102,7 @@
                 <p>Total: {count}</p>
             </div>
             <div>
-                <a use:inertia href="/dashboard/task/create" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Create Task</a>
+                <button type="button" use:inertia="{{ href: `/dashboard/task/create`, method: 'get', data: { project: filters.project }, replace: true, preserveScroll: true, }}" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Create Task</button>
             </div>
         </div>
 

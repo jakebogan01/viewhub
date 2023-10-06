@@ -3,7 +3,7 @@
 </script>
 
 <script>
-    import {inertia} from "@inertiajs/inertia-svelte";
+    import {inertia, useForm} from "@inertiajs/inertia-svelte";
     import {Inertia} from "@inertiajs/inertia";
     import IntersectionObserver from "svelte-intersection-observer";
 
@@ -41,6 +41,18 @@
             })
         }
     }
+
+    let showProjectForm = false;
+    let form = useForm({
+        project_name: '',
+    });
+
+    function submit() {
+        showProjectForm = false;
+        $form.post(`/dashboard/project/create`, {
+            replace: true,
+        })
+    }
 </script>
 
 <svelte:head>
@@ -52,6 +64,21 @@
 
         {#if flash.message}
             <div class="text-green-500 font-bold">{flash.message}</div>
+        {/if}
+
+        <div>
+            <button type="button" on:click={()=>{showProjectForm = true}} class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Create Project</button>
+        </div>
+
+        {#if showProjectForm}
+            <form on:submit|preventDefault={submit}>
+                    <input bind:value={$form.project_name} type="text" id="project_name" name="project_name" placeholder="Project Name">
+                    {#if $form.errors.project_name}
+                        <p class="text-red-500 text-xs mt-1"> {$form.errors.project_name} </p>
+                    {/if}
+
+                    <button type="submit" class="bg-orange-400 text-white rounded py-2 px-4 hover:bg-blue-500">Create</button>
+            </form>
         {/if}
 
         <div class="grid grid-cols-2 gap-4">

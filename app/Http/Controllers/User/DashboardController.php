@@ -91,6 +91,7 @@ class DashboardController extends Controller
     public function create()
     {
         return Inertia::render('Dashboard/Create', [
+            'param' => request('project'),
             'projects' => Project::where('company_id', auth()->user()->company_id)->get(),
             'tags' => Tag::all(),
             'statuses' => Status::all(),
@@ -98,9 +99,26 @@ class DashboardController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     */
+    public function storeProject(Request $request)
+    {
+        $request->validate([
+            'project_name' => 'required|string|max:255'
+        ]);
+
+        $project = Project::create([
+            'company_id' => auth()->user()->company_id,
+            'name' => $request->project_name,
+        ]);
+
+        return redirect('/dashboard?project=' . $project->name)->with('message', 'Project created successfully!');
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function storeTask(Request $request)
     {
         $attributes = $this->validateTask();
 

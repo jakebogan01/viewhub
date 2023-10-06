@@ -19,8 +19,11 @@
     export let auth;
     export let tags;
     export let csrf_token;
+    export let param;
     export let projects;
     console.log(projects);
+    console.log(param);
+    let project_param = projects.find(project => project.name === param);
 
     // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
@@ -34,7 +37,7 @@
         priority: 0,
         due_date: null,
         tag_id: 1,
-        project_id: projects.length > 0 ? projects[0].id : null,
+        project_id: project_param ? project_param.id : projects[0].id,
         images: [],
     });
 
