@@ -13,7 +13,7 @@ class Project extends Model
 {
     use HasFactory, SoftDeletes, CascadeSoftDeletes;
 
-    protected $cascadeDeletes = ['user', 'tasks'];
+    protected $cascadeDeletes = ['tasks'];
 
     protected $guarded = [];
 
@@ -29,14 +29,6 @@ class Project extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class)->withTrashed();
     }
 
     /**

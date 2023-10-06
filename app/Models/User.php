@@ -17,7 +17,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
 
-    protected $cascadeDeletes = ['company', 'projects', 'tasks'];
+    protected $cascadeDeletes = ['company', 'tasks'];
 
     /**
      * The attributes that are mass assignable.
@@ -84,14 +84,6 @@ class User extends Authenticatable
     public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
-    }
-
-    /**
-     * @return HasMany
-     */
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
     }
 
     /**

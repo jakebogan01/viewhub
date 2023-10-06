@@ -89,6 +89,7 @@ class SettingsController extends Controller
 
     public function deleteAccount(Request $request)
     {
+
         File::cleanDirectory(public_path() . '/images/user' . auth()->user()->id);
 
         Auth::guard('web')->logout();
