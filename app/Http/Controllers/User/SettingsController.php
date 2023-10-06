@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\URL;
 
 class SettingsController extends Controller
 {
@@ -20,8 +21,10 @@ class SettingsController extends Controller
     public function index()
     {
         return Inertia::render('Settings/Index', [
+            'register_path' => URL::to('/register/new-team-member'),
             'user' => [
                 'id' => auth()->user()->id,
+                'company_slug' => auth()->user()->company->slug,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
                 'username' => auth()->user()->username,

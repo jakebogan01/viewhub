@@ -86,6 +86,41 @@ Route::middleware('guest')->group(function () {
             ],
         ]);
     });
+
+    Route::get('register/new-team-member/{company:slug}', function (Company $company) {
+        return Inertia::render('Auth/ClientTeamRegister', [
+            'company' => [
+                'id' => $company->id,
+                'name' => $company->name,
+                'slug' => $company->slug,
+            ],
+        ]);
+    });
+
+    Route::post('register/new-team-member', function (Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'timezone' => 'string|timezone',
+        ]);
+
+        $user = User::create([
+            'company_id' => $request->company_id,
+            'name' => $request->name,
+            'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'onboarded' => true,
+            'timezone' => $request->timezone,
+        ]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return to_route('dashboard.projects');
+    });
 });
 
 Route::middleware('auth')->group(function () {
