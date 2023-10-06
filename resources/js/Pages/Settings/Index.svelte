@@ -73,7 +73,7 @@
         $personalInformationForm.patch(`/dashboard/settings/update/information`, {
             replace: true,
         });
-        router.reload({ only: ['users'] })
+        router.reload({ only: ['user'] })
     }
 
     function submitPasswordChange() {
