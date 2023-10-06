@@ -27,6 +27,7 @@
     let makePriority = task.priority;
 
     let form = useForm({
+        project_id: task.project_id,
         title: task.title,
         description: task.description,
         priority: makePriority,

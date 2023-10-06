@@ -198,6 +198,7 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
+                'project_id' => $task->project->id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'priority' => $task->priority,
