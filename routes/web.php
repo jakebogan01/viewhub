@@ -106,11 +106,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/dashboard/task/create', [DashboardController::class, 'create'])->name('dashboard.create');
         Route::post('/dashboard/task/create', [DashboardController::class, 'storeTask']);
         Route::get('/dashboard/task/{task:slug}/edit', [DashboardController::class, 'edit']);
-        Route::patch('/dashboard/task/{task}', [DashboardController::class, 'update']);
+        Route::patch('/dashboard/task/{task}', [DashboardController::class, 'updateTask']);
         Route::delete('/dashboard/task/{task}', [DashboardController::class, 'destroyTask']);
         Route::get('/dashboard/projects', [DashboardController::class, 'allProjects'])->name('dashboard.projects');
         Route::delete('/dashboard/project/{project}', [DashboardController::class, 'destroyProject']);
         Route::post('/dashboard/project/create', [DashboardController::class, 'storeProject']);
+        Route::patch('/dashboard/project/{project}', [DashboardController::class, 'updateProject']);
 
         // images
         Route::post('/dashboard/image/upload', [ImageController::class, 'upload']);

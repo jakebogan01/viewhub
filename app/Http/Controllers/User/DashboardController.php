@@ -70,7 +70,6 @@ class DashboardController extends Controller
         ]);
 
         return Inertia::render('Dashboard/Projects', [
-            'client_d' => auth()->user()->id,
             'projects' => Project::
                 where('company_id', auth()->user()->company_id)
                 ->simplePaginate(6)
@@ -104,12 +103,14 @@ class DashboardController extends Controller
     public function storeProject(Request $request)
     {
         $request->validate([
-            'project_name' => 'required|string|max:255'
+            'project_name' => 'required|string|max:255',
+            'project_description' => 'required|string|max:255'
         ]);
 
         $project = Project::create([
             'company_id' => auth()->user()->company_id,
             'name' => $request->project_name,
+            'description' => $request->project_description,
         ]);
 
         return redirect('/dashboard?project=' . $project->name)->with('message', 'Project created successfully!');
@@ -235,10 +236,26 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function updateProject(Project $project)
+    {
+        $attributes = request()->validate([
+            'project_name' => 'required|string|max:255',
+            'project_description' => 'max:255'
+        ]);
+
+        $project = Project::find($project->id);
+        $project->update([
+            'name' => $attributes['project_name'],
+            'description' => $attributes['project_description'],
+        ]);
+
+        return to_route('dashboard.projects')->with('message', 'Project updated successfully!');
+    }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Task $task, Request $request)
+    public function updateTask(Task $task, Request $request)
     {
         if ($task->user_id !== auth()->user()->id) {
             abort(403);
@@ -298,10 +315,6 @@ class DashboardController extends Controller
      */
     public function destroyProject(Project $project)
     {
-        if ($project->user_id !== auth()->user()->id) {
-            abort(403);
-        }
-
         $tasks = Task::where('project_id', $project->id)->get();
         foreach($tasks as $task) {
             $images = Image::where('task_id', $task->id)->get();
@@ -316,7 +329,7 @@ class DashboardController extends Controller
         }
         $project->delete();
 
-        return to_route('dashboard.index')->with('message', 'Project deleted successfully!');
+        return to_route('dashboard.projects')->with('message', 'Project deleted successfully!');
     }
 
     /**
