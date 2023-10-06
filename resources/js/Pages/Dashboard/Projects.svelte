@@ -4,6 +4,7 @@
 
 <script>
     import {inertia, useForm} from "@inertiajs/inertia-svelte";
+    import { router } from '@inertiajs/svelte';
     import {Inertia} from "@inertiajs/inertia";
     import IntersectionObserver from "svelte-intersection-observer";
 
@@ -63,6 +64,7 @@
             $form.patch(`/dashboard/project/${obj.id}`, {
                 replace: true,
             })
+            router.reload({ only: ['projects'] })
         }
 
         createProject = false;
