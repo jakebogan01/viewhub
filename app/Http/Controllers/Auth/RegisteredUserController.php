@@ -52,6 +52,7 @@ class RegisteredUserController extends Controller
             'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'onboarded' => true,
             'timezone' => $request->timezone,
         ]);
 

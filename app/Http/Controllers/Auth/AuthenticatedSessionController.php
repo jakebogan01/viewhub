@@ -40,7 +40,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         Auth::user()->update([
-            'onboarded' => true,
             'timezone' => request('timezone'),
         ]);
 
