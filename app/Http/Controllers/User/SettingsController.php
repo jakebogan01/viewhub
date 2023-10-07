@@ -24,7 +24,7 @@ class SettingsController extends Controller
             'register_path' => URL::to('/register/new-team-member'),
             'user' => [
                 'id' => auth()->user()->id,
-                'company_slug' => auth()->user()->company->slug,
+                'company_slug' => auth()->user()->is_admin ? auth()->user()->company->slug : null,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
                 'username' => auth()->user()->username,
