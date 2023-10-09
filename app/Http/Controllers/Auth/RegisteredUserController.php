@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Company;
-use App\Models\Team;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -40,9 +38,8 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'team_name' => 'max:255',
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|regex:/^[a-zA-Z0-9_.+-]+@pny\.com$/i|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'timezone' => 'string|timezone',
         ]);
@@ -52,16 +49,8 @@ class RegisteredUserController extends Controller
             'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'onboarded' => true,
             'timezone' => $request->timezone,
         ]);
-
-        if (!$request->is_solo) {
-            $team = Team::create([
-                'name' => $request->team_name,
-            ]);
-            $team->users()->attach($user->id);
-        }
 
         event(new Registered($user));
 

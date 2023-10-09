@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->nullable();
             $table->string('name');
             $table->string('username', 60)->unique();
             $table->string('avatar')->nullable();
@@ -24,7 +23,6 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('dark_mode')->default(false);
             $table->boolean('is_admin')->default(false);
-            $table->boolean('onboarded')->default(true);
             $table->string('timezone')->nullable();
             $table->rememberToken();
             $table->timestamps();

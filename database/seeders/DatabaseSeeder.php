@@ -3,11 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Comment;
-use App\Models\Project;
 use App\Models\Reply;
-use App\Models\Company;
 use Exception;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\TaskLikes;
 use App\Models\Status;
 use App\Models\Tag;
@@ -26,7 +23,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $tags = ['ui', 'enhancement', 'bug', 'feature', 'marketing', 'sales'];
-        $statuses = ['pending', 'in progress', 'live'];
+        $statuses = ['marketing', 'sales', 'commercial', 'consumer', 'graphics', 'operations', 'it', 'finance', 'legal', 'officers'];
 
         User::factory()->create([
             'name' => 'test',
@@ -35,7 +32,6 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt(123456789),
             'dark_mode' => false,
             'is_admin' => true,
-            'onboarded' => false,
             'timezone' => 'America/New_York',
         ]);
 
@@ -47,11 +43,9 @@ class DatabaseSeeder extends Seeder
             Tag::factory()->create(['name' => $tag]);
         }
 
-        Company::factory()->create();
-        Project::factory()->create();
-        Task::factory()->create();
-        TaskLikes::factory()->create();
-        Comment::factory()->create();
-        Reply::factory()->create();
+        Task::factory(30)->create();
+        TaskLikes::factory(30)->create();
+        Comment::factory(30)->create();
+        Reply::factory(30)->create();
     }
 }

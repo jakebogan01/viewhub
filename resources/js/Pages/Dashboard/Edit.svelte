@@ -4,7 +4,7 @@
 
 <script>
     import {useForm, inertia} from "@inertiajs/inertia-svelte";
-    import {Inertia, router} from '@inertiajs/inertia';
+    import {Inertia} from '@inertiajs/inertia';
     import FilePond, { registerPlugin, supported } from 'svelte-filepond';
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
@@ -27,7 +27,6 @@
     let makePriority = task.priority;
 
     let form = useForm({
-        project_id: task.project_id,
         title: task.title,
         description: task.description,
         priority: makePriority,

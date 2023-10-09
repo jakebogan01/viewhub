@@ -8,17 +8,7 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Models\Company;
-use App\Models\Team;
-use App\Models\User;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Validation\Rules;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
@@ -42,85 +32,6 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
         ->name('password.update');
-
-    Route::get('register/new-company/{company:slug}', function (Company $company) {
-        return Inertia::render('Auth/ClientRegister', [
-            'company' => [
-                'id' => $company->id,
-                'name' => $company->name,
-                'slug' => $company->slug,
-            ],
-        ]);
-    });
-
-    Route::post('register/new-company', function (Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'timezone' => 'string|timezone',
-        ]);
-
-        $user = User::create([
-            'company_id' => $request->company_id,
-            'name' => $request->name,
-            'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'onboarded' => false,
-            'timezone' => $request->timezone,
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return to_route('Auth.ClientOnboarding');
-    });
-
-    Route::get('login/company/{company:slug}', function (Company $company) {
-        return Inertia::render('Auth/ClientLogin', [
-            'company' => [
-                'name' => $company->name,
-                'slug' => $company->slug,
-            ],
-        ]);
-    });
-
-    Route::get('register/new-team-member/{company:slug}', function (Company $company) {
-        return Inertia::render('Auth/ClientTeamRegister', [
-            'company' => [
-                'id' => $company->id,
-                'name' => $company->name,
-                'slug' => $company->slug,
-            ],
-        ]);
-    });
-
-    Route::post('register/new-team-member', function (Request $request) {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'timezone' => 'string|timezone',
-        ]);
-
-        $user = User::create([
-            'company_id' => $request->company_id,
-            'name' => $request->name,
-            'username' => str_replace(' ', '', $request->name) . rand(10000000, 99999999),
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'onboarded' => true,
-            'timezone' => $request->timezone,
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return to_route('dashboard.projects');
-    });
 });
 
 Route::middleware('auth')->group(function () {

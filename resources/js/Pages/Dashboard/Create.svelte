@@ -19,11 +19,6 @@
     export let auth;
     export let tags;
     export let csrf_token;
-    export let param;
-    export let projects;
-    console.log(projects);
-    console.log(param);
-    let project_param = projects.find(project => project.name === param);
 
     // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
@@ -37,7 +32,6 @@
         priority: 0,
         due_date: null,
         tag_id: 1,
-        project_id: project_param ? project_param.id : projects[0].id,
         images: [],
     });
 
@@ -172,19 +166,6 @@
                 </select>
                 {#if $form.errors.tag_id}
                     <p class="text-red-500 text-xs mt-1"> {$form.errors.tag_id} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
-                <label for="project_id" class="block text-sm font-medium leading-6 text-gray-900">Project</label>
-
-                <select bind:value={$form.project_id} id="project_id" name="project_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    {#each projects as project (project.id)}
-                        <option value={project.id}>{project.name}</option>
-                    {/each}
-                </select>
-                {#if $form.errors.project_id}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.project_id} </p>
                 {/if}
             </div>
 

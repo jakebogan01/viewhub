@@ -39,9 +39,9 @@
                                 About
                             </BreezeNavLink>
                             <BreezeNavLink
-                                href="/dashboard/projects"
-                                active={$page.component === "Projects"}>
-                                Projects
+                                href="/dashboard/all-tasks"
+                                active={$page.component === "AllTasks"}>
+                                All Tasks
                             </BreezeNavLink>
                         </div>
                     </div>

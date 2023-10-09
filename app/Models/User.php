@@ -17,7 +17,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, CascadeSoftDeletes;
 
-    protected $cascadeDeletes = ['company', 'tasks'];
+    protected $cascadeDeletes = ['tasks', 'reviews', 'comments'];
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +25,6 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'company_id',
         'name',
         'username',
         'avatar',
@@ -33,7 +32,6 @@ class User extends Authenticatable
         'password',
         'dark_mode',
         'is_admin',
-        'onboarded',
         'timezone'
     ];
 
@@ -71,19 +69,6 @@ class User extends Authenticatable
             .'&d=https://s3.amazonaws.com/laracasts/images/forum/avatars/default-avatar-'
             .$integerToUse
             .'.png';
-    }
-
-    /**
-     * The roles that belong to the user.
-     */
-    public function teams(): BelongsToMany
-    {
-        return $this->belongsToMany(Team::class);
-    }
-
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(Company::class);
     }
 
     /**

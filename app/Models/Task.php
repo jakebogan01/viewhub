@@ -17,8 +17,7 @@ class Task extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'due_date' => 'datetime',
-        'priority' => 'boolean'
+        'created_at' => 'datetime',
     ];
 
     protected $with = ['tag', 'user', 'status', 'likes', 'images', 'comments'];
@@ -30,16 +29,12 @@ class Task extends Model
      */
     public function scopeFilter($query, array $filters): void
     {
-        $query->when($filters['project'] ?? false, function($query, $search) {
-            $query->whereHas('project', function($query) use ($search) {
-                $query->where('name', $search);
-            });
-        });
-
         // if search exists in filters, then search by title or tag name
         $query->when($filters['search'] ?? false, function($query, $search) {
             $query->where('title', 'LIKE', "%$search%")
                 ->orWhereHas('tag', function($query) use ($search) {
+                    $query->where('name', 'LIKE', "%$search%");
+                })->orWhereHas('user', function($query) use ($search) {
                     $query->where('name', 'LIKE', "%$search%");
                 });
         });
@@ -58,26 +53,16 @@ class Task extends Model
             });
         });
 
-        // if sort exists in filters, then sort by newest or oldest
-        if (request('sortby') === 'oldest') {
-            $query->oldest();
-        } else {
-            $query->latest();
-        }
-
-        // if date exists in filters, then sort by date
-        if (request('date')) {
-            $query->orderBy('due_date', 'desc');
-        }
-
         // if liked exists in filters, then sort by count likes
         if (request('liked')) {
             $query->withCount('likes')->orderByDesc('likes_count');
         }
 
-        // if priority is in filters, then sort by priority value of 1
-        if (request('priority')) {
-            $query->where('priority', 1);
+        // if sort exists in filters, then sort by newest or oldest
+        if (request('sortby') === 'oldest') {
+            $query->oldest();
+        } else {
+            $query->latest();
         }
     }
 
@@ -127,13 +112,5 @@ class Task extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
     }
 }

@@ -21,10 +21,8 @@ class SettingsController extends Controller
     public function index()
     {
         return Inertia::render('Settings/Index', [
-            'register_path' => URL::to('/register/new-team-member'),
             'user' => [
                 'id' => auth()->user()->id,
-                'company_slug' => auth()->user()->is_admin ? auth()->user()->company->slug : null,
                 'name' => auth()->user()->name,
                 'email' => auth()->user()->email,
                 'username' => auth()->user()->username,
@@ -89,7 +87,6 @@ class SettingsController extends Controller
 
     public function deleteAccount(Request $request)
     {
-
         File::cleanDirectory(public_path() . '/images/user' . auth()->user()->id);
 
         Auth::guard('web')->logout();

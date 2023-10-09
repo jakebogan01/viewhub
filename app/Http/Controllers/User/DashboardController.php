@@ -8,14 +8,9 @@ use App\Models\Project;
 use App\Models\Status;
 use App\Models\Tag;
 use App\Models\Task;
-use App\Models\TaskLikes;
 use App\Models\TemporaryImage;
-use App\Models\User;
-use App\Notifications\TaskLiked;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
@@ -32,10 +27,8 @@ class DashboardController extends Controller
         // return Task::latest()->paginate();
 
         return Inertia::render('Dashboard/Index', [
-            'tasks' => Task::query()->whereHas('project', function($query) {
-                    $query->where('company_id', auth()->user()->company_id);
-                })
-                ->filter(request(['project', 'search', 'status', 'tag']))
+            'tasks' => Task::query()
+                ->filter(request(['search', 'status', 'tag']))
                 ->simplePaginate(6)
                 ->withQueryString()
                 ->through(fn($task) => [
@@ -43,43 +36,31 @@ class DashboardController extends Controller
                     'title' => $task->title,
                     'slug' => $task->slug,
                     'description' => $task->description,
-                    'priority' => $task->priority,
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
                     'owner_id' => $task->user->id,
+                    'created_at' => $task->created_at
+                        ->setTimezone(auth()->user()->timezone)
+                        ->format('F j, Y, g:i a'),
                 ]),
-            'count' => Task::whereHas('project', function($query) {
-                $query->where('company_id', auth()->user()->company_id);
-            })->count(),
-            'filters' => request()->only(['project', 'search', 'status', 'tag', 'sortby', 'date', 'liked', 'priority']),
-            'projects' => Project::where('company_id', auth()->user()->company_id)->get(['id', 'name']),
-            'tags' => Tag::whereHas('tasks', function($query) {
-                $query->whereHas('project', function($query) {
-                    $query->where('company_id', auth()->user()->company_id);
-                });
-            })->get(['id', 'name']),
+            'count' => Task::count(),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked']),
+            'tags' => Tag::all(),
             'user' => Auth::user()
         ]);
     }
 
-    public function allProjects()
+    public function allTasks()
     {
-        auth()->user()->update([
-            'onboarded' => true,
-        ]);
-
-        return Inertia::render('Dashboard/Projects', [
-            'projects' => Project::
-                where('company_id', auth()->user()->company_id)
-                ->simplePaginate(6)
+        return Inertia::render('Dashboard/AllTasks', [
+            'tasks' => Task::
+                simplePaginate(6)
                 ->withQueryString()
-                ->through(fn($project) => [
-                    'id' => $project->id,
-                    'name' => $project->name,
-                    'description' => $project->description,
-                    'number_of_tasks' => $project->tasks->count(),
-                    'created_at' => $project->created_at->format('F j, Y'),
+                ->through(fn($task) => [
+                    'id' => $task->id,
+                    'title' => $task->title,
+                    'slug' => $task->slug,
                 ]),
         ]);
     }
@@ -90,36 +71,15 @@ class DashboardController extends Controller
     public function create()
     {
         return Inertia::render('Dashboard/Create', [
-            'param' => request('project'),
-            'projects' => Project::where('company_id', auth()->user()->company_id)->get(),
             'tags' => Tag::all(),
             'statuses' => Status::all(),
         ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function storeProject(Request $request)
-    {
-        $request->validate([
-            'project_name' => 'required|string|max:255',
-            'project_description' => 'required|string|max:255'
-        ]);
-
-        $project = Project::create([
-            'company_id' => auth()->user()->company_id,
-            'name' => $request->project_name,
-            'description' => $request->project_description,
-        ]);
-
-        return redirect('/dashboard?project=' . $project->name)->with('message', 'Project created successfully!');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function storeTask(Request $request)
+    public function store(Request $request)
     {
         $attributes = $this->validateTask();
 
@@ -217,7 +177,6 @@ class DashboardController extends Controller
         return Inertia::render('Dashboard/Edit', [
             'task' => [
                 'id' => $task->id,
-                'project_id' => $task->project->id,
                 'title' => $task->title,
                 'description' => $task->description,
                 'priority' => $task->priority,
@@ -236,26 +195,10 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function updateProject(Project $project)
-    {
-        $attributes = request()->validate([
-            'project_name' => 'required|string|max:255',
-            'project_description' => 'max:255'
-        ]);
-
-        $project = Project::find($project->id);
-        $project->update([
-            'name' => $attributes['project_name'],
-            'description' => $attributes['project_description'],
-        ]);
-
-        return to_route('dashboard.projects')->with('message', 'Project updated successfully!');
-    }
-
     /**
      * Update the specified resource in storage.
      */
-    public function updateTask(Task $task, Request $request)
+    public function update(Task $task, Request $request)
     {
         if ($task->user_id !== auth()->user()->id) {
             abort(403);
@@ -290,7 +233,7 @@ class DashboardController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroyTask(Task $task)
+    public function destroy(Task $task)
     {
         if ($task->user_id !== auth()->user()->id) {
             abort(403);
@@ -308,28 +251,6 @@ class DashboardController extends Controller
         $task->delete();
 
         return to_route('dashboard.index')->with('message', 'Task deleted successfully!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroyProject(Project $project)
-    {
-        $tasks = Task::where('project_id', $project->id)->get();
-        foreach($tasks as $task) {
-            $images = Image::where('task_id', $task->id)->get();
-            foreach($images as $image) {
-                File::delete(public_path('images/' . $image->path));
-                $image->delete();
-            }
-            $task->comments->each(function($comment) {
-                $comment->delete();
-            });
-            $task->delete();
-        }
-        $project->delete();
-
-        return to_route('dashboard.projects')->with('message', 'Project deleted successfully!');
     }
 
     /**
@@ -364,7 +285,6 @@ class DashboardController extends Controller
             'description' => 'required',
             'priority' => 'required|integer|between:0,1',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
-            'project_id' => ['required', Rule::exists('projects', 'id')],
         ]);
     }
 

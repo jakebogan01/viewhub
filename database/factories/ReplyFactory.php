@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Reply;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Reply>
+ * @extends Factory<Reply>
  */
 class ReplyFactory extends Factory
 {
@@ -13,13 +15,14 @@ class ReplyFactory extends Factory
      * Define the model's default state.
      *
      * @return array<string, mixed>
+     * @throws Exception
      */
     public function definition(): array
     {
         return [
-            'comment_id' => 1,
-            'user_id' => 1,
-            'recipient_id' => 1,
+            'comment_id' => random_int(1, 30),
+            'user_id' => random_int(1, 30),
+            'recipient_id' => random_int(1, 30),
             'body' => fake()->paragraph(),
         ];
     }
