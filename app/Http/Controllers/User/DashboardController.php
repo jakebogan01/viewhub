@@ -39,10 +39,8 @@ class DashboardController extends Controller
                     'tag' => $task->tag->name,
                     'status' => $task->status->name,
                     'likes' => $task->likes->count(),
+                    'comment_count' => $task->comments->count(),
                     'owner_id' => $task->user->id,
-                    'created_at' => $task->created_at
-                        ->setTimezone(auth()->user()->timezone)
-                        ->format('F j, Y, g:i a'),
                 ]),
             'count' => Task::count(),
             'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked']),
@@ -121,13 +119,14 @@ class DashboardController extends Controller
                 'title' => $task->title,
                 'slug' => $task->slug,
                 'description' => $task->description,
-                'priority' => $task->priority,
-                'due_date' => $task->due_date ? $task->due_date->format('m/d/y') : null,
                 'tag' => $task->tag->name,
                 'user' => $task->user->name,
                 'user_id' => $task->user->id,
                 'likes' => $task->likes->count(),
                 'owner_id' => $task->user->id,
+                'created_at' => $task->created_at
+                    ->setTimezone(auth()->user()->timezone)
+                    ->format('F j, Y, g:i a'),
                 'images' => $task->images->map(function($image) {
                     return [
                         'id' => $image->id,

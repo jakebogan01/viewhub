@@ -12,7 +12,7 @@
     let showNotifications = false;
 </script>
 
-<div>
+<div class="font-jost font-normal max-w-[1200px] mx-auto">
     <div class="min-h-screen bg-gray-100 {auth.user.dark_mode ? 'dark' : ''}">
         <nav class="bg-white border-b border-gray-100">
             <!-- Primary Navigation Menu -->
