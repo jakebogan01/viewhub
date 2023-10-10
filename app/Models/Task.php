@@ -58,6 +58,11 @@ class Task extends Model
             $query->withCount('likes')->orderByDesc('likes_count');
         }
 
+        // if commented exists in filters, then sort by count comments
+        if (request('commented')) {
+            $query->withCount('comments')->orderByDesc('comments_count');
+        }
+
         // if sort exists in filters, then sort by newest or oldest
         if (request('sortby') === 'oldest') {
             $query->oldest();

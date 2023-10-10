@@ -27,17 +27,14 @@
     console.log('User: ', user);
 
     let route = '/dashboard';
-    let showStatusDropdown = false;
-    let showSortByDropdown = false;
     let search = filters.search || '';
-    // let updateStatusDropdownSelection = filters.status || 'All';
-    let updateSortByDropdownSelection = filters.liked ? 'Most Popular' :  'All';
     let timer;
     let rotateArrow = false;
     let enableDarkMode = auth.user.dark_mode;
     let showSearch;
     let searchInput;
-    let activeLikeFilter, activeCommentFilter = false;
+    let activeLikeFilter, activeCommentFilter, activeSortFilter = false;
+    let showNotifications = false;
     const randomColor = ['#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#E6F598', '#ABDDA4', '#66C2A6', '#3388BD', '#5E4FA2', '#31207d'];
 
     const toggleDarkMode = () => {
@@ -69,21 +66,23 @@
         }, 300);
     }
 
-    $: filterByDateData = {
-        search: filters.search,
-        tag: filters.tag,
-        status: filters.status,
-        liked: filters.liked,
-        ...(!rotateArrow) && {sortby: 'oldest'},
-    }
+    window.addEventListener('keydown', (e) => {
+        if (e.keyCode === 83 && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            showSearch = true;
+            searchInput.focus();
+            debounce('');
+        }
+        if (e.keyCode === 27) {
+            showNotifications = false;
+        }
+    });
 
-    const sortByCreatedBy = () => {
-        rotateArrow = !rotateArrow;
-        Inertia.get(route, filterByDateData, {
-            // prevents the browser's history from being updated
-            replace: true,
-            preserveScroll: true
-        });
+    const submitSearch = (e) => {
+        if (e.keyCode === 13 || e.keyCode === 27) {
+            showSearch = false;
+            search = '';
+        }
     }
 </script>
 
@@ -91,6 +90,33 @@
     <title>Dashboard</title>
 </svelte:head>
 
+{#if showNotifications}
+    <div class="fixed right-2.5 bottom-2.5 w-[350px] mt-4 space-y-2 z-50" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+        {#each auth.user.unreadNotifications.reverse() as notification}
+            <div class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+                <div class="p-4">
+                    <div class="flex items-start">
+                        <div class="ml-3 w-0 flex-1 pt-0.5">
+                            {#if notification.type === 'App\\Notifications\\CommentReceived'}
+                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span>commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.comment_id}" class="text-blue-500 font-bold">task</a></p>
+                            {:else if notification.type === 'App\\Notifications\\CommentReplyReceived'}
+                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span>replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.reply_id}" class="text-blue-500 font-bold">comment</a></p>
+                            {:else}
+                                <p class="text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a>was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
+                            {/if}
+                        </div>
+                        <div class="ml-4 flex flex-shrink-0">
+                            <button type="button" use:inertia="{{ href: '/notification-mark-read', method: 'post', data: { id: notification.id }, replace: true, }}" class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                <span class="sr-only">Close</span>
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {/each}
+    </div>
+{/if}
 
 <div class="flex gap-x-[30px]">
     <div class="min-w-[255px] max-w-[255px] space-y-6">
@@ -109,7 +135,7 @@
         <!--end company banner-->
 
         <!--start tags-->
-        <div class="bg-white dark:bg-[#1E283A] p-6 rounded-[0.625rem]">
+        <div class="bg-white dark:bg-[#1E283A] p-3.5 rounded-[0.625rem]">
             <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
 
@@ -167,15 +193,15 @@
         <!--start nav-->
         <nav class="relative flex items-center justify-between md:rounded-[0.625rem] px-6 py-2 md:py-3.5 md:px-3 1440:px-4 1440:py-4 bg-[#10263E] text-13 text-[#F3F4FE]">
             <div class="flex items-center">
-                <div class="hidden md:flex items-center mr-10">
+                <div class="hidden md:flex items-center">
                     <svg width="23" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 2.274c2.237 0 4.339.854 5.923 2.408a8.123 8.123 0 012.465 5.839 8.084 8.084 0 01-1.7 4.979 8.457 8.457 0 01-3.652 2.71l-.31.112.003.826h.369c.262 0 .475.21.475.469a.47.47 0 01-.39.46l-.085.008h-.365l.004 1.02h.36c.263 0 .476.21.476.469a.47.47 0 01-.39.461l-.085.008h-.358l.006 1.487a.466.466 0 01-.381.46l-.094.01H9.23a.478.478 0 01-.466-.378l-.01-.092.006-1.487h-.357a.472.472 0 01-.475-.47.47.47 0 01.39-.46l.085-.008h.361l.004-1.02h-.365a.472.472 0 01-.475-.468.47.47 0 01.39-.462l.085-.007h.368l.004-.826a8.452 8.452 0 01-3.996-2.867 8.08 8.08 0 01-1.666-5.056c.032-2.127.923-4.152 2.511-5.7 1.508-1.471 3.448-2.322 5.493-2.416l.324-.009h.06zm1.791 19.769H9.709l-.004 1.02h3.59l-.004-1.02zm-.007-1.958H9.716l-.003 1.02h3.574l-.003-1.02zM11.5 3.212h-.054c-3.946.027-7.327 3.325-7.384 7.2-.048 3.266 2.14 6.192 5.322 7.118.174.05.3.193.332.364l.008.088-.004 1.166h3.56l-.004-1.166a.47.47 0 01.34-.452c3.134-.912 5.323-3.794 5.323-7.01a7.197 7.197 0 00-2.185-5.173A7.453 7.453 0 0011.5 3.212zm.829 1.782a.4.4 0 01.401.397v.322c.48.12.932.307 1.346.552l.228-.226a.405.405 0 01.569 0L16.046 7.2a.393.393 0 010 .56l-.23.228c.247.41.437.858.557 1.333h.323a.4.4 0 01.402.397v1.645a.4.4 0 01-.402.396h-.323c-.12.476-.31.924-.557 1.333l.23.228a.393.393 0 010 .56l-1.173 1.163a.405.405 0 01-.57 0l-.227-.227a5.02 5.02 0 01-1.346.553v.322a.4.4 0 01-.401.396H10.67a.4.4 0 01-.402-.396v-.322a5.022 5.022 0 01-1.345-.553l-.228.227a.405.405 0 01-.569 0L6.954 13.88a.393.393 0 010-.56l.23-.228a4.924 4.924 0 01-.557-1.333h-.324a.4.4 0 01-.401-.396V9.719a.4.4 0 01.401-.397h.324c.12-.475.31-.923.557-1.333l-.23-.228a.393.393 0 010-.56L8.127 6.04a.405.405 0 01.569 0l.228.226a5.021 5.021 0 011.345-.552V5.39a.4.4 0 01.402-.397zM11.5 7.721c-1.572 0-2.846 1.263-2.846 2.82 0 1.558 1.274 2.82 2.846 2.82s2.846-1.262 2.846-2.82c0-1.557-1.274-2.82-2.846-2.82zm11.025 4.152c.262 0 .475.21.475.469a.47.47 0 01-.39.461l-.085.008h-.498a.472.472 0 01-.475-.469.47.47 0 01.39-.461l.085-.008h.498zm-21.552 0c.262 0 .475.21.475.469a.47.47 0 01-.39.461l-.085.008H.475A.472.472 0 010 12.342a.47.47 0 01.39-.461l.085-.008h.498zM3.112 3.45l.074.06.46.451c.185.183.186.48 0 .663a.476.476 0 01-.596.062l-.075-.06-.459-.451a.465.465 0 01-.001-.663.48.48 0 01.597-.062zm17.373.062c.162.16.182.408.06.59l-.061.073-.46.45a.476.476 0 01-.67 0 .464.464 0 01-.06-.59l.06-.074.46-.45a.48.48 0 01.671 0zM11.5 0c.233 0 .427.166.467.384l.008.085v.49a.472.472 0 01-.475.468.473.473 0 01-.467-.384l-.008-.084v-.49c0-.26.213-.469.475-.469z" fill="#FFF" fill-rule="nonzero"/></svg>
                     <span class="font-bold text-white text-lg ml-4">{count} Suggestions</span>
                 </div>
             </div>
             <div class="dark:bg-slate-900 relative pointer-events-auto">
-                <button on:click={()=>{showSearch = !showSearch}} type="button" class="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 border border-[#1e3e66] rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
+                <button on:click={()=>{showSearch = !showSearch; debounce('');}} type="button" class="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 border border-[#1e3e66] rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
                     <svg width="24" height="24" fill="none" aria-hidden="true" class="mr-3 flex-none"><path d="m19 19-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
-                    Quick search...<span class="ml-auto pl-3 flex-none text-xs font-semibold">&#8984;K</span>
+                    Quick search...<span class="ml-auto pl-3 flex-none text-xs font-semibold">CTR&#43;S</span>
                 </button>
             </div>
             <div>
@@ -186,25 +212,35 @@
 
         <main>
             <!--start filters-->
-            <div class="flex justify-end text-[#AD1FE9] mb-2">
+            <div class="flex justify-between text-[#AD1FE9] mb-2">
                 <div class="flex space-x-px">
                     {#if activeLikeFilter}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status }, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false}} class="block py-2 px-3 hover:bg-bg-transparent rounded-tl-md rounded-bl-md {activeLikeFilter ? 'bg-gray-200' : ''}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg>
-                        </button>
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status }, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = false; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-bg-transparent rounded-tl-md rounded-bl-md {activeLikeFilter ? 'bg-transparent' : ''}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg></button>
                     {:else}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, liked: true}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = true}} class="block py-2 px-3 hover:bg-transparent rounded-tl-md rounded-bl-md {activeLikeFilter ? '' : 'bg-white'}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg>
-                        </button>
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status, liked: true}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = true; activeCommentFilter = false; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-transparent rounded-tl-md rounded-bl-md {activeLikeFilter ? '' : 'bg-white'}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg></button>
                     {/if}
 
                     {#if activeCommentFilter}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, liked: true}, replace: true, preserveScroll: true }}" on:click={()=>{activeCommentFilter = false}} class="block py-2 px-3 hover:bg-transparent rounded-tr-md rounded-br-md {activeCommentFilter ? 'bg-gray-200' : ''}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = false; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-transparent {activeCommentFilter ? 'bg-transparent' : ''}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg></button>
+                    {:else}
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status, commented: true}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = true; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-transparent {activeCommentFilter ? '' : 'bg-white'}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg></button>
+                    {/if}
+
+                    {#if activeSortFilter}
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = false; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-transparent rounded-tr-md rounded-br-md {activeSortFilter ? 'bg-transparent' : ''}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" /></svg></button>
+                    {:else}
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: 'oldest', status: filters.status}, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = false; activeSortFilter = true;}} class="block py-2 px-3 hover:bg-transparent rounded-tr-md rounded-br-md {activeSortFilter ? '' : 'bg-white'}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M14.77 12.79a.75.75 0 01-1.06-.02L10 8.832 6.29 12.77a.75.75 0 11-1.08-1.04l4.25-4.5a.75.75 0 011.08 0l4.25 4.5a.75.75 0 01-.02 1.06z" clip-rule="evenodd" /></svg></button>
+                    {/if}
+                </div>
+
+                <div class="flex space-x-px">
+                    {#if auth.user.unreadNotifications.length > 0}
+                        <button type="button" on:click={()=>{showNotifications = !showNotifications}} class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="{auth.user.unreadNotifications.length > 0 ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
                         </button>
                     {:else}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, liked: true}, replace: true, preserveScroll: true }}" on:click={()=>{activeCommentFilter = true}} class="block py-2 px-3 hover:bg-transparent rounded-tr-md rounded-br-md {activeCommentFilter ? '' : 'bg-white'}">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" /></svg>
+                        <button type="button" class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
                         </button>
                     {/if}
                 </div>
@@ -262,159 +298,22 @@
             <!--end suggestions-->
 
             <!--pagination-->
-            <div class="flex {tasks.prev_page_url ? 'justify-between' : 'justify-end'} my-6">
+            <div class="flex justify-between my-6">
                 {#if tasks.prev_page_url}
                     <a use:inertia href="{tasks.prev_page_url}" class="text-[#AD1FE9]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
+                {:else}
+                    <button type="button" class="text-[#AD1FE9] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
                 {/if}
 
                 {#if tasks.next_page_url}
                     <a use:inertia href="{tasks.next_page_url}" class="text-[#AD1FE9]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
+                {:else}
+                    <button type="button" class="text-[#AD1FE9] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
                 {/if}
             </div>
         </main>
     </div>
 </div>
-
-
-<section class="p-6 dark:bg-gray-500">
-    <div class="max-w-3xl mx-auto">
-
-        {#if flash.message}
-            <div class="text-green-500 font-bold">{flash.message}</div>
-        {/if}
-
-        <div class="flex justify-between items-center mb-12">
-            <div>
-                <p>Total: {count}</p>
-            </div>
-            <div>
-                <a use:inertia href="/dashboard/task/create" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">Create Task</a>
-            </div>
-        </div>
-
-        <div class="flex space-x-8">
-            <div class="basis-4/12">
-                <!--sort by-->
-                <div>
-                    <div class="relative mt-2">
-                        <label for class="font-bold">Sort By:</label>
-                        <button on:click={()=>{ showSortByDropdown = !showSortByDropdown }} type="button" class="relative w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
-                            <span class="block truncate">{@html updateSortByDropdownSelection}</span>
-                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd"/></svg>
-                        </span>
-                        </button>
-
-                        {#if showSortByDropdown}
-                            <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>All</button>
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, status: filters.status, liked: true}, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateSortByDropdownSelection = event.target.innerText; showSortByDropdown = !showSortByDropdown; }}>Most Popular</button>
-                            </div>
-                        {/if}
-                    </div>
-                </div>
-
-                <!--list of statuses-->
-<!--                <div>-->
-<!--                    <div class="relative mt-2">-->
-<!--                        <label for class="font-bold">Statuses:</label>-->
-<!--                        <button on:click={()=>{ showStatusDropdown = !showStatusDropdown }} type="button" class="relative w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"-->
-<!--                                aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">-->
-<!--                            <span class="block truncate">{@html updateStatusDropdownSelection}</span>-->
-<!--                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">-->
-<!--                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd"/></svg>-->
-<!--                        </span>-->
-<!--                        </button>-->
-
-<!--                        {#if showStatusDropdown}-->
-<!--                            <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">-->
-<!--                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>All</button>-->
-<!--                                {#each statuses as status}-->
-<!--                                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>{status}</button>-->
-<!--                                {/each}-->
-<!--                            </div>-->
-<!--                        {/if}-->
-<!--                    </div>-->
-<!--                </div>-->
-
-                <!--list of tags-->
-                <div class="mt-4">
-                    <div class="bg-gray-300 p-6 min-w-[15.9375rem] max-w-[15.9375rem] rounded-[0.625rem]">
-                        <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
-                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
-
-                            {#each tags as tag (tag.id)}
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
-                            {/each}
-                        </div>
-                    </div>
-                </div>
-
-                <!--dark mode-->
-                <div class="mt-4">
-                    <button type="button" on:click={toggleDarkMode} class="block bg-white hover:bg-gray-200 rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">Enable Dark Mode</button>
-                </div>
-            </div>
-
-            <div class="basis-full">
-                <!--Search-->
-                <div class="flex justify-between mb-6">
-                    <h1 class="text-3xl">All Tasks</h1>
-                    <input on:keyup={({ target: { value } }) => debounce(value)} value={search} type="text"
-                           placeholder="Search by Title or Tag or User" class="border px-2 rounded-lg"/>
-                </div>
-
-                <!--sort by oldest and newest-->
-                <div class="flex justify-end">
-                    <button type="button" on:click={sortByCreatedBy}>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 transform transition-transform {rotateArrow ? 'rotate-180' : 'rotate-0'}"><path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 011.06 0l7.5 7.5a.75.75 0 11-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 01-1.06-1.06l7.5-7.5z" clip-rule="evenodd" /></svg>
-                    </button>
-                </div>
-
-                <!--list of tasks-->
-                <div class="space-y-4 mt-5">
-                    {#if tasks.data.length < 1}
-                        <p>There currently are no tasks</p>
-                    {:else}
-                        {#each tasks.data as task (task.id)}
-                            <div class="relative border border-gray-200 rounded p-4 my-2">
-                                <div class="flex items-center justify-between">
-                                    <a use:inertia href="/dashboard/tasks/{task.slug}">
-                                        <h2 class="text-2xl font-bold pb-3">{task.title}</h2>
-                                        <p>{task.created_at}</p>
-                                    </a>
-                                    <span class="whitespace-nowrap">Status: <span class="text-[#3bba2d] bg-[#d4facf] p-2 rounded">{task.status}</span></span>
-                                </div>
-                                <p class="mt-4">{@html task.description}</p>
-                                <a use:inertia href="/dashboard" class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white">{task.tag}</a>
-                                <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}">Like</button>
-                                <span>{task.likes}</span>
-                            </div>
-                        {:else}
-                            <p>There currently are no tasks</p>
-                        {/each}
-                    {/if}
-                </div>
-
-                <!--pagination-->
-                <div>
-                    <div class="mt-6">
-                        {#if tasks.prev_page_url}
-                            <a use:inertia href="{tasks.prev_page_url}" class="px-1">&laquo; Prev</a>
-                        {/if}
-
-                        {#if tasks.next_page_url}
-                            <a use:inertia href="{tasks.next_page_url}" class="px-1">Next &raquo;</a>
-                        {/if}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-
 
 {#if showSearch}
     <div
@@ -424,27 +323,15 @@
         aria-modal="true"
         data-headlessui-state="open"
         on:keydown={() => {}}
-        on:click|self={() => (showSearch = false)}
-    >
-        <div
-            class="fixed inset-0 bg-slate-900/25 backdrop-blur transition-opacity opacity-100"
-            on:keydown={() => {}}
-            on:click|self={() => (showSearch = false)}
-        />
-        <div
-            class="relative w-full max-w-lg transform px-4 transition-all opacity-100 scale-100"
-            on:keydown={() => {}}
-            on:click|self={() => (showSearch = false)}
-        >
-            <div
-                class="overflow-hidden rounded-lg bg-white shadow-md"
-                id="headlessui-dialog-panel-531"
-                data-headlessui-state="open"
-            >
+        on:click|self={() => (showSearch = false)}>
+        <div class="fixed inset-0 bg-slate-900/25 backdrop-blur transition-opacity opacity-100" on:keydown={() => {}} on:click|self={() => (showSearch = false)}/>
+        <div class="relative w-full max-w-lg transform px-4 transition-all opacity-100 scale-100" on:keydown={() => {}} on:click|self={() => (showSearch = false)}>
+            <div class="overflow-hidden rounded-lg bg-white shadow-md" id="headlessui-dialog-panel-531" data-headlessui-state="open">
                 <form on:submit|preventDefault class="relative flex items-center justify-between shadow-sm">
                     <input
+                        on:keyup={({ target: { value } }) => debounce(value)}
+                        on:keydown={submitSearch}
                         class="block w-full appearance-none bg-transparent py-4 pl-4 pr-12 text-base text-slate-900 outline-none border-0 border-none placeholder:text-slate-600 focus:outline-none sm:text-sm sm:leading-6 focus-visible"
-                        placeholder="Find anything..."
                         aria-label="Search components"
                         id="headlessui-combobox-input-532"
                         role="combobox"
@@ -452,26 +339,15 @@
                         aria-expanded="true"
                         aria-autocomplete="list"
                         data-headlessui-state="open"
-                        bind:value={searchInput}
+                        value={search}
                         tabindex="0"
                         style="caret-color: rgb(107, 114, 128);"
                         data-focus-visible-added=""
                         aria-controls="headlessui-combobox-options-533"
+                        placeholder="Search by Title or Tag or User"
                         autofocus
                     />
-
-<!--                    <input on:keyup={({ target: { value } }) => debounce(value)} value={search} type="text"-->
-<!--                           placeholder="Search by Title or Tag or User" class="border px-2 rounded-lg"/>-->
-<!--                    -->
-                    <button type="submit"
-                    ><svg
-                        class="cursor-pointer absolute right-4 top-4 h-6 w-6 fill-slate-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                    ><path
-                        d="M20.47 21.53a.75.75 0 1 0 1.06-1.06l-1.06 1.06Zm-9.97-4.28a6.75 6.75 0 0 1-6.75-6.75h-1.5a8.25 8.25 0 0 0 8.25 8.25v-1.5ZM3.75 10.5a6.75 6.75 0 0 1 6.75-6.75v-1.5a8.25 8.25 0 0 0-8.25 8.25h1.5Zm6.75-6.75a6.75 6.75 0 0 1 6.75 6.75h1.5a8.25 8.25 0 0 0-8.25-8.25v1.5Zm11.03 16.72-5.196-5.197-1.061 1.06 5.197 5.197 1.06-1.06Zm-4.28-9.97c0 1.864-.755 3.55-1.977 4.773l1.06 1.06A8.226 8.226 0 0 0 18.75 10.5h-1.5Zm-1.977 4.773A6.727 6.727 0 0 1 10.5 17.25v1.5a8.226 8.226 0 0 0 5.834-2.416l-1.061-1.061Z"
-                    /></svg
-                    ></button
-                    >
+                    <button type="submit"><svg class="cursor-pointer absolute right-4 top-4 h-6 w-6 fill-slate-400" xmlns="http://www.w3.org/2000/svg"><path d="M20.47 21.53a.75.75 0 1 0 1.06-1.06l-1.06 1.06Zm-9.97-4.28a6.75 6.75 0 0 1-6.75-6.75h-1.5a8.25 8.25 0 0 0 8.25 8.25v-1.5ZM3.75 10.5a6.75 6.75 0 0 1 6.75-6.75v-1.5a8.25 8.25 0 0 0-8.25 8.25h1.5Zm6.75-6.75a6.75 6.75 0 0 1 6.75 6.75h1.5a8.25 8.25 0 0 0-8.25-8.25v1.5Zm11.03 16.72-5.196-5.197-1.061 1.06 5.197 5.197 1.06-1.06Zm-4.28-9.97c0 1.864-.755 3.55-1.977 4.773l1.06 1.06A8.226 8.226 0 0 0 18.75 10.5h-1.5Zm-1.977 4.773A6.727 6.727 0 0 1 10.5 17.25v1.5a8.226 8.226 0 0 0 5.834-2.416l-1.061-1.061Z"/></svg></button>
                 </form>
             </div>
         </div>

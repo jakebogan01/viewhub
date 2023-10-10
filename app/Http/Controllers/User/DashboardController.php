@@ -43,7 +43,7 @@ class DashboardController extends Controller
                     'owner_id' => $task->user->id,
                 ]),
             'count' => Task::count(),
-            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked']),
+            'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked', 'commented']),
             'tags' => Tag::all(),
             'statuses' => Status::all()->map(function($status) {
                 return [
