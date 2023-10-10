@@ -111,7 +111,7 @@
 
 <div class="flex gap-x-[30px]">
     <div class="relative min-w-[255px] max-w-[255px]">
-        <div class="fixed min-w-[255px] max-w-[255px] space-y-6">
+        <div class="fixed max-h-full min-w-[255px] max-w-[255px] space-y-6 pb-16 overflow-y-scroll">
             <!--start company banner-->
             <aside class="relative flex-1 flex items-center md:items-end justify-between hover:shadow-lg md:rounded-[0.625rem] px-6 pb-6 md:px-8 pt-[61px]" style="background-image: linear-gradient(to bottom right, #000000, #414042);">
                 <div class="mt-1 md:mt-0 whitespace-nowrap">
@@ -127,7 +127,7 @@
             <!--end company banner-->
 
             <!--start tags-->
-            <div class="bg-white dark:bg-[#1E283A] p-3.5 hover:shadow-lg rounded-[0.625rem]">
+            <div class="bg-white dark:bg-[#1E283A] px-3.5 py-6 hover:shadow-lg rounded-[0.625rem]">
                 <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
                     <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
 
