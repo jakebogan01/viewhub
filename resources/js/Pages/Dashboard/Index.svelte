@@ -16,20 +16,24 @@
     export let count;
     export let filters;
     export let tags;
+    export let statuses;
     export let user;
+    export let showSearch;
+    export let searchInput;
+    const randomColor = ['#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#E6F598', '#ABDDA4', '#66C2A6', '#3388BD', '#5E4FA2', '#31207d'];
 
     console.log('Filters: ', filters);
     console.log('Count: ', count);
     console.log('Tasks: ', tasks);
     console.log('Tags: ', tags);
+    console.log('Statuses: ', statuses);
     console.log('User: ', user);
 
-    let statuses = ['Marketing', 'Sales', 'Commercial', 'Consumer', 'Graphics', 'Operations', 'IT', 'Finance', 'Legal', 'Officers'];
     let route = '/dashboard';
     let showStatusDropdown = false;
     let showSortByDropdown = false;
     let search = filters.search || '';
-    let updateStatusDropdownSelection = filters.status || 'All';
+    // let updateStatusDropdownSelection = filters.status || 'All';
     let updateSortByDropdownSelection = filters.liked ? 'Most Popular' :  'All';
     let timer;
     let rotateArrow = false;
@@ -80,9 +84,6 @@
             preserveScroll: true
         });
     }
-
-    export let showSearch;
-    export let searchInput;
 </script>
 
 <svelte:head>
@@ -92,7 +93,8 @@
 
 <div class="flex gap-x-[30px]">
     <div class="min-w-[255px] max-w-[255px] space-y-6">
-        <aside class="relative flex-1 md:max-w-[38.88125rem] flex items-center md:items-end justify-between bg-green-500 h-[11.125rem] 1440:max-h-[8.5625rem] 1440:min-w-[15.9375rem] md:rounded-[0.625rem] md:h-auo px-6 py-6 md:px-8 md:py-6 z-50" on:keydown={()=>{}} on:click|self={()=>{showDropList = false}}>
+        <!--start company banner-->
+        <aside class="relative flex-1 flex items-center md:items-end justify-between bg-green-500 h-[11.125rem] 1440:max-h-[8.5625rem] md:rounded-[0.625rem] md:h-auo px-6 py-6 md:px-8 md:py-6 z-50">
             <div class="mt-1 md:mt-0 whitespace-nowrap">
                 <h1 class="font-bold text-15 md:text-xl text-white leading-none">PNY Technologies</h1>
                 <span class="font-medium text-13 md:text-15 text-[#E1D5FC]">Feedback Board</span>
@@ -103,7 +105,9 @@
                 <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
             </div>
         </aside>
+        <!--end company banner-->
 
+        <!--start tags-->
         <div class="bg-white dark:bg-[#1E283A] p-6 rounded-[0.625rem]">
             <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
                 <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
@@ -113,6 +117,37 @@
                 {/each}
             </div>
         </div>
+        <!--end tags-->
+
+        <!--start departments-->
+        <div class="hidden md:block ">
+            <div class="bg-white dark:bg-[#1E293B] p-6 rounded-[0.625rem]">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
+                    <a href="/roadmap" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
+                </div>
+                <div>
+                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4 1440:mt-6">
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
+                            <span class="text-base text-[#647196] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize">All</span>
+                        </span>
+                    </button>
+                    {#each statuses as status, i (status.id)}
+                        {#if status.count > 0}
+                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status.name, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4 1440:mt-6">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-3" style="background-color: {randomColor[i]}"></span>
+                                    <span class="text-base text-[#647196] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize">{status.name}</span>
+                                </span>
+                                <span class="font-bold text-base text-[#647196] dark:text-[#D1D7E9] cursor-default">{status.count}</span>
+                            </button>
+                        {/if}
+                    {/each}
+                </div>
+            </div>
+        </div>
+        <!--end departments-->
     </div>
 
     <div class="w-full space-y-6">
@@ -242,27 +277,27 @@
                 </div>
 
                 <!--list of statuses-->
-                <div>
-                    <div class="relative mt-2">
-                        <label for class="font-bold">Statuses:</label>
-                        <button on:click={()=>{ showStatusDropdown = !showStatusDropdown }} type="button" class="relative w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
-                            <span class="block truncate">{@html updateStatusDropdownSelection}</span>
-                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd"/></svg>
-                        </span>
-                        </button>
+<!--                <div>-->
+<!--                    <div class="relative mt-2">-->
+<!--                        <label for class="font-bold">Statuses:</label>-->
+<!--                        <button on:click={()=>{ showStatusDropdown = !showStatusDropdown }} type="button" class="relative w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"-->
+<!--                                aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">-->
+<!--                            <span class="block truncate">{@html updateStatusDropdownSelection}</span>-->
+<!--                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">-->
+<!--                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10 3a.75.75 0 01.55.24l3.25 3.5a.75.75 0 11-1.1 1.02L10 4.852 7.3 7.76a.75.75 0 01-1.1-1.02l3.25-3.5A.75.75 0 0110 3zm-3.76 9.2a.75.75 0 011.06.04l2.7 2.908 2.7-2.908a.75.75 0 111.1 1.02l-3.25 3.5a.75.75 0 01-1.1 0l-3.25-3.5a.75.75 0 01.04-1.06z" clip-rule="evenodd"/></svg>-->
+<!--                        </span>-->
+<!--                        </button>-->
 
-                        {#if showStatusDropdown}
-                            <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">
-                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>All</button>
-                                {#each statuses as status}
-                                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>{status}</button>
-                                {/each}
-                            </div>
-                        {/if}
-                    </div>
-                </div>
+<!--                        {#if showStatusDropdown}-->
+<!--                            <div class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm" tabindex="-1" role="listbox" aria-labelledby="listbox-label">-->
+<!--                                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>All</button>-->
+<!--                                {#each statuses as status}-->
+<!--                                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="font-normal block truncate text-gray-900 relative select-none py-2 pl-3 pr-9 w-full text-left" on:click={(event)=>{ updateStatusDropdownSelection = event.target.innerText; showStatusDropdown = !showStatusDropdown; }}>{status}</button>-->
+<!--                                {/each}-->
+<!--                            </div>-->
+<!--                        {/if}-->
+<!--                    </div>-->
+<!--                </div>-->
 
                 <!--list of tags-->
                 <div class="mt-4">
