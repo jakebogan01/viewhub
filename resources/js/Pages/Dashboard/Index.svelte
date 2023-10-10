@@ -37,15 +37,6 @@
     let showNotifications = false;
     const randomColor = ['#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#E6F598', '#ABDDA4', '#66C2A6', '#3388BD', '#5E4FA2', '#31207d'];
 
-    const toggleDarkMode = () => {
-        enableDarkMode = !enableDarkMode;
-
-        Inertia.post('/update-dark-mode', { dark_mode: enableDarkMode }, {
-            replace: true,
-            preserveScroll: true,
-        });
-    }
-
     // debounce search input
     const debounce = v => {
         clearTimeout(timer);
@@ -119,79 +110,85 @@
 {/if}
 
 <div class="flex gap-x-[30px]">
-    <div class="min-w-[255px] max-w-[255px] space-y-6">
-        <!--start company banner-->
-        <aside class="relative flex-1 flex items-center md:items-end justify-between bg-green-500 h-[11.125rem] 1440:max-h-[8.5625rem] md:rounded-[0.625rem] md:h-auo px-6 py-6 md:px-8 md:py-6">
-            <div class="mt-1 md:mt-0 whitespace-nowrap">
-                <h1 class="font-bold text-15 md:text-xl text-white leading-none">PNY Technologies</h1>
-                <span class="font-medium text-13 md:text-15 text-[#E1D5FC]">Feedback Board</span>
-            </div>
-            <div on:keydown={()=>{}} on:click class="md:hidden space-y-1">
-                <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
-                <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
-                <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
-            </div>
-        </aside>
-        <!--end company banner-->
+    <div class="relative min-w-[255px] max-w-[255px]">
+        <div class="fixed min-w-[255px] max-w-[255px] space-y-6">
+            <!--start company banner-->
+            <aside class="relative flex-1 flex items-center md:items-end justify-between hover:shadow-lg md:rounded-[0.625rem] px-6 pb-6 md:px-8 pt-[61px]" style="background-image: linear-gradient(to bottom right, #000000, #414042);">
+                <div class="mt-1 md:mt-0 whitespace-nowrap">
+                    <h1 class="font-bold text-15 md:text-xl text-white leading-none"><span class="text-[#238AB6]">PNY</span> Technologies</h1>
+                    <span class="font-medium text-13 md:text-15 text-white">Feedback <span class="text-[#238AB6]">Board</span></span>
+                </div>
+                <div on:keydown={()=>{}} on:click class="md:hidden space-y-1">
+                    <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
+                    <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
+                    <div class="w-5 h-[0.1875rem] bg-white duration-300 ease-in-out"></div>
+                </div>
+            </aside>
+            <!--end company banner-->
 
-        <!--start tags-->
-        <div class="bg-white dark:bg-[#1E283A] p-3.5 rounded-[0.625rem]">
-            <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
-                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
+            <!--start tags-->
+            <div class="bg-white dark:bg-[#1E283A] p-3.5 hover:shadow-lg rounded-[0.625rem]">
+                <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
+                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">All</button>
 
-                {#each tags as tag (tag.id)}
-                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
-                {/each}
+                    {#each tags as tag (tag.id)}
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-pointer">{tag.name}</button>
+                    {/each}
+                </div>
             </div>
-        </div>
-        <!--end tags-->
+            <!--end tags-->
 
-        <!--start departments-->
-        <div class="bg-white dark:bg-[#1E293B] p-6 rounded-[0.625rem]">
-            <div class="flex items-center justify-between">
-                <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
-                <a href="/roadmap" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
+            <!--start departments-->
+            <div class="bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem]">
+                <div class="flex items-center justify-between">
+                    <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
+                    <a href="/roadmap" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
+                </div>
+                <div>
+                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4">
+                        <span class="flex items-center">
+                            <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
+                            <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500'}">All</span>
+                        </span>
+                    </button>
+                    {#each statuses as status, i (status.id)}
+                        {#if status.count > 0}
+                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status.name, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-2.5 group">
+                                <span class="flex items-center">
+                                    <span class="w-2 h-2 rounded-full mr-3" style="background-color: {randomColor[i]}"></span>
+                                    <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-gray-500'}">{status.name}</span>
+                                </span>
+                                <span class="font-bold text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-[#21678B]'}">{status.count}</span>
+                            </button>
+                        {/if}
+                    {/each}
+                </div>
             </div>
-            <div>
-                <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4 1440:mt-6">
-                    <span class="flex items-center">
-                        <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
-                        <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500'}">All</span>
-                    </span>
+            <!--end departments-->
+
+            <!--start settings-->
+            <div class="flex justify-between items-center space-x-4">
+                <button type="button" use:inertia={{ href: '/logout', method: 'post' }} class="flex justify-center w-full bg-white text-[#186489] hover:text-[#798ef2] dark:bg-[#1E293B] p-6 rounded-[0.625rem] hover:shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z" clip-rule="evenodd" /></svg>
                 </button>
-                {#each statuses as status, i (status.id)}
-                    {#if status.count > 0}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status.name, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4 1440:mt-6 group">
-                            <span class="flex items-center">
-                                <span class="w-2 h-2 rounded-full mr-3" style="background-color: {randomColor[i]}"></span>
-                                <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-gray-500'}">{status.name}</span>
-                            </span>
-                            <span class="font-bold text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-[#647196]'}">{status.count}</span>
-                        </button>
+                <button type="button" on:click={()=>{enableDarkMode = !enableDarkMode}} use:inertia="{{ href: '/update-dark-mode', method: 'post', data: { dark_mode: enableDarkMode }, replace: true, preserveScroll: true }}" class="flex justify-center w-full bg-white text-[#186489] hover:text-[#798ef2] dark:bg-[#1E293B] p-6 rounded-[0.625rem] hover:shadow-lg">
+                    {#if enableDarkMode}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path d="M10 2a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 2zM10 15a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0110 15zM10 7a3 3 0 100 6 3 3 0 000-6zM15.657 5.404a.75.75 0 10-1.06-1.06l-1.061 1.06a.75.75 0 001.06 1.06l1.06-1.06zM6.464 14.596a.75.75 0 10-1.06-1.06l-1.06 1.06a.75.75 0 001.06 1.06l1.06-1.06zM18 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 0118 10zM5 10a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5A.75.75 0 015 10zM14.596 15.657a.75.75 0 001.06-1.06l-1.06-1.061a.75.75 0 10-1.06 1.06l1.06 1.06zM5.404 6.464a.75.75 0 001.06-1.06l-1.06-1.06a.75.75 0 10-1.061 1.06l1.06 1.06z" /></svg>
+                    {:else}
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 01.26.77 7 7 0 009.958 7.967.75.75 0 011.067.853A8.5 8.5 0 116.647 1.921a.75.75 0 01.808.083z" clip-rule="evenodd" /></svg>
                     {/if}
-                {/each}
+                </button>
+                <a use:inertia href="/dashboard/settings" class="flex justify-center w-full bg-white text-[#186489] hover:text-[#798ef2] dark:bg-[#1E293B] p-6 rounded-[0.625rem] hover:shadow-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 01.804.98v1.361a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.294 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.294A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.294-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd" /></svg>
+                </a>
             </div>
+            <!--end settings-->
         </div>
-        <!--end departments-->
-
-        <!--start settings-->
-        <div class="flex justify-between items-center space-x-4 overflow-hidden">
-            <button type="button" use:inertia={{ href: '/logout', method: 'post' }} class="flex justify-center w-full bg-white text-[#4661E6] hover:bg-gray-200 dark:bg-[#1E293B] p-6 rounded-[0.625rem]">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M3 4.25A2.25 2.25 0 015.25 2h5.5A2.25 2.25 0 0113 4.25v2a.75.75 0 01-1.5 0v-2a.75.75 0 00-.75-.75h-5.5a.75.75 0 00-.75.75v11.5c0 .414.336.75.75.75h5.5a.75.75 0 00.75-.75v-2a.75.75 0 011.5 0v2A2.25 2.25 0 0110.75 18h-5.5A2.25 2.25 0 013 15.75V4.25z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M19 10a.75.75 0 00-.75-.75H8.704l1.048-.943a.75.75 0 10-1.004-1.114l-2.5 2.25a.75.75 0 000 1.114l2.5 2.25a.75.75 0 101.004-1.114l-1.048-.943h9.546A.75.75 0 0019 10z" clip-rule="evenodd" /></svg>
-            </button>
-            <button type="button" on:click={toggleDarkMode} class="flex justify-center w-full bg-white text-[#4661E6] hover:bg-gray-200 dark:bg-[#1E293B] p-6 rounded-[0.625rem]">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 01.26.77 7 7 0 009.958 7.967.75.75 0 011.067.853A8.5 8.5 0 116.647 1.921a.75.75 0 01.808.083z" clip-rule="evenodd" /></svg>
-            </button>
-            <a use:inertia href="/dashboard/settings" class="flex justify-center w-full bg-white text-[#4661E6] hover:bg-gray-200 dark:bg-[#1E293B] p-6 rounded-[0.625rem]">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5"><path fill-rule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473c.497.144.971.342 1.416.587l1.25-.834a1 1 0 011.262.125l.962.962a1 1 0 01.125 1.262l-.834 1.25c.245.445.443.919.587 1.416l1.473.294a1 1 0 01.804.98v1.361a1 1 0 01-.804.98l-1.473.295a6.95 6.95 0 01-.587 1.416l.834 1.25a1 1 0 01-.125 1.262l-.962.962a1 1 0 01-1.262.125l-1.25-.834a6.953 6.953 0 01-1.416.587l-.294 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.957 6.957 0 01-1.416-.587l-1.25.834a1 1 0 01-1.262-.125l-.962-.962a1 1 0 01-.125-1.262l.834-1.25a6.957 6.957 0 01-.587-1.416l-1.473-.294A1 1 0 011 10.68V9.32a1 1 0 01.804-.98l1.473-.295c.144-.497.342-.971.587-1.416l-.834-1.25a1 1 0 01.125-1.262l.962-.962A1 1 0 015.38 3.03l1.25.834a6.957 6.957 0 011.416-.587l.294-1.473zM13 10a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd" /></svg>
-            </a>
-        </div>
-        <!--end settings-->
     </div>
 
     <div class="w-full space-y-6">
         <!--start nav-->
-        <nav class="relative flex items-center justify-between md:rounded-[0.625rem] px-6 py-2 md:py-3.5 md:px-3 1440:px-4 1440:py-4 bg-[#10263E] text-13 text-[#F3F4FE]">
+        <nav class="relative flex items-center justify-between hover:shadow-lg md:rounded-[0.625rem] px-4 py-4 bg-[#000000] text-13 text-[#F3F4FE]">
             <div class="flex items-center">
                 <div class="hidden md:flex items-center">
                     <svg width="23" height="24" xmlns="http://www.w3.org/2000/svg"><path d="M11.5 2.274c2.237 0 4.339.854 5.923 2.408a8.123 8.123 0 012.465 5.839 8.084 8.084 0 01-1.7 4.979 8.457 8.457 0 01-3.652 2.71l-.31.112.003.826h.369c.262 0 .475.21.475.469a.47.47 0 01-.39.46l-.085.008h-.365l.004 1.02h.36c.263 0 .476.21.476.469a.47.47 0 01-.39.461l-.085.008h-.358l.006 1.487a.466.466 0 01-.381.46l-.094.01H9.23a.478.478 0 01-.466-.378l-.01-.092.006-1.487h-.357a.472.472 0 01-.475-.47.47.47 0 01.39-.46l.085-.008h.361l.004-1.02h-.365a.472.472 0 01-.475-.468.47.47 0 01.39-.462l.085-.007h.368l.004-.826a8.452 8.452 0 01-3.996-2.867 8.08 8.08 0 01-1.666-5.056c.032-2.127.923-4.152 2.511-5.7 1.508-1.471 3.448-2.322 5.493-2.416l.324-.009h.06zm1.791 19.769H9.709l-.004 1.02h3.59l-.004-1.02zm-.007-1.958H9.716l-.003 1.02h3.574l-.003-1.02zM11.5 3.212h-.054c-3.946.027-7.327 3.325-7.384 7.2-.048 3.266 2.14 6.192 5.322 7.118.174.05.3.193.332.364l.008.088-.004 1.166h3.56l-.004-1.166a.47.47 0 01.34-.452c3.134-.912 5.323-3.794 5.323-7.01a7.197 7.197 0 00-2.185-5.173A7.453 7.453 0 0011.5 3.212zm.829 1.782a.4.4 0 01.401.397v.322c.48.12.932.307 1.346.552l.228-.226a.405.405 0 01.569 0L16.046 7.2a.393.393 0 010 .56l-.23.228c.247.41.437.858.557 1.333h.323a.4.4 0 01.402.397v1.645a.4.4 0 01-.402.396h-.323c-.12.476-.31.924-.557 1.333l.23.228a.393.393 0 010 .56l-1.173 1.163a.405.405 0 01-.57 0l-.227-.227a5.02 5.02 0 01-1.346.553v.322a.4.4 0 01-.401.396H10.67a.4.4 0 01-.402-.396v-.322a5.022 5.022 0 01-1.345-.553l-.228.227a.405.405 0 01-.569 0L6.954 13.88a.393.393 0 010-.56l.23-.228a4.924 4.924 0 01-.557-1.333h-.324a.4.4 0 01-.401-.396V9.719a.4.4 0 01.401-.397h.324c.12-.475.31-.923.557-1.333l-.23-.228a.393.393 0 010-.56L8.127 6.04a.405.405 0 01.569 0l.228.226a5.021 5.021 0 011.345-.552V5.39a.4.4 0 01.402-.397zM11.5 7.721c-1.572 0-2.846 1.263-2.846 2.82 0 1.558 1.274 2.82 2.846 2.82s2.846-1.262 2.846-2.82c0-1.557-1.274-2.82-2.846-2.82zm11.025 4.152c.262 0 .475.21.475.469a.47.47 0 01-.39.461l-.085.008h-.498a.472.472 0 01-.475-.469.47.47 0 01.39-.461l.085-.008h.498zm-21.552 0c.262 0 .475.21.475.469a.47.47 0 01-.39.461l-.085.008H.475A.472.472 0 010 12.342a.47.47 0 01.39-.461l.085-.008h.498zM3.112 3.45l.074.06.46.451c.185.183.186.48 0 .663a.476.476 0 01-.596.062l-.075-.06-.459-.451a.465.465 0 01-.001-.663.48.48 0 01.597-.062zm17.373.062c.162.16.182.408.06.59l-.061.073-.46.45a.476.476 0 01-.67 0 .464.464 0 01-.06-.59l.06-.074.46-.45a.48.48 0 01.671 0zM11.5 0c.233 0 .427.166.467.384l.008.085v.49a.472.472 0 01-.475.468.473.473 0 01-.467-.384l-.008-.084v-.49c0-.26.213-.469.475-.469z" fill="#FFF" fill-rule="nonzero"/></svg>
@@ -199,20 +196,20 @@
                 </div>
             </div>
             <div class="dark:bg-slate-900 relative pointer-events-auto">
-                <button on:click={()=>{showSearch = !showSearch; debounce('');}} type="button" class="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 border border-[#1e3e66] rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
+                <button on:click={()=>{showSearch = !showSearch; debounce('');}} type="button" class="hidden w-full lg:flex items-center text-sm leading-6 text-slate-400 border border-[#212020] rounded-md ring-1 ring-slate-900/10 shadow-sm py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700">
                     <svg width="24" height="24" fill="none" aria-hidden="true" class="mr-3 flex-none"><path d="m19 19-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle></svg>
                     Quick search...<span class="ml-auto pl-3 flex-none text-xs font-semibold">CTR&#43;S</span>
                 </button>
             </div>
             <div>
-                <a use:inertia href="/dashboard/task/create" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
+                <a use:inertia href="/dashboard/task/create" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
             </div>
         </nav>
         <!--end nav-->
 
         <main>
             <!--start filters-->
-            <div class="flex justify-between text-[#AD1FE9] mb-2">
+            <div class="flex justify-between text-[#186489] mb-2">
                 <div class="flex space-x-px">
                     {#if activeLikeFilter}
                         <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, status: filters.status }, replace: true, preserveScroll: true }}" on:click={()=>{activeLikeFilter = false; activeCommentFilter = false; activeSortFilter = false;}} class="block py-2 px-3 hover:bg-bg-transparent rounded-tl-md rounded-bl-md {activeLikeFilter ? 'bg-transparent' : ''}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z" /></svg></button>
@@ -235,13 +232,9 @@
 
                 <div class="flex space-x-px">
                     {#if auth.user.unreadNotifications.length > 0}
-                        <button type="button" on:click={()=>{showNotifications = !showNotifications}} class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="{auth.user.unreadNotifications.length > 0 ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
-                        </button>
+                        <button type="button" on:click={()=>{showNotifications = !showNotifications}} class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg" fill="{auth.user.unreadNotifications.length > 0 ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg></button>
                     {:else}
-                        <button type="button" class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg>
-                        </button>
+                        <button type="button" class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg></button>
                     {/if}
                 </div>
             </div>
@@ -257,23 +250,25 @@
                             <p class="text-13 md:text-base text-[#647196] dark:text-[#D1D7E9] my-6 md:mt-4 md:mb-10">Got a suggestion? Found a bug that needs to be squashed? We love hearing about new ideas to improve our app.</p>
                         </div>
                         <div>
-                            <a use:inertia href="/dashboard/task/create" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
+                            <a use:inertia href="/dashboard/task/create" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
                         </div>
                     </div>
                 {:else}
                     {#each tasks.data as task (task.id)}
-                        <div class="flex flex-col md:flex-row bg-white dark:bg-[#1E283A] p-6 md:py-7 md:px-8 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
+                        <div class="flex flex-col md:flex-row bg-white dark:bg-[#1E283A] hover:shadow-lg p-6 md:py-7 md:px-8 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
                             <div class="hidden md:block pr-10">
                                 <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold text-[#3A4374] dark:text-white">
                                     <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
                                     <span class="mt-1">{task.likes}</span>
                                 </button>
                             </div>
-                            <a use:inertia href="/dashboard/tasks/{task.slug}" class="block flex-1 md:pr-[1.5625rem]">
-                                <h2 class="font-bold text-[#3A4374] group-hover:text-[#4761E6] dark:text-white md:text-lg leading-3">{task.title}</h2>
-                                <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
-                                <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6]">{task.tag}</span>
-                            </a>
+                            <div class="flex-1 md:pr-[1.5625rem]">
+                                <a use:inertia href="/dashboard/tasks/{task.slug}">
+                                    <h2 class="font-bold text-[#3A4374] group-hover:text-[#238AB6] dark:text-white md:text-lg leading-3">{task.title}</h2>
+                                </a>
+                                    <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
+                                    <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] cursor-default">{task.tag}</span>
+                            </div>
                             <div class="flex items-end md:items-center justify-between">
                                 <a use:inertia href="/dashboard/tasks/{task.slug}" class="flex items-center space-x-2 font-bold text-[#3A4374] md:text-base">
                                     <svg width="18" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M2.62 16H1.346l.902-.91c.486-.491.79-1.13.872-1.823C1.036 11.887 0 9.89 0 7.794 0 3.928 3.52 0 9.03 0 14.87 0 18 3.615 18 7.455c0 3.866-3.164 7.478-8.97 7.478-1.017 0-2.078-.137-3.025-.388A4.705 4.705 0 012.62 16z" fill="#CDD2EE" fill-rule="nonzero"/></svg>
@@ -289,7 +284,7 @@
                                 <p class="text-13 md:text-base text-[#647196] dark:text-[#D1D7E9] my-6 md:mt-4 md:mb-10">Got a suggestion? Found a bug that needs to be squashed? We love hearing about new ideas to improve our app.</p>
                             </div>
                             <div>
-                                <a use:inertia href="/dashboard/task/create" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
+                                <a use:inertia href="/dashboard/task/create" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
                             </div>
                         </div>
                     {/each}
@@ -300,15 +295,15 @@
             <!--pagination-->
             <div class="flex justify-between my-6">
                 {#if tasks.prev_page_url}
-                    <a use:inertia href="{tasks.prev_page_url}" class="text-[#AD1FE9]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
+                    <a use:inertia href="{tasks.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
                 {:else}
-                    <button type="button" class="text-[#AD1FE9] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                    <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
                 {/if}
 
                 {#if tasks.next_page_url}
-                    <a use:inertia href="{tasks.next_page_url}" class="text-[#AD1FE9]"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
+                    <a use:inertia href="{tasks.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
                 {:else}
-                    <button type="button" class="text-[#AD1FE9] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                    <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
                 {/if}
             </div>
         </main>

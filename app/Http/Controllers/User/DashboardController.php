@@ -44,7 +44,7 @@ class DashboardController extends Controller
                 ]),
             'count' => Task::count(),
             'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked', 'commented']),
-            'tags' => Tag::all(),
+            'tags' => Tag::has('tasks')->get(),
             'statuses' => Status::all()->map(function($status) {
                 return [
                     'id' => $status->id,
