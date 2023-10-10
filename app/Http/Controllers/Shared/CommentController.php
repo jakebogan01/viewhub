@@ -126,7 +126,7 @@ class CommentController extends Controller
         $attributes = request()->validate([
             'comment_id' => ['required', Rule::exists('comments', 'id')],
             'recipient_id' => ['required', Rule::exists('users', 'id')],
-            'body' => 'required'
+            'body' => 'required|max:255'
         ]);
 
         $attributes['user_id'] = auth()->id();

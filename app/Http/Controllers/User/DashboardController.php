@@ -130,10 +130,8 @@ class DashboardController extends Controller
                 'user' => $task->user->name,
                 'user_id' => $task->user->id,
                 'likes' => $task->likes->count(),
+                'comment_count' => $task->comments->count(),
                 'owner_id' => $task->user->id,
-                'created_at' => $task->created_at
-                    ->setTimezone(auth()->user()->timezone)
-                    ->format('F j, Y, g:i a'),
                 'images' => $task->images->map(function($image) {
                     return [
                         'id' => $image->id,
