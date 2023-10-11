@@ -179,6 +179,7 @@ class DashboardController extends Controller
             'task' => [
                 'id' => $task->id,
                 'title' => $task->title,
+                'slug' => $task->slug,
                 'description' => $task->description,
                 'priority' => $task->priority,
                 'due_date' => $task->due_date,
