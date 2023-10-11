@@ -1,19 +1,22 @@
 <script>
-    import Nav from "../Components/Navigation/Nav.svelte";
+    /* svelte-ignore unused-export-let */
+    export let auth;
 </script>
 
-<div>
-    <section class="p-6 bg-gray-200">
-        <header class="flex justify-between max-w-6xl mx-auto">
-            <h1 class="text-lg font-bold">My App</h1>
-            <Nav/>
-        </header>
-    </section>
-
-    <section class="p-6">
-        <div class="max-w-3xl mx-auto">
-            <slot/>
+<div class="{auth.user.dark_mode ? 'dark' : ''}">
+    <div class="py-6 dark:bg-[#444444]">
+        <div class="font-jost font-normal max-w-[730px] mx-auto">
+            <!--start page content-->
+            <main>
+                <slot/>
+            </main>
+            <!--end page content-->
         </div>
-        <input type="text">
-    </section>
+    </div>
 </div>
+
+<style global>
+    :global(body) {
+        background-color: #f2f2f2;
+    }
+</style>

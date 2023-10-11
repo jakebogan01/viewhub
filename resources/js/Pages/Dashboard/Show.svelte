@@ -1,5 +1,5 @@
 <script context="module">
-    export {default as layout} from "../../Layouts/Authenticated.svelte";
+    export {default as layout} from "../../Layouts/Layout.svelte";
 </script>
 
 <script>
@@ -158,9 +158,7 @@
             </button>
         </div>
         <div class="flex-1 md:pr-[1.5625rem]">
-            <a use:inertia href="/dashboard/tasks/{task.slug}">
-                <h2 class="font-bold text-[#3A4374] group-hover:text-[#238AB6] dark:text-white md:text-lg leading-3">{task.title}</h2>
-            </a>
+            <h2 class="font-bold text-[#3A4374] group-hover:text-[#238AB6] dark:text-white md:text-lg leading-3">{task.title}</h2>
             <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
 
             {#if task.images.length > 0}
@@ -176,89 +174,92 @@
             <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
         </div>
         <div class="flex items-end md:items-center justify-between">
-            <a use:inertia href="/dashboard/tasks/{task.slug}" class="flex items-center space-x-2 font-bold text-[#3A4374] md:text-base">
+            <div class="flex items-center space-x-2 font-bold text-[#3A4374] md:text-base">
                 <svg width="18" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M2.62 16H1.346l.902-.91c.486-.491.79-1.13.872-1.823C1.036 11.887 0 9.89 0 7.794 0 3.928 3.52 0 9.03 0 14.87 0 18 3.615 18 7.455c0 3.866-3.164 7.478-8.97 7.478-1.017 0-2.078-.137-3.025-.388A4.705 4.705 0 012.62 16z" fill="#CDD2EE" fill-rule="nonzero"/></svg>
                 <span class="dark:text-[#D1D7E9]">{task.comment_count}</span>
-            </a>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white dark:bg-[#1E293B] px-8 py-6 rounded-[0.625rem] text-13 space-y-10 my-6">
-        <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6 md:mb-0">{task.comments.data.length} Comments</h2>
-        {#each task.comments.data as comment, i (comment.id)}
-            <div id={comment.id}>
-                <div class="flex justify-between mb-4">
-                    <div class="flex items-start">
-                        <div class="mr-4 rounded-full w-10 h-10 overflow-hidden">
-                            {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}
-                                <img src={comment.default_avatar} class="object-cover" alt="user">
-                            {:else}
-                                <img src="/images/user{comment.user.id}/{comment.user.avatar}" class="object-cover" alt="user">
-                            {/if}
-                        </div>
-                        <div>
-                            <div class="text-13 md:text-sm">
-                                <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{comment.user.username}</span>
-                                <span class="block text-[#647196]"><time>{comment.created_at}</time></span>
-                            </div>
-                            <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">{comment?.body}</p>
-                        </div>
-                    </div>
-                    <div>
-                        {#if comment.user.id === client_d}
-                            <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
-                        {:else}
-                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
-                        {/if}
-                    </div>
-                </div>
-                <p class="md:hidden text-[#647196]">{comment?.body}</p>
-            </div>
-
-            {#if (task.comments.data.length - 1) > i}
-                <hr class="dark:border-gray-700">
-            {/if}
-
-            {#if comment.replies.length > 0}
-                {#each comment.replies.sort() as reply (reply.id)}
-                    <div id={reply.id} class="pl-10 ml-5 pt-4 border-dotted border-l border-[#E5E7EB]">
-                        <div class="flex justify-between mb-4">
-                            <div class="flex items-start">
-                                <div class="mr-4 rounded-full min-w-[40px] max-w-[40px] min-h-[40px] max-h-[40px] overflow-hidden">
-                                    {#if !reply.user_avatar || reply.user_avatar.includes('placeholder.com')}
-                                        <img src={reply.default_avatar} class="object-cover" alt="user">
-                                    {:else}
-                                        <img src="/images/user{reply.user_id}/{reply.user_avatar}" class="object-cover" alt="user">
-                                    {/if}
-                                </div>
-                                <div>
-                                    <div class="text-13 md:text-sm">
-                                        <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{reply.username}</span>
-                                        <span class="block text-[#647196]"><time>{reply.created_at}</time></span>
-                                    </div>
-                                    <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">
-                                        <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
-                                        {reply.body}
-                                    </p>
-                                </div>
-                            </div>
-                            <div>
-                                {#if reply.user_id === client_d}
-                                    <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
+    {#if task.comments.data.length > 0}
+        <div class="bg-white dark:bg-[#1E293B] px-8 py-6 rounded-[0.625rem] text-13 space-y-10 my-6">
+            <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6 md:mb-0">{task.comments.data.length} Comments</h2>
+            {#each task.comments.data as comment, i (comment.id)}
+                <div id={comment.id}>
+                    <div class="flex justify-between mb-4">
+                        <div class="flex items-start">
+                            <div class="mr-4 rounded-full w-10 h-10 overflow-hidden">
+                                {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}
+                                    <img src={comment.default_avatar} class="object-cover" alt="user">
                                 {:else}
-                                    <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                    <img src="/images/user{comment.user.id}/{comment.user.avatar}" class="object-cover" alt="user">
                                 {/if}
                             </div>
+                            <div>
+                                <div class="text-13 md:text-sm">
+                                    <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{comment.user.username}</span>
+                                    <span class="block text-[#647196]"><time>{comment.created_at}</time></span>
+                                </div>
+                                <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">{comment?.body}</p>
+                            </div>
                         </div>
-                        <p class="md:hidden text-[#647196]">
-                            <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
-                            {reply.body}
-                        </p>
+                        <div>
+                            {#if comment.user.id === client_d}
+                                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
+                            {:else}
+                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                            {/if}
+                        </div>
                     </div>
-                {/each}
-            {/if}
-        {/each}
-    </div>
+                    <p class="md:hidden text-[#647196]">{comment?.body}</p>
+                </div>
+
+                {#if (task.comments.data.length - 1) > i}
+                    <hr class="dark:border-gray-700">
+                {/if}
+
+                {#if comment.replies.length > 0}
+                    {#each comment.replies.sort() as reply (reply.id)}
+                        <div id={reply.id} class="pl-10 ml-5 pt-4 border-dotted border-l border-[#E5E7EB]">
+                            <div class="flex justify-between mb-4">
+                                <div class="flex items-start">
+                                    <div class="mr-4 rounded-full min-w-[40px] max-w-[40px] min-h-[40px] max-h-[40px] overflow-hidden">
+                                        {#if !reply.user_avatar || reply.user_avatar.includes('placeholder.com')}
+                                            <img src={reply.default_avatar} class="object-cover" alt="user">
+                                        {:else}
+                                            <img src="/images/user{reply.user_id}/{reply.user_avatar}" class="object-cover" alt="user">
+                                        {/if}
+                                    </div>
+                                    <div>
+                                        <div class="text-13 md:text-sm">
+                                            <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{reply.username}</span>
+                                            <span class="block text-[#647196]"><time>{reply.created_at}</time></span>
+                                        </div>
+                                        <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">
+                                            <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
+                                            {reply.body}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div>
+                                    {#if reply.user_id === client_d}
+                                        <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
+                                    {:else}
+                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                    {/if}
+                                </div>
+                            </div>
+                            <p class="md:hidden text-[#647196]">
+                                <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
+                                {reply.body}
+                            </p>
+                        </div>
+                    {/each}
+                {/if}
+            {/each}
+        </div>
+
+    {/if}
 
     <form on:submit|preventDefault={submit} class="bg-white dark:bg-[#1E293B] mt-6 p-6 hover:shadow-lg rounded-[0.625rem] text-13">
         <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Add Comment</h2>

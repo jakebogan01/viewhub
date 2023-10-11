@@ -35,6 +35,7 @@
     let searchInput;
     let activeLikeFilter, activeCommentFilter, activeSortFilter = false;
     let showNotifications = false;
+    let showAllDepartments = false;
     const randomColor = ['#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#E6F598', '#ABDDA4', '#66C2A6', '#3388BD', '#5E4FA2', '#31207d'];
 
     // debounce search input
@@ -139,7 +140,7 @@
             <!--end tags-->
 
             <!--start departments-->
-            <div class="bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem]">
+            <div class="relative bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden group {showAllDepartments ? 'h-[456px]' : 'h-[200px]'}">
                 <div class="flex items-center justify-between">
                     <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
                     <a href="/roadmap" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
@@ -163,6 +164,8 @@
                         {/if}
                     {/each}
                 </div>
+
+                <button type="button" on:click={()=>{showAllDepartments = !showAllDepartments}} class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white bg-opacity-0 group-hover:bg-opacity-100 text-sm font-semibold py-0.5 text-[#4761E6] w-full group-hover:opacity-100 {showAllDepartments ? 'opacity-0' : 'opacity-0'}">{showAllDepartments ? 'show less' : 'show more'}</button>
             </div>
             <!--end departments-->
 
