@@ -88,9 +88,6 @@ class DashboardController extends Controller
     {
         $attributes = $this->validateTask();
 
-        if ($request->due_date !== null) {
-            $attributes['due_date'] = $this->validateDueDate();
-        }
         $attributes['user_id'] = auth()->id();
         $attributes['status_id'] = 1;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
@@ -287,7 +284,6 @@ class DashboardController extends Controller
         return request()->validate([
             'title' => 'required',
             'description' => 'required',
-            'priority' => 'required|integer|between:0,1',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
         ]);
     }

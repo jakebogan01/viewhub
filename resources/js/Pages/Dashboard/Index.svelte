@@ -140,8 +140,8 @@
             <!--end tags-->
 
             <!--start departments-->
-            <div class="relative bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden group {showAllDepartments ? 'h-[456px]' : 'h-[200px]'}">
-                <div class="flex items-center justify-between">
+            <div on:click|self={()=>{showAllDepartments = !showAllDepartments}} on:keydown={()=>{}} class="relative bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden group {showAllDepartments ? 'h-[456px]' : 'h-[200px]'}">
+                <div on:click={()=>{showAllDepartments = !showAllDepartments}} on:keydown={()=>{}} class="flex items-center justify-between">
                     <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
                     <a href="/roadmap" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
                 </div>

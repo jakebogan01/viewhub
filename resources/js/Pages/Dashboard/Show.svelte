@@ -94,7 +94,7 @@
     <div class="text-green-500 font-bold">{flash.message}</div>
 {/if}
 
-<section class="">
+<section>
     <div class="flex justify-between mb-6">
         <a use:inertia={{ replace: true }} href="#" on:click={()=>{window.history.back()}} class="flex items-center space-x-2">
             <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
@@ -109,7 +109,7 @@
         {/if}
     </div>
 
-    <div class="flex flex-col md:flex-row bg-white dark:bg-[#1E283A] hover:shadow-lg p-6 md:py-7 md:px-8 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
+    <div class="flex flex-col md:flex-row bg-white dark:bg-[#1E283A] hover:shadow-lg p-6 md:py-7 md:px-8 mt-12 md:mt-16 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
         <div class="hidden md:block pr-10">
             <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold text-[#3A4374] dark:text-white">
                 <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
