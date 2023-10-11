@@ -3,8 +3,8 @@
     export let auth;
 </script>
 
-<div class="{auth.user.dark_mode ? 'dark' : ''}">
-    <div class="sm:py-6 dark:bg-[#444444]">
+<div class="{auth.user.dark_mode ? 'dark' : ''} h-full">
+    <div class="sm:py-6 dark:bg-black h-full">
         <div class="font-jost font-normal max-w-[1100px] mx-auto">
             <!--start page content-->
             <main>
