@@ -11,13 +11,12 @@
     export let flash = {};
     export let task;
     export let client_d;
-    let editTask = false;
-    let editReplyTask = false;
     let replyNow = false;
     let replyToComment = false;
-    let comment_id, user_id;
+    let comment_id, user_id, replyTo;
     $: comment_id = null;
     $: user_id = null;
+    $: replyTo = '';
 
     console.log(auth)
     let form = useForm({
@@ -25,18 +24,7 @@
         body: '',
     });
 
-    let editForm = useForm({
-        task_id: task.id,
-        body: '',
-    });
-
     let replyForm = useForm({
-        comment_id: null,
-        recipient_id: null,
-        body: '',
-    });
-
-    let editReplyForm = useForm({
         comment_id: null,
         recipient_id: null,
         body: '',
@@ -51,23 +39,10 @@
     function submit() {
         $form.post(`/dashboard/comment/create`, {
             replace: true,
+            preserveScroll: true
         })
 
         $form.body = '';
-    }
-
-    function submitEdit(id) {
-        if ($editForm.body === '') {
-            return;
-        }
-
-        $editForm.patch(`/dashboard/comment/${id}`, {
-            replace: true,
-            preserveScroll: true,
-        })
-
-        editTask = false;
-        $editForm.body = '';
     }
 
     function submitReply() {
@@ -84,22 +59,6 @@
 
         replyNow = false;
         $replyForm.body = '';
-    }
-
-    function submitReplyEdit(comment, comment_user, replied_user) {
-        if ($editReplyForm.body === '') {
-            return;
-        }
-
-        $editReplyForm.comment_id = comment;
-        $editReplyForm.recipient_id = comment_user;
-        $editReplyForm.patch(`/dashboard/comment/reply/${replied_user}`, {
-            replace: true,
-            preserveScroll: true,
-        })
-
-        editReplyTask = false;
-        $editReplyForm.body = '';
     }
 
     function submitCommentReply() {
@@ -207,7 +166,7 @@
                             {#if comment.user.id === client_d}
                                 <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
                             {:else}
-                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
                             {/if}
                         </div>
                     </div>
@@ -245,7 +204,7 @@
                                     {#if reply.user_id === client_d}
                                         <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
                                     {:else}
-                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
                                     {/if}
                                 </div>
                             </div>
@@ -279,145 +238,6 @@
             <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$form.processing}>Post Comment</button>
         </div>
     </form>
-</section>
-
-{#if viewImage}
-    <div class="absolute flex justify-center items-center inset-0 bg-black bg-opacity-20 z-50 p-20">
-        <div class="relative bg-black w-full h-full overflow-hidden p-4">
-                    <span on:click={()=>{viewImage = false;}} on:keydown class="absolute right-2 top-2 text-white cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
-                    </span>
-            <img src="/images/user{task.user_id}/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
-        </div>
-    </div>
-{/if}
-
-<section class="p-6">
-
-    <!--{#each task.comments.data as comment (comment.id)}-->
-    <!--    <div class="border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 max-w-3xl mx-auto" id={comment.id}>-->
-    <!--        <div class="flex space-x-4">-->
-    <!--            <div class="flex-shrink-0">-->
-    <!--                {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}-->
-    <!--                    <img src={comment.default_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">-->
-    <!--                {:else}-->
-    <!--                    <img src="/images/user{comment.user.id}/{comment.user.avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">-->
-    <!--                {/if}-->
-    <!--            </div>-->
-    <!--            <div class="flex-1">-->
-    <!--                <header class="mb-4">-->
-    <!--                    <h3 class="font-bold lowercase">{comment.user.username}</h3>-->
-    <!--                    <p class="text-xs">Posted <time>{comment.created_at}</time></p>-->
-    <!--                </header>-->
-    <!--                {#if editTask}-->
-    <!--                    <form on:submit|preventDefault={()=>{submitEdit(comment.id)}}>-->
-    <!--                        <textarea on:input={(e)=>{$editForm.body = e.target.value}} name="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring">{comment.body}</textarea>-->
-    <!--                        {#if $editForm.errors.body}-->
-    <!--                            <p class="text-red-500 text-xs mt-1">{$editForm.errors.body}</p>-->
-    <!--                        {/if}-->
-
-    <!--                        <div class="flex justify-end">-->
-    <!--                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{editTask = false}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Cancel</button>-->
-    <!--                            <button type="submit" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-blue-500 ml-4" disabled={$editForm.processing}>Update</button>-->
-    <!--                        </div>-->
-    <!--                    </form>-->
-    <!--                {:else}-->
-    <!--                    <p>-->
-    <!--                        {comment.body}-->
-    <!--                    </p>-->
-    <!--                {/if}-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--        {#if !editTask}-->
-    <!--            <div class="flex justify-end">-->
-    <!--                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-purple-400 ml-4">Reply</button>-->
-    <!--                <button type="button" use:inertia={{ href: '#', replace: true, preserveScroll: true }} on:click={()=>{editTask = true}} class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white ml-4">Edit</button>-->
-    <!--                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>-->
-    <!--            </div>-->
-    <!--        {/if}-->
-    <!--    </div>-->
-
-    <!--    {#if comment.replies.length > 0}-->
-    <!--        {#each comment.replies.sort() as reply (reply.id)}-->
-    <!--            <div class="max-w-3xl mx-auto border-l-2 border-dashed border-blue-200" id={reply.id}>-->
-    <!--                <div class="ml-20 rounded-xl bg-gray-50 p-6 mt-4 border border-l-4 border-gray-200">-->
-    <!--                    <div class="flex space-x-4">-->
-    <!--                        <div class="flex-shrink-0">-->
-    <!--                            {#if !reply.user_avatar || reply.user_avatar.includes('placeholder.com')}-->
-    <!--                                <img src={reply.defaut_avatar} class="h-[60px] w-[60px] rounded-xl" alt="">-->
-    <!--                            {:else}-->
-    <!--                                <img src="/images/user{reply.user_id}/{reply.user_avatar}" class="h-[60px] w-[60px] rounded-xl object-cover" alt="">-->
-    <!--                            {/if}-->
-    <!--                        </div>-->
-    <!--                        <div class="flex-1">-->
-    <!--                            <header class="mb-4">-->
-    <!--                                <h3 class="font-bold lowercase">{reply.username}</h3>-->
-    <!--                                <p class="text-xs">Posted-->
-    <!--                                    <time>{reply.created_at}</time>-->
-    <!--                                </p>-->
-    <!--                            </header>-->
-    <!--                            {#if editReplyTask}-->
-    <!--                                <form on:submit|preventDefault={()=>{submitReplyEdit(comment.id, comment.user.id, reply.id)}}>-->
-    <!--                                    <textarea on:input={(e)=>{$editReplyForm.body = e.target.value}} name="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring">{reply.body}</textarea>-->
-    <!--                                    {#if $editReplyForm.errors.body}-->
-    <!--                                        <p class="text-red-500 text-xs mt-1">{$editReplyForm.errors.body}</p>-->
-    <!--                                    {/if}-->
-
-    <!--                                    <div class="flex justify-end">-->
-    <!--                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{editReplyTask = false}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Cancel</button>-->
-    <!--                                        <button type="submit" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-blue-500 ml-4" disabled={$editReplyForm.processing}>Update</button>-->
-    <!--                                    </div>-->
-    <!--                                </form>-->
-    <!--                            {:else}-->
-    <!--                                <p>-->
-    <!--                                    <span class="text-blue-600">@{reply.recipient}&#xa0;</span>-->
-    <!--                                    {reply.body}-->
-    <!--                                </p>-->
-    <!--                            {/if}-->
-    <!--                        </div>-->
-    <!--                    </div>-->
-    <!--                    {#if !editReplyTask}-->
-    <!--                        <div class="flex justify-end">-->
-    <!--                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-purple-400 ml-4">Reply</button>-->
-    <!--                            <button type="button" use:inertia={{ href: '#', replace: true, preserveScroll: true }} on:click={()=>{editReplyTask = true}} class="inline-block mt-2 text-blue-500 border border-gray-200 px-4 py-1 rounded-lg bg-white ml-4">Edit</button>-->
-    <!--                            <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Delete</button>-->
-    <!--                        </div>-->
-    <!--                    {/if}-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        {/each}-->
-    <!--    {/if}-->
-    <!--{/each}-->
-
-    {#if replyNow}
-        <div class="fixed bottom-0 left-0 w-full border border-gray-200 p-6 mt-4 rounded-xl bg-gray-50 z-50">
-            {#if replyToComment}
-                <form on:submit|preventDefault={submitReply}>
-                    <textarea bind:value={$replyForm.body} name="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" autofocus></textarea>
-                    {#if $replyForm.errors.body}
-                        <p class="text-red-500 text-xs mt-1">{$replyForm.errors.body}</p>
-                    {/if}
-
-                    <div class="flex justify-end">
-                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $replyForm.body = ''; replyToComment = false;}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Cancel</button>
-                        <button type="submit" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-blue-500 ml-4" disabled={$replyForm.processing}>Post</button>
-                    </div>
-                </form>
-            {:else}
-                <form on:submit|preventDefault={submitCommentReply}>
-                    <textarea bind:value={$submitReplyForm.body} name="body" cols="30" rows="5" class="w-full text-sm focus:outline-none focus:ring" autofocus></textarea>
-                    {#if $submitReplyForm.errors.body}
-                        <p class="text-red-500 text-xs mt-1">{$submitReplyForm.errors.body}</p>
-                    {/if}
-
-                    <div class="flex justify-end">
-                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $submitReplyForm.body = '';}} class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-red-400 ml-4">Cancel</button>
-                        <button type="submit" class="inline-block mt-2 text-white border border-gray-200 px-4 py-1 rounded-lg bg-blue-500 ml-4" disabled={$submitReplyForm.processing}>Post</button>
-                    </div>
-                </form>
-            {/if}
-        </div>
-    {/if}
 
     <!--pagination-->
     <div>
@@ -432,3 +252,64 @@
         </div>
     </div>
 </section>
+
+{#if viewImage}
+    <div class="absolute flex justify-center items-center inset-0 bg-black bg-opacity-20 z-50 p-20">
+        <div class="relative bg-black w-full h-full overflow-hidden p-4">
+                    <span on:click={()=>{viewImage = false;}} on:keydown class="absolute right-2 top-2 text-white cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-10 h-10"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
+                    </span>
+            <img src="/images/user{task.user_id}/{imageSrc.path}" class="w-full h-full object-contain" alt={imageSrc.name}>
+        </div>
+    </div>
+{/if}
+
+{#if replyNow}
+    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#1E293B] mt-6 p-6 hover:shadow-lg z-50">
+        {#if replyToComment}
+            <form on:submit|preventDefault={submitReply} class="max-w-[730px] mx-auto rounded-[0.625rem] text-13">
+                <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Replying to {replyTo}</h2>
+                <div>
+                    <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
+                    <div class="mt-3">
+                        <textarea bind:value={$replyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-4">
+                    <div class="text-13 md:text-15 text-[#647196]">
+                        {#if $replyForm.errors.body}
+                            <span class="block text-red-500">{$replyForm.errors.body}</span>
+                        {/if}
+                        <span>{255 - $form.body.length } Characters left</span>
+                    </div>
+                    <div>
+                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $replyForm.body = ''; replyToComment = false;}} class="bg-red-500 hover:bg-red-400 font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap">Cancel</button>
+                        <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$replyForm.processing}>Post Comment</button>
+                    </div>
+                </div>
+            </form>
+        {:else}
+            <form on:submit|preventDefault={submitCommentReply} class="max-w-[730px] mx-auto rounded-[0.625rem] text-13">
+                <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Replying to {replyTo}</h2>
+                <div>
+                    <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
+                    <div class="mt-3">
+                        <textarea bind:value={$submitReplyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between mt-4">
+                    <div class="text-13 md:text-15 text-[#647196]">
+                        {#if $submitReplyForm.errors.body}
+                            <span class="block text-red-500">{$submitReplyForm.errors.body}</span>
+                        {/if}
+                        <span>{255 - $form.body.length } Characters left</span>
+                    </div>
+                    <div>
+                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $submitReplyForm.body = '';}} class="bg-red-500 hover:bg-red-400 font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap">Cancel</button>
+                        <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$submitReplyForm.processing}>Post Comment</button>
+                    </div>
+                </div>
+            </form>
+        {/if}
+    </div>
+{/if}
