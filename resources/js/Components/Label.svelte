@@ -6,7 +6,7 @@
 </script>
 
 <!-- svelte-ignore a11y-label-has-associated-control -->
-<label class="block font-medium text-sm text-gray-700" for={forName}>
+<label class="block font-medium text-sm text-white" for={forName}>
     {#if value}
         <span>{value}</span>
     {:else}
