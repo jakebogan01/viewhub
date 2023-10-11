@@ -62,8 +62,8 @@
     <title>All Tasks</title>
 </svelte:head>
 
-<section class="mb-[500px]">
-    <nav class="relative flex items-center justify-between max-w-[69.375rem] mx-auto md:rounded-[0.625rem] px-6 py-6 md:px-9 md:py-8 bg-[#10263E] z-50">
+<section>
+    <nav class="relative flex items-center justify-between max-w-[69.375rem] mx-auto sm:rounded-[0.625rem] sm:mx-6 xl:mx-0 px-6 py-6 md:px-9 md:py-8 bg-[#10263E] z-50">
         <div class="text-13 text-[#F3F4FE]">
             <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
                 <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
@@ -76,7 +76,7 @@
         </div>
     </nav>
 
-    <div class="flex gap-4 py-6">
+    <div class="flex flex-col lg:flex-row gap-4 py-6 px-6 xl:px-0">
         <div class="flex-1 space-y-6">
             {#each allTasks as task, i (task.id)}
                 {#if i % 2 === 0}
@@ -128,13 +128,6 @@
             {/each}
         </div>
     </div>
-<!--    <div class="grid grid-cols-2 gap-4 py-6">-->
-<!--        {#each allTasks as task (task.id)}-->
-<!--            <div class="flex flex-col justify-center items-center border border-red-500 w-full p-5">-->
-<!--                <a use:inertia href="/dashboard/tasks/{task.slug}">{task.title}</a>-->
-<!--            </div>-->
-<!--        {/each}-->
-<!--    </div>-->
 </section>
 
 <IntersectionObserver {element} on:intersect={load}>

@@ -180,7 +180,9 @@ class DashboardController extends Controller
     public function edit(Task $task)
     {
         if ($task->user_id !== auth()->user()->id) {
-            abort(403);
+            if (!auth()->user()->is_admin) {
+                abort(403);
+            }
         }
 
         return Inertia::render('Dashboard/Edit', [
@@ -211,7 +213,9 @@ class DashboardController extends Controller
     public function update(Task $task, Request $request)
     {
         if ($task->user_id !== auth()->user()->id) {
-            abort(403);
+            if (!auth()->user()->is_admin) {
+                abort(403);
+            }
         }
 
         $attributes = $this->validateTask($task);
@@ -241,7 +245,9 @@ class DashboardController extends Controller
     public function destroy(Task $task)
     {
         if ($task->user_id !== auth()->user()->id) {
-            abort(403);
+            if (!auth()->user()->is_admin) {
+                abort(403);
+            }
         }
 
         $images = Image::where('task_id', $task->id)->get();

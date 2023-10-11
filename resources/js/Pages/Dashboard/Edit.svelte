@@ -73,7 +73,7 @@
 </svelte:head>
 
 
-<section class="mb-10 max-w-[530px] mx-auto">
+<section class="mb-10 max-w-[530px] mx-auto px-4 md:px-0">
     <div class="mb-6">
         <a use:inertia={{ replace: true }} href="/dashboard/tasks/{task.slug}" class="flex items-center space-x-2">
             <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>

@@ -37,7 +37,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $task->user_id === $user->id;
+        return $task->user_id === $user->id || auth()->user()->is_admin;
     }
 
     /**
@@ -45,7 +45,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $task->user_id === $user->id;
+        return $task->user_id === $user->id || auth()->user()->is_admin;
     }
 
     /**

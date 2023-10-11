@@ -95,7 +95,7 @@
     <div class="text-green-500 font-bold">{flash.message}</div>
 {/if}
 
-<section>
+<section class="px-4 md:px-0">
     <div class="flex justify-between mb-6">
         <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
             <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
@@ -142,7 +142,7 @@
                 <div id={comment.id}>
                     <div class="flex justify-between mb-4">
                         <div class="flex items-start">
-                            <div class="mr-4 rounded-full w-10 h-10 overflow-hidden">
+                            <div class="mr-4 rounded-full min-w-[40px] max-w-[40px] min-h-[40px] max-h-[40px] overflow-hidden">
                                 {#if !comment.user.avatar || comment.user.avatar.includes('placeholder.com')}
                                     <img src={comment.default_avatar} class="object-cover" alt="user">
                                 {:else}
@@ -160,6 +160,9 @@
                         <div>
                             {#if comment.user.id === client_d || is_admin}
                                 <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
+                                {#if is_admin}
+                                    <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                {/if}
                             {:else}
                                 <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
                             {/if}
@@ -198,6 +201,9 @@
                                 <div>
                                     {#if reply.user_id === client_d || is_admin}
                                         <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
+                                        {#if is_admin}
+                                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                        {/if}
                                     {:else}
                                         <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
                                     {/if}
