@@ -220,6 +220,21 @@
         </div>
     {/if}
 
+    <!--pagination-->
+    <div class="flex justify-between my-6 px-6 sm:px-0">
+        {#if task.comments.prev_page_url}
+            <a use:inertia={{replace: true, preserveScroll: true}} href="{task.comments.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
+        {:else}
+            <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+        {/if}
+
+        {#if task.comments.next_page_url}
+            <a use:inertia={{replace: true, preserveScroll: true}} href="{task.comments.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
+        {:else}
+            <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+        {/if}
+    </div>
+
     <form on:submit|preventDefault={submit} class="bg-white dark:bg-[#1E293B] mt-6 p-6 hover:shadow-lg rounded-[0.625rem] text-13">
         <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Add Comment</h2>
         <div>
@@ -238,19 +253,6 @@
             <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$form.processing}>Post Comment</button>
         </div>
     </form>
-
-    <!--pagination-->
-    <div>
-        <div class="mt-6">
-            {#if task.comments.prev_page_url}
-                <a use:inertia href="{task.comments.prev_page_url}" class="px-1">&laquo; Prev</a>
-            {/if}
-
-            {#if task.comments.next_page_url}
-                <a use:inertia href="{task.comments.next_page_url}" class="px-1">Next &raquo;</a>
-            {/if}
-        </div>
-    </div>
 </section>
 
 {#if viewImage}

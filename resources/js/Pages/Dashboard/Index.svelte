@@ -29,13 +29,11 @@
     let route = '/dashboard';
     let search = filters.search || '';
     let timer;
-    let rotateArrow = false;
     let enableDarkMode = auth.user.dark_mode;
     let showSearch;
     let searchInput;
     let activeLikeFilter, activeCommentFilter, activeSortFilter = false;
     let showNotifications = false;
-    let showAllDepartments = false;
     const randomColor = ['#D53E4F', '#F46D43', '#FDAE61', '#FEE08B', '#E6F598', '#ABDDA4', '#66C2A6', '#3388BD', '#5E4FA2', '#31207d'];
 
     // debounce search input
@@ -140,7 +138,7 @@
             <!--end tags-->
 
             <!--start departments-->
-            <div on:click|self={()=>{showAllDepartments = !showAllDepartments}} on:keydown={()=>{}} class="hidden lg:block relative bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden group {showAllDepartments ? 'h-[456px]' : 'h-[200px]'}">
+            <div class="hidden lg:block relative bg-white dark:bg-[#1E293B] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden min-h-[455px]">
                 <div class="flex items-center justify-between">
                     <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
                     <a href="/dashboard/all-tasks" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-[#95A1B8] dark:hover:text-[#4661E6]">View</a>
@@ -149,7 +147,7 @@
                     <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4">
                         <span class="flex items-center">
                             <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
-                            <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500'}">All</span>
+                            <span class="text-base hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-[#4661E6] capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500'}">All</span>
                         </span>
                     </button>
                     {#each statuses as status, i (status.id)}
@@ -164,8 +162,6 @@
                         {/if}
                     {/each}
                 </div>
-
-                <button type="button" on:click={()=>{showAllDepartments = !showAllDepartments}} class="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white bg-opacity-0 group-hover:bg-opacity-100 text-sm font-semibold py-0.5 text-[#4761E6] w-full group-hover:opacity-100 {showAllDepartments ? 'opacity-0' : 'opacity-0'}">{showAllDepartments ? 'show less' : 'show more'}</button>
             </div>
             <!--end departments-->
 
@@ -296,13 +292,13 @@
             <!--pagination-->
             <div class="flex justify-between my-6 px-6 sm:px-0">
                 {#if tasks.prev_page_url}
-                    <a use:inertia href="{tasks.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
+                    <a use:inertia={{replace: true}} href="{tasks.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
                 {:else}
                     <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
                 {/if}
 
                 {#if tasks.next_page_url}
-                    <a use:inertia href="{tasks.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
+                    <a use:inertia={{replace: true}} href="{tasks.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
                 {:else}
                     <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
                 {/if}
