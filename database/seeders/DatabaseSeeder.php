@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $tags = ['ui', 'enhancement', 'bug', 'feature', 'marketing', 'sales'];
+        $tags = ['Bug', 'Improvement', 'Issue', 'New Feature', 'UI', 'Research', 'Customer Based'];
         $statuses = ['marketing', 'sales', 'commercial', 'consumer', 'graphics', 'operations', 'it', 'finance', 'legal', 'officers'];
 
         User::factory()->create([

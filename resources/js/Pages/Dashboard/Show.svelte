@@ -10,6 +10,7 @@
     /* svelte-ignore unused-export-let */
     export let flash = {};
     export let task;
+    export let is_admin;
     export let client_d;
     let replyNow = false;
     let replyToComment = false;
@@ -101,7 +102,7 @@
             <span class="font-bold text-13 md:text-sm text-[#647196]">Go Home</span>
         </a>
 
-        {#if task.user_id === client_d}
+        {#if task.user_id === client_d || is_admin}
             <div class="space-x-2">
                 <button type="button" use:inertia="{{ href: `/dashboard/task/${task.id}`, method: 'delete', replace: true, }}" class="bg-[#F87171] hover:bg-[#7C91F9] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Delete</button>
                 <button type="button" use:inertia="{{ href: `/dashboard/task/${task.slug}/edit`, method: 'get' }}" class="bg-[#4761E6] hover:bg-[#7C91F9] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Edit Feedback</button>
@@ -157,7 +158,7 @@
                             </div>
                         </div>
                         <div>
-                            {#if comment.user.id === client_d}
+                            {#if comment.user.id === client_d || is_admin}
                                 <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
                             {:else}
                                 <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
@@ -195,7 +196,7 @@
                                     </div>
                                 </div>
                                 <div>
-                                    {#if reply.user_id === client_d}
+                                    {#if reply.user_id === client_d || is_admin}
                                         <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
                                     {:else}
                                         <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>

@@ -125,6 +125,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard/Show', [
             'client_d' => auth()->user()->id,
+            'is_admin' => auth()->user()->is_admin,
             'task' => [
                 'id' => $task->id,
                 'title' => $task->title,
