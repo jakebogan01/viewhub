@@ -1,5 +1,5 @@
 <script context="module">
-    export {default as layout} from "../../Layouts/Authenticated.svelte";
+    // export {default as layout} from "../../Layouts/Authenticated.svelte";
 </script>
 
 <script>
@@ -144,6 +144,13 @@
         {#if flash.message}
             <div class="text-green-500 font-bold">{flash.message}</div>
         {/if}
+
+        <div class="px-4 sm:py-8 sm:px-6 lg:px-8">
+            <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
+                <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                <span class="font-bold text-13 md:text-sm text-white">Go Home</span>
+            </a>
+        </div>
 
         <main>
             <!-- Settings forms -->
