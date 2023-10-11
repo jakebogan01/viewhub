@@ -157,7 +157,7 @@ class DashboardController extends Controller
                                 'body' => $reply->body,
                                 'user_id' => $reply->user->id,
                                 'username' => $reply->user->username,
-                                'defaut_avatar' => $reply->user->getAvatar(),
+                                'default_avatar' => $reply->user->getAvatar(),
                                 'user_avatar' => $reply->user->avatar,
                                 'recipient' => $reply->recipient->username,
                                 'created_at' => $reply->created_at
