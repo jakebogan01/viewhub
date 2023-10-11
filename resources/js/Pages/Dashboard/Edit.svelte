@@ -1,5 +1,5 @@
 <script context="module">
-    export {default as layout} from "../../Layouts/Authenticated.svelte";
+    export {default as layout} from "../../Layouts/Layout.svelte";
 </script>
 
 <script>
@@ -9,9 +9,6 @@
     import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
     import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
     import 'filepond/dist/filepond.min.css';
-    import {DateInput} from "date-picker-svelte";
-    import Editor from "@tinymce/tinymce-svelte";
-
     registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
 
     /* svelte-ignore unused-export-let */
@@ -23,31 +20,12 @@
     // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
 
-    let includeDate = task.due_date !== null;
-    let makePriority = task.priority;
-
     let form = useForm({
         title: task.title,
         description: task.description,
-        priority: makePriority,
-        due_date: includeDate ? new Date(task.due_date) : null,
         tag_id: task.tag,
         images: [],
     });
-
-    $: {
-        if (!makePriority) {
-            $form.priority = 0;
-        } else {
-            $form.priority = 1;
-        }
-
-        if (!includeDate) {
-            $form.due_date = null;
-        } else {
-            $form.due_date = task.due_date ? new Date(task.due_date) : new Date();
-        }
-    }
 
     let options = {
         url: '',
@@ -88,128 +66,89 @@
             replace: true,
         })
     }
-
-    let conf = {
-        height: 300,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'preview',
-            'anchor', 'code'
-        ],
-        toolbar: 'bold italic backcolor | alignleft aligncenter ' +
-            'alignright alignjustify | code |  bullist numlist outdent indent | ',
-        menubar: '',
-        statusbar: false
-    }
 </script>
 
 <svelte:head>
     <title>Edit {task.title}</title>
 </svelte:head>
 
-<section class="p-6">
-    <div class="max-w-3xl mx-auto">
-        {#if $form.progress}
-            <progress value={$form.progress.percentage} max="100">
-                {$form.progress.percentage}%
-            </progress>
-        {/if}
 
-        <form on:submit|preventDefault={submit} class="max-w-md mx-auto mt-8">
-            <div class="mb-6">
-                <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="title"> Title </label>
+<section class="mb-10 max-w-[530px] mx-auto">
+    <div class="mb-6">
+        <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
+            <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+            <span class="font-bold text-13 md:text-sm text-[#647196]">Go Back</span>
+        </a>
+    </div>
 
-                <input value={task.title} on:input={(e)=>{$form.title = e.target.value}} class="border border-gray-400 p-2 w-full" type="text" name="title" id="title"/>
-                {#if $form.errors.title}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.title} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
-                <label class="block mb-2 uppercase font-bold text-xs text-gray-700" for="description"> Description </label>
-
-                <Editor
-                    apiKey="c6nd39g8lr6fi2qj6ed3jl7xyimi98cd389sbn1crir27xph"
-                    id="description"
-                    inline=false
-                    disabled=false
-                    modelEvents="input change"
-                    value={task.description}
-                    on:keydown={(e)=>{$form.description = e.detail.event.currentTarget.innerHTML}}
-                    text="readonly-text-output"
-                    name="description"
-                    {conf}
-                />
-                {#if $form.errors.description}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.description} </p>
-                {/if}
-            </div>
-
-            <div class="flex items-center mb-6">
-                <input type="checkbox" id="includeDate" name="includeDate" value={includeDate} on:click={()=>{includeDate = !includeDate}} checked={includeDate}>
-                <label for="includeDate" class="mr-6 ml-1">Include a Due Date</label>
-
-                {#if includeDate}
-                    <DateInput bind:value={$form.due_date} format="MM-dd-yyyy" closeOnSelection="true" browseWithoutSelecting="true" disabled={!includeDate} />
-                    {#if $form.errors.due_date}
-                        <p class="text-red-500 text-xs mt-1"> {$form.errors.due_date} </p>
+    <form on:submit|preventDefault={submit} enctype="multipart/form-data" class="relative bg-white dark:bg-[#1E293B] hover:shadow-lg p-6 rounded-[0.625rem] mt-12 md:mt-16">
+        <span class="absolute -top-5 md:-top-7 h-10 md:h-14"><svg fill="none" height="56" viewBox="0 0 56 56" width="56" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><radialGradient id="a" cx="0" cy="0" gradientTransform="matrix(-59.30841458 72.17498989 -72.17498989 -59.30841458 58.184 -5.81647)" gradientUnits="userSpaceOnUse" r="1"><stop offset="0" stop-color="#e84d70"/><stop offset=".530886" stop-color="#a337f6"/><stop offset="1" stop-color="#28a7ed"/></radialGradient><circle cx="28" cy="28" fill="url(#a)" r="28"/><path clip-rule="evenodd" d="m29.0825 19.4809 3.749-3.4809 6.5135 6.2719-3.5481 3.6801zm-13.0825 20.114c.9207-3.9416 3.4867-14.0206 3.4867-14.0206l8.2028-4.8208 6.8314 6.3964-5.2192 7.8201-12.9887 5.03 6.1573-5.7896c1.0427.3894 2.5154.0374 3.3115-.8368 1.051-1.1481.9721-2.9313-.1768-3.9822-1.149-1.051-3.0202-1.051-4.0711.0971-.7829.8559-1.0527 2.3659-.6052 3.3613z" fill="#fff" fill-rule="evenodd"/></svg></span>
+        <div class="mt-6 md:mt-8">
+            <h3 class="font-bold text-lg md:text-2xl text-[#3A4374] dark:text-[#4761E6] truncate" id="modal-title">Editing '{task.title}'</h3>
+            <div class="mt-6 md:mt-16 space-y-6">
+                <div>
+                    <label for="title" class="block font-bold text-13 md:text-sm text-[#3A4374] dark:text-white">Feedback Title</label>
+                    <span class="text-13 md:text-sm text-[#647196] dark:text-[#D1D7E9]">Add a short, descriptive headline</span>
+                    <div class="mt-3">
+                        <input type="text" value={task.title} on:input={(e)=>{$form.title = e.target.value}} name="title" id="title" spellcheck="true" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 placeholder:text-[#3A4374] ring-inset focus:ring-2 focus:ring-inset focus:ring-indigo-600" required>
+                    </div>
+                    {#if $form.errors.title}
+                        <p class="text-red-500 text-[0.9rem]">{$form.errors.title} </p>
                     {/if}
-                {/if}
-            </div>
-
-            <div class="flex items-center mb-6">
-                <label for="priority" class="mr-6 ml-1">High Priority</label>
-                <input type="checkbox" id="priority" name="priority" value={makePriority} on:click={()=>{makePriority = !makePriority}} checked={makePriority}>
-
-                {#if $form.errors.priority}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.priority} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
-                <label for="tag_id" class="block text-sm font-medium leading-6 text-gray-900">Tag</label>
-
-                <select bind:value={task.tag_id} on:input={(e)=>{$form.tag_id = parseInt(e.target.value)}} id="tag_id" name="tag_id" class="mt-2 block w-full capitalize rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                    {#each tags as tag (tag.id)}
-                        {#if task.tag === tag.id}
-                            <option value={tag.id} selected>{tag.name}</option>
-                        {:else}
-                            <option value={tag.id}>{tag.name}</option>
-                        {/if}
-                    {/each}
-                </select>
-                {#if $form.errors.tag_id}
-                    <p class="text-red-500 text-xs mt-1"> {$form.errors.tag_id} </p>
-                {/if}
-            </div>
-
-            <div class="mb-6">
-                <div class="app">
+                </div>
+                <div>
+                    <label for="tag_id" class="block font-bold text-13 md:text-sm text-[#3A4374] dark:text-white">Category</label>
+                    <span class="text-13 md:text-sm text-[#647196] dark:text-[#D1D7E9]">Choose a category for your feedback</span>
+                    <div class="mt-3">
+                        <select bind:value={task.tag_id} on:input={(e)=>{$form.tag_id = parseInt(e.target.value)}} id="tag_id" name="tag_id" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 placeholder:text-[#3A4374] ring-inset focus:ring-2 focus:ring-inset focus:ring-indigo-600">
+                            {#each tags as tag (tag.id)}
+                                {#if task.tag === tag.id}
+                                    <option value={tag.id} selected>{tag.name}</option>
+                                {:else}
+                                    <option value={tag.id}>{tag.name}</option>
+                                {/if}
+                            {/each}
+                        </select>
+                    </div>
+                    {#if $form.errors.tag_id}
+                        <p class="text-red-500 text-[0.9rem]"> {$form.errors.tag_id} </p>
+                    {/if}
+                </div>
+                <div>
+                    <label for="description" class="block font-bold text-13 md:text-sm text-[#3A4374] dark:text-white">Feedback Detail</label>
+                    <span class="text-13 md:text-sm text-[#647196] dark:text-[#D1D7E9]">Include any specific comments on what should be improved, added, etc.</span>
+                    <div class="mt-3">
+                        <textarea on:input={(e)=>{$form.description = e.target.value}} rows="4" cols="50" spellcheck="true" name="description" id="description" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 placeholder:text-[#3A4374] ring-inset focus:ring-2 focus:ring-inset focus:ring-indigo-600" style="resize: none;" required>{task.description}</textarea>
+                    </div>
+                    {#if $form.errors.description}
+                        <p class="text-red-500 text-[0.9rem]">{$form.errors.description}</p>
+                    {/if}
+                </div>
+                <div>
                     <FilePond
                         name="image"
                         server={options}
                         allowMultiple={true}
                     />
                 </div>
+                {#if task.images.length > 0}
+                    <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3 lg:mx-0 lg:max-w-none">
+                        {#each task.images as image (image.id)}
+                            <li class="relative rounded-md overflow-hidden">
+                                <div class="absolute inset-0 w-full h-full bg-black bg-opacity-20"></div>
+                                <button type="button" use:inertia="{{ href: `/dashboard/image/delete/${image.id}`, method: 'delete', replace: true, }}" class="absolute top-0 right-0 text-white">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
+                                </button>
+                                <img src="/images/user{task.user_id}/{image.path}" class="aspect-[3/2] w-full object-cover" alt={image.name}>
+                            </li>
+                        {/each}
+                    </ul>
+                {/if}
             </div>
-
-            {#if task.images.length > 0}
-                <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-3 lg:mx-0 lg:max-w-none">
-                    {#each task.images as image (image.id)}
-                        <li class="relative rounded-md overflow-hidden">
-                            <div class="absolute inset-0 w-full h-full bg-black bg-opacity-20"></div>
-                            <button type="button" use:inertia="{{ href: `/dashboard/image/delete/${image.id}`, method: 'delete', replace: true, }}" class="absolute top-0 right-0 text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z" clip-rule="evenodd" /></svg>
-                            </button>
-                            <img src="/images/user{task.user_id}/{image.path}" class="aspect-[3/2] w-full object-cover" alt={image.name}>
-                        </li>
-                    {/each}
-                </ul>
-            {/if}
-
-            <div class="mb-6">
-                <button type="submit" class="bg-blue-400 text-white rounded py-2 px-4 hover:bg-blue-500" disabled={$form.processing}>Update</button>
-                <a use:inertia href="/dashboard" class="bg-red-400 text-white rounded py-2 px-4 hover:bg-red-500">Cancel</a>
-            </div>
-        </form>
-    </div>
+        </div>
+        <div class="flex flex-col md:flex-row md:justify-end items-center md:space-x-4 space-y-4 md:space-y-0 mt-10 mb-8">
+            <button type="button" use:inertia={{ href: '/dashboard', replace: true }} class="mt-3 inline-flex w-full justify-center items-center rounded-[0.625rem] bg-[#10263E] hover:bg-[#656EA3] dark:bg-black px-3 h-10 md:w-[5.8125rem] text-[#F2F4FE] ring-1 ring-inset ring-gray-300 dark:ring-black sm:col-start-1 sm:mt-0">Cancel</button>
+            <button type="submit" class="inline-flex w-full justify-center items-center rounded-[0.625rem] bg-[#AD1FE9] hover:bg-[#C75AF6] px-3 h-10 md:w-[9rem] text-[#F2F4FE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2" disabled={$form.processing}>Update feedback</button>
+        </div>
+    </form>
 </section>

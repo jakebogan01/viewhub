@@ -90,11 +90,11 @@
                     <div class="flex items-start">
                         <div class="ml-3 w-0 flex-1 pt-0.5">
                             {#if notification.type === 'App\\Notifications\\CommentReceived'}
-                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span>commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.comment_id}" class="text-blue-500 font-bold">task</a></p>
+                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.comment_id}" class="text-blue-500 font-bold">task</a></p>
                             {:else if notification.type === 'App\\Notifications\\CommentReplyReceived'}
-                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span>replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.reply_id}" class="text-blue-500 font-bold">comment</a></p>
+                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.reply_id}" class="text-blue-500 font-bold">comment</a></p>
                             {:else}
-                                <p class="text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a>was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
+                                <p class="text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
                             {/if}
                         </div>
                         <div class="ml-4 flex flex-shrink-0">

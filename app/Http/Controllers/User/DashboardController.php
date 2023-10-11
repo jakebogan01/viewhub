@@ -206,11 +206,6 @@ class DashboardController extends Controller
         }
 
         $attributes = $this->validateTask($task);
-        if ($request->due_date !== null) {
-            $attributes['due_date'] = $this->validateDueDate();
-        } else {
-            $attributes['due_date'] = null;
-        }
         $attributes['status_id'] = $task->status_id;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
