@@ -66,6 +66,13 @@ class DashboardController extends Controller
                     'id' => $task->id,
                     'title' => $task->title,
                     'slug' => $task->slug,
+                    'description' => $task->description,
+                    'tag' => $task->tag->name,
+                    'user' => $task->user->name,
+                    'user_id' => $task->user->id,
+                    'likes' => $task->likes->count(),
+                    'comment_count' => $task->comments->count(),
+                    'owner_id' => $task->user->id,
                 ]),
         ]);
     }

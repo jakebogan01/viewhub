@@ -147,7 +147,7 @@
             </div>
         </div>
         <div class="flex flex-col md:flex-row md:justify-end items-center md:space-x-4 space-y-4 md:space-y-0 mt-10 mb-8">
-            <button type="button" use:inertia={{ href: '/dashboard', replace: true }} class="mt-3 inline-flex w-full justify-center items-center rounded-[0.625rem] bg-[#10263E] hover:bg-[#656EA3] dark:bg-black px-3 h-10 md:w-[5.8125rem] text-[#F2F4FE] ring-1 ring-inset ring-gray-300 dark:ring-black sm:col-start-1 sm:mt-0">Cancel</button>
+            <button type="button" use:inertia={{ href: `/dashboard/tasks/${task.slug}`, replace: true }} class="mt-3 inline-flex w-full justify-center items-center rounded-[0.625rem] bg-[#10263E] hover:bg-[#656EA3] dark:bg-black px-3 h-10 md:w-[5.8125rem] text-[#F2F4FE] ring-1 ring-inset ring-gray-300 dark:ring-black sm:col-start-1 sm:mt-0">Cancel</button>
             <button type="submit" class="inline-flex w-full justify-center items-center rounded-[0.625rem] bg-[#AD1FE9] hover:bg-[#C75AF6] px-3 h-10 md:w-[9rem] text-[#F2F4FE] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2" disabled={$form.processing}>Update feedback</button>
         </div>
     </form>

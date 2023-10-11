@@ -98,7 +98,7 @@
     <div class="flex justify-between mb-6">
         <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
             <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
-            <span class="font-bold text-13 md:text-sm text-[#647196]">Go Back</span>
+            <span class="font-bold text-13 md:text-sm text-[#647196]">Go Home</span>
         </a>
 
         {#if task.user_id === client_d}
@@ -121,7 +121,7 @@
             <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
 
             {#if task.images.length > 0}
-                <ul role="list" class="mx-auto my-20 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
+                <ul role="list" class="mx-auto my-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 lg:mx-0 lg:max-w-none">
                     {#each task.images as image}
                         <li on:click={()=>{inspectImage(image)}} on:keydown>
                             <img src="/images/user{task.user_id}/{image.path}" class="aspect-[3/2] w-full rounded-md object-cover" alt={image.name}>
@@ -131,12 +131,6 @@
             {/if}
 
             <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
-        </div>
-        <div class="flex items-end md:items-center justify-between">
-            <div class="flex items-center space-x-2 font-bold text-[#3A4374] md:text-base">
-                <svg width="18" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M2.62 16H1.346l.902-.91c.486-.491.79-1.13.872-1.823C1.036 11.887 0 9.89 0 7.794 0 3.928 3.52 0 9.03 0 14.87 0 18 3.615 18 7.455c0 3.866-3.164 7.478-8.97 7.478-1.017 0-2.078-.137-3.025-.388A4.705 4.705 0 012.62 16z" fill="#CDD2EE" fill-rule="nonzero"/></svg>
-                <span class="dark:text-[#D1D7E9]">{task.comment_count}</span>
-            </div>
         </div>
     </div>
 
