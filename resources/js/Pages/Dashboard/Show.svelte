@@ -92,7 +92,7 @@
 </svelte:head>
 
 {#if flash.message}
-    <div class="text-green-500 font-bold">{flash.message}</div>
+    <div class="text-center text-green-500 dark:text-blue-400 font-bold">{flash.message}</div>
 {/if}
 
 <section class="px-4 md:px-0">
@@ -282,7 +282,7 @@
                 <div>
                     <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
                     <div class="mt-3">
-                        <textarea bind:value={$replyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] dark:placeholder:text-white/40 focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
+                        <textarea bind:value={$replyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-white p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] dark:placeholder:text-white/40 focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-4">
