@@ -144,7 +144,7 @@
     </div>
 
     {#if task.comments.data.length > 0}
-        <div class="bg-white dark:bg-[#1E293B] px-8 py-6 rounded-[0.625rem] text-13 space-y-10 my-6">
+        <div class="bg-white dark:bg-[#222222] hover:shadow-lg px-8 py-6 rounded-[0.625rem] text-13 space-y-10 my-6">
             <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6 md:mb-0">{task.comments.data.length} Comments</h2>
             {#each task.comments.data as comment, i (comment.id)}
                 <div id={comment.id}>
@@ -159,20 +159,20 @@
                             </div>
                             <div>
                                 <div class="text-13 md:text-sm">
-                                    <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{comment.user.username}</span>
-                                    <span class="block text-[#647196]"><time>{comment.created_at}</time></span>
+                                    <span class="block font-bold text-[#3A4374] dark:text-white">{comment.user.username}</span>
+                                    <span class="block text-[#647196] dark:text-gray-400"><time>{comment.created_at}</time></span>
                                 </div>
                                 <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">{comment?.body}</p>
                             </div>
                         </div>
                         <div>
                             {#if comment.user.id === client_d || is_admin}
-                                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline mr-2">Delete</button>
+                                <button type="button" use:inertia="{{ href: `/dashboard/comment/${comment.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 dark:text-red-400 hover:text-red-400 hover:underline mr-2">Delete</button>
                                 {#if is_admin}
-                                    <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                    <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] dark:text-[#3bb0e3] hover:text-[#7389f5] dark:hover:text-white hover:underline">Reply</button>
                                 {/if}
                             {:else}
-                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = comment.user.username; replyNow = true; replyToComment = true; comment_id = comment.id; user_id = comment.user.id}} class="font-semibold text-13 text-[#4661E6] dark:text-[#3bb0e3] hover:text-[#7389f5] dark:hover:text-white hover:underline">Reply</button>
                             {/if}
                         </div>
                     </div>
@@ -180,12 +180,12 @@
                 </div>
 
                 {#if (task.comments.data.length - 1) > i}
-                    <hr class="dark:border-gray-700">
+                    <hr class="dark:border-gray-700 dark:border-[#444444]">
                 {/if}
 
                 {#if comment.replies.length > 0}
                     {#each comment.replies.sort() as reply (reply.id)}
-                        <div id={reply.id} class="pl-10 ml-5 pt-4 border-dotted border-l border-[#E5E7EB]">
+                        <div id={reply.id} class="pl-10 ml-5 pt-4 border-dotted border-l border-[#E5E7EB] dark:border-[#444444]">
                             <div class="flex justify-between mb-4">
                                 <div class="flex items-start">
                                     <div class="mr-4 rounded-full min-w-[40px] max-w-[40px] min-h-[40px] max-h-[40px] overflow-hidden">
@@ -197,28 +197,28 @@
                                     </div>
                                     <div>
                                         <div class="text-13 md:text-sm">
-                                            <span class="block font-bold text-[#3A4374] dark:text-[#4761E6]">{reply.username}</span>
-                                            <span class="block text-[#647196]"><time>{reply.created_at}</time></span>
+                                            <span class="block font-bold text-[#3A4374] dark:text-white">{reply.username}</span>
+                                            <span class="block text-[#647196] dark:text-gray-400"><time>{reply.created_at}</time></span>
                                         </div>
                                         <p class="hidden md:inline-block text-15 mt-4 text-[#647196] dark:text-[#D1D7E9]">
-                                            <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
+                                            <span class="text-blue-600 dark:text-[#3bb0e3]">@{reply.recipient}&#xa0;</span>
                                             {reply.body}
                                         </p>
                                     </div>
                                 </div>
                                 <div>
                                     {#if reply.user_id === client_d || is_admin}
-                                        <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 hover:text-red-400 hover:underline">Delete</button>
+                                        <button type="button" use:inertia="{{ href: `/dashboard/comment/reply/${reply.id}`, method: 'delete', replace: true, preserveScroll: true }}" class="font-semibold text-13 text-red-500 dark:text-red-400 hover:text-red-400 hover:underline">Delete</button>
                                         {#if is_admin}
-                                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                            <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] dark:text-[#3bb0e3] dark:hover:text-white hover:text-[#7389f5] hover:underline">Reply</button>
                                         {/if}
                                     {:else}
-                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] hover:text-[#7389f5] hover:underline">Reply</button>
+                                        <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyTo = reply.username; replyNow = true; comment_id = comment.id; user_id = reply.user_id}} class="font-semibold text-13 text-[#4661E6] dark:text-[#3bb0e3] dark:hover:text-white hover:text-[#7389f5] hover:underline">Reply</button>
                                     {/if}
                                 </div>
                             </div>
                             <p class="md:hidden text-[#647196]">
-                                <span class="text-blue-600">@{reply.recipient}&#xa0;</span>
+                                <span class="text-blue-600 dark:text-[#3bb0e3]">@{reply.recipient}&#xa0;</span>
                                 {reply.body}
                             </p>
                         </div>
@@ -243,22 +243,22 @@
         {/if}
     </div>
 
-    <form on:submit|preventDefault={submit} class="bg-white dark:bg-[#1E293B] mt-6 p-6 hover:shadow-lg rounded-[0.625rem] text-13">
+    <form on:submit|preventDefault={submit} class="bg-white dark:bg-[#222222] mt-6 p-6 hover:shadow-lg rounded-[0.625rem] text-13">
         <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Add Comment</h2>
         <div>
             <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
             <div class="mt-3">
-               <textarea bind:value={$form.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required></textarea>
+               <textarea bind:value={$form.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-white p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] dark:placeholder:text-white/40 focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required></textarea>
             </div>
         </div>
         <div class="flex items-center justify-between mt-4">
-            <div class="text-13 md:text-15 text-[#647196]">
+            <div class="text-13 md:text-15 text-[#647196] dark:text-gray-500">
                 {#if $form.errors.body}
                     <span class="block text-red-500">{$form.errors.body}</span>
                 {/if}
                 <span>{255 - $form.body.length } Characters left</span>
             </div>
-            <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$form.processing}>Post Comment</button>
+            <button type="submit" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$form.processing}>Post Comment</button>
         </div>
     </form>
 </section>
@@ -275,18 +275,18 @@
 {/if}
 
 {#if replyNow}
-    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#1E293B] mt-6 p-6 hover:shadow-lg z-50">
+    <div class="fixed bottom-0 left-0 w-full bg-white dark:bg-[#222222] mt-6 p-6 hover:shadow-lg z-50">
         {#if replyToComment}
             <form on:submit|preventDefault={submitReply} class="max-w-[730px] mx-auto rounded-[0.625rem] text-13">
                 <h2 class="font-bold text-lg text-[#3A4374] dark:text-white mb-6">Replying to {replyTo}</h2>
                 <div>
                     <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
                     <div class="mt-3">
-                        <textarea bind:value={$replyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
+                        <textarea bind:value={$replyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] dark:placeholder:text-white/40 focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-4">
-                    <div class="text-13 md:text-15 text-[#647196]">
+                    <div class="text-13 md:text-15 text-[#647196] dark:text-gray-500">
                         {#if $replyForm.errors.body}
                             <span class="block text-red-500">{$replyForm.errors.body}</span>
                         {/if}
@@ -294,7 +294,7 @@
                     </div>
                     <div>
                         <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $replyForm.body = ''; replyToComment = false;}} class="bg-red-500 hover:bg-red-400 font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap">Cancel</button>
-                        <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$replyForm.processing}>Post Comment</button>
+                        <button type="submit" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$replyForm.processing}>Post Comment</button>
                     </div>
                 </div>
             </form>
@@ -304,11 +304,11 @@
                 <div>
                     <label for="body" class="block font-bold text-13 text-[#3A4374] sr-only">Create Comment</label>
                     <div class="mt-3">
-                        <textarea bind:value={$submitReplyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-[#151E2C] text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
+                        <textarea bind:value={$submitReplyForm.body} maxlength="255" spellcheck="true" rows="3" cols="50" name="body" id="body" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-[#8C92B4] p-3 rounded-[0.3125rem] border-0 ring-1 ring-inset ring-transparent placeholder:text-[#8C92B4] dark:placeholder:text-white/40 focus:ring-2 focus:ring-inset focus:ring-indigo-600" placeholder="Type your comment here" style="resize: none;" required autofocus></textarea>
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-4">
-                    <div class="text-13 md:text-15 text-[#647196]">
+                    <div class="text-13 md:text-15 text-[#647196] dark:text-gray-500">
                         {#if $submitReplyForm.errors.body}
                             <span class="block text-red-500">{$submitReplyForm.errors.body}</span>
                         {/if}
@@ -316,7 +316,7 @@
                     </div>
                     <div>
                         <button type="button" use:inertia="{{ href: '#', replace: true, preserveScroll: true }}" on:click={()=>{replyNow = false; $submitReplyForm.body = '';}} class="bg-red-500 hover:bg-red-400 font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap">Cancel</button>
-                        <button type="submit" class="bg-[#AD1FE9] hover:bg-[#C75AF6] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$submitReplyForm.processing}>Post Comment</button>
+                        <button type="submit" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-white text-13 md:text-sm rounded-[0.625rem] px-4 py-2.5 whitespace-nowrap" disabled={$submitReplyForm.processing}>Post Comment</button>
                     </div>
                 </div>
             </form>
