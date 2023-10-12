@@ -81,26 +81,26 @@
 </svelte:head>
 
 {#if flash.message}
-    <div class="text-center text-green-500 dark:text-blue-400 font-bold">{flash.message}</div>
+    <div class="text-center text-blue-500 dark:text-blue-400 font-bold pb-4">{flash.message}</div>
 {/if}
 
 {#if showNotifications}
     <div class="fixed right-2.5 bottom-2.5 w-[350px] mt-4 space-y-2 z-50" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
         {#each auth.user.unreadNotifications.reverse() as notification}
-            <div class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+            <div class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white dark:bg-[#111111] shadow-lg ring-1 ring-black ring-opacity-5">
                 <div class="p-4">
                     <div class="flex items-start">
                         <div class="ml-3 w-0 flex-1 pt-0.5">
                             {#if notification.type === 'App\\Notifications\\CommentReceived'}
-                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.comment_id}" class="text-blue-500 font-bold">task</a></p>
+                                <p class="text-sm text-gray-500 dark:text-white"><span class="text-purple-500 font-bold">{notification.data.user}</span> commented on your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.comment_id}" class="text-blue-500 font-bold">task</a></p>
                             {:else if notification.type === 'App\\Notifications\\CommentReplyReceived'}
-                                <p class="text-sm text-gray-500"><span class="text-purple-500 font-bold">{notification.data.user}</span> replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.reply_id}" class="text-blue-500 font-bold">comment</a></p>
+                                <p class="text-sm text-gray-500 dark:text-white"><span class="text-purple-500 font-bold">{notification.data.user}</span> replied to your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}/#{notification.data.reply_id}" class="text-blue-500 font-bold">comment</a></p>
                             {:else}
-                                <p class="text-sm text-gray-500">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
+                                <p class="text-sm text-gray-500 dark:text-white">Your <a use:inertia href="/dashboard/tasks/{notification.data.task_slug}" class="text-blue-500 font-bold">task</a> was liked by <span class="text-purple-500 font-bold">{notification.data.user}</span></p>
                             {/if}
                         </div>
                         <div class="ml-4 flex flex-shrink-0">
-                            <button type="button" use:inertia="{{ href: '/notification-mark-read', method: 'post', data: { id: notification.id }, replace: true, }}" class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            <button type="button" use:inertia="{{ href: '/notification-mark-read', method: 'post', data: { id: notification.id }, replace: true, }}" class="inline-flex rounded-md bg-white dark:bg-red-400 text-gray-400 dark:text-white hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 <span class="sr-only">Close</span>
                                 <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"/></svg>
                             </button>
@@ -130,15 +130,17 @@
             <!--end company banner-->
 
             <!--start tags-->
-            <div class="hidden sm:block bg-white dark:bg-[#222222] px-3.5 py-6 hover:shadow-lg rounded-[0.625rem]">
-                <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
-                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] dark:text-white cursor-pointer">All</button>
+            {#if tags.length > 0}
+                <div class="hidden sm:block bg-white dark:bg-[#222222] px-3.5 py-6 hover:shadow-lg rounded-[0.625rem]">
+                    <div class="flex flex-wrap justify-evenly gap-x-2 gap-y-3.5 text-13">
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] dark:text-white cursor-pointer">All</button>
 
-                    {#each tags as tag (tag.id)}
-                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] dark:text-white cursor-pointer">{tag.name}</button>
-                    {/each}
+                        {#each tags as tag (tag.id)}
+                            <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: filters.status, tag: tag.name, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="block bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] dark:hover:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] dark:text-white cursor-pointer">{tag.name}</button>
+                        {/each}
+                    </div>
                 </div>
-            </div>
+            {/if}
             <!--end tags-->
 
             <!--start departments-->
@@ -148,12 +150,14 @@
                     <a href="/dashboard/all-tasks" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-white dark:hover:text-[#238AB6]">View</a>
                 </div>
                 <div>
-                    <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4">
-                        <span class="flex items-center">
-                            <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
-                            <span class="text-base hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-white capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500 dark:text-white'}">All</span>
-                        </span>
-                    </button>
+                    {#if statuses.length > 0}
+                        <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
+                                <span class="text-base hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-white capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500 dark:text-white'}">All</span>
+                            </span>
+                        </button>
+                    {/if}
                     {#each statuses as status, i (status.id)}
                         {#if status.count > 0}
                             <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status.name, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-2.5 group">
@@ -233,7 +237,7 @@
 
                 <div class="flex space-x-px">
                     {#if auth.user.unreadNotifications.length > 0}
-                        <button type="button" on:click={()=>{showNotifications = !showNotifications}} class="block py-2 px-3 hover:bg-transparent rounded-md bg-white" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg" fill="{auth.user.unreadNotifications.length > 0 ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg></button>
+                        <button type="button" on:click={()=>{showNotifications = !showNotifications}} class="block py-2 px-3 hover:bg-transparent rounded-md bg-white dark:bg-transparent" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg" fill="{auth.user.unreadNotifications.length > 0 ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg></button>
                     {:else}
                         <button type="button" class="block py-2 px-3 hover:bg-transparent dark:hover:bg-black rounded-md bg-white dark:bg-black" aria-label="notifications"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" /></svg></button>
                     {/if}
@@ -307,16 +311,18 @@
 
             <!--pagination-->
             <div class="flex justify-between my-6 px-6 sm:px-0">
-                {#if tasks.prev_page_url}
-                    <a use:inertia={{replace: true}} href="{tasks.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
-                {:else}
-                    <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
-                {/if}
+                {#if tasks.data.length > 0}
+                    {#if tasks.prev_page_url}
+                        <a use:inertia={{replace: true}} href="{tasks.prev_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></a>
+                    {:else}
+                        <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg></button>
+                    {/if}
 
-                {#if tasks.next_page_url}
-                    <a use:inertia={{replace: true}} href="{tasks.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
-                {:else}
-                    <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                    {#if tasks.next_page_url}
+                        <a use:inertia={{replace: true}} href="{tasks.next_page_url}" class="text-[#238AB6] hover:opacity-40"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></a>
+                    {:else}
+                        <button type="button" class="text-[#238AB6] opacity-40" disabled><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg></button>
+                    {/if}
                 {/if}
             </div>
         </main>
