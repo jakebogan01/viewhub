@@ -130,15 +130,7 @@
     <title>Settings</title>
 </svelte:head>
 
-<!--
-  This example requires updating your template:
-
-  ```
-  <html class="h-full bg-gray-900">
-  <body class="h-full">
-  ```
--->
-<section class="p-6 bg-gray-900">
+<section class="p-6 bg-black">
     <div class="max-w-7xl mx-auto">
 
         {#if flash.message}
@@ -189,7 +181,7 @@
                             <div class="sm:col-span-3">
                                 <label for="name" class="block text-sm font-medium leading-6 text-white">Name</label>
                                 <div class="mt-2">
-                                    <input type="text" value={user.name} on:input={(e)=>{$personalInformationForm.name = e.target.value}} name="name" id="name" autocomplete="given-name" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input type="text" value={user.name} on:input={(e)=>{$personalInformationForm.name = e.target.value}} name="name" id="name" autocomplete="given-name" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                     {#if $personalInformationForm.errors.name}
                                         <p class="text-red-500 text-xs mt-1"> {$personalInformationForm.errors.name} </p>
                                     {/if}
@@ -199,7 +191,7 @@
                             <div class="sm:col-span-3">
                                 <label for="email" class="block text-sm font-medium leading-6 text-white">Email address</label>
                                 <div class="mt-2">
-                                    <input id="email" value={user.email} on:input={(e)=>{$personalInformationForm.email = e.target.value}} name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input id="email" value={user.email} on:input={(e)=>{$personalInformationForm.email = e.target.value}} name="email" type="email" autocomplete="email" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                     {#if $personalInformationForm.errors.email}
                                         <p class="text-red-500 text-xs mt-1"> {$personalInformationForm.errors.email} </p>
                                     {/if}
@@ -209,7 +201,7 @@
                             <div class="col-span-full">
                                 <label for="username" class="block text-sm font-medium leading-6 text-white">Username</label>
                                 <div class="mt-2">
-                                    <div class="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
+                                    <div class="flex rounded-md bg-white/20 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
                                         <span class="flex select-none items-center pl-3 text-gray-400 sm:text-sm">example/</span>
                                         <input type="text" value={user.username} on:input={(e)=>{$personalInformationForm.username = e.target.value}} name="username" id="username" autocomplete="username" class="flex-1 border-0 bg-transparent py-1.5 pl-1 text-white focus:ring-0 sm:text-sm sm:leading-6" placeholder="janesmith">
                                         {#if $personalInformationForm.errors.username}
@@ -237,7 +229,7 @@
                             <div class="col-span-full">
                                 <label for="current_password" class="block text-sm font-medium leading-6 text-white">Current password</label>
                                 <div class="mt-2">
-                                    <input bind:value={$passwordForm.current_password} id="current_password" name="current_password" type="password" autocomplete="current-password" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input bind:value={$passwordForm.current_password} id="current_password" name="current_password" type="password" autocomplete="current-password" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                     {#if $passwordForm.errors.current_password}
                                         <p class="text-red-500 text-xs mt-1"> {$passwordForm.errors.current_password} </p>
                                     {/if}
@@ -247,7 +239,7 @@
                             <div class="col-span-full">
                                 <label for="new_password" class="block text-sm font-medium leading-6 text-white">New password</label>
                                 <div class="mt-2">
-                                    <input bind:value={$passwordForm.new_password} on:input={confirmPasswords} id="new_password" name="new_password" type="password" autocomplete="new-password" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input bind:value={$passwordForm.new_password} on:input={confirmPasswords} id="new_password" name="new_password" type="password" autocomplete="new-password" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                     {#if $passwordForm.errors.new_password}
                                         <p class="text-red-500 text-xs mt-1"> {$passwordForm.errors.new_password} </p>
                                     {/if}
@@ -257,7 +249,7 @@
                             <div class="col-span-full">
                                 <label for="confirm_password" class="block text-sm font-medium leading-6 text-white">Confirm password</label>
                                 <div class="mt-2">
-                                    <input bind:value={$passwordForm.confirm_password} on:input={confirmPasswords} id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                                    <input bind:value={$passwordForm.confirm_password} on:input={confirmPasswords} id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6">
                                     {#if $passwordForm.errors.confirm_password}
                                         <p class="text-red-500 text-xs mt-1"> {$passwordForm.errors.confirm_password} </p>
                                     {/if}
@@ -306,7 +298,7 @@
                             <div class="col-span-full">
                                 <label for="review" class="block text-sm font-medium leading-6 text-white">Your review</label>
                                 <div class="mt-2">
-                                    <textarea id="review" bind:value={$reviewForm.review} name="review" cols="30" rows="4" class="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"></textarea>
+                                    <textarea id="review" bind:value={$reviewForm.review} name="review" cols="30" rows="4" class="block w-full rounded-md border-0 bg-white/20 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"></textarea>
                                 </div>
                             </div>
                         </div>

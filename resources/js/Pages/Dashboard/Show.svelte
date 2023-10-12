@@ -98,27 +98,35 @@
 <section class="px-4 md:px-0">
     <div class="flex justify-between mb-6">
         <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
-            <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
-            <span class="font-bold text-13 md:text-sm text-[#647196]">Go Home</span>
+            {#if auth.user.dark_mode}
+                <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+            {:else}
+                <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+            {/if}
+            <span class="font-bold text-13 md:text-sm text-[#647196] dark:text-white">Go Home</span>
         </a>
 
         {#if task.user_id === client_d || is_admin}
             <div class="space-x-2">
-                <button type="button" use:inertia="{{ href: `/dashboard/task/${task.id}`, method: 'delete', replace: true, }}" class="bg-[#F87171] hover:bg-[#7C91F9] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Delete</button>
-                <button type="button" use:inertia="{{ href: `/dashboard/task/${task.slug}/edit`, method: 'get' }}" class="bg-[#4761E6] hover:bg-[#7C91F9] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Edit Feedback</button>
+                <button type="button" use:inertia="{{ href: `/dashboard/task/${task.id}`, method: 'delete', replace: true, }}" class="bg-red-500 hover:bg-red-400 font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Delete</button>
+                <button type="button" use:inertia="{{ href: `/dashboard/task/${task.slug}/edit`, method: 'get' }}" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">Edit Feedback</button>
             </div>
         {/if}
     </div>
 
-    <div class="flex flex-col md:flex-row bg-white dark:bg-[#1E283A] hover:shadow-lg p-6 md:py-7 md:px-8 mt-12 md:mt-16 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
+    <div class="flex flex-col md:flex-row bg-white dark:bg-[#222222] hover:shadow-lg p-6 md:py-7 md:px-8 mt-12 md:mt-16 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
         <div class="hidden md:block pr-10">
-            <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold text-[#3A4374] dark:text-white">
-                <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+            <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] text-[#3A4374] dark:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold">
+                {#if auth.user.dark_mode}
+                    <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                {:else}
+                    <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                {/if}
                 <span class="mt-1">{task.likes}</span>
             </button>
         </div>
         <div class="flex-1 md:pr-[1.5625rem]">
-            <h2 class="font-bold text-[#3A4374] group-hover:text-[#238AB6] dark:text-white md:text-lg leading-3">{task.title}</h2>
+            <h2 class="font-bold text-[#3A4374] dark:text-white md:text-lg leading-3">{task.title}</h2>
             <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
 
             {#if task.images.length > 0}
@@ -131,7 +139,7 @@
                 </ul>
             {/if}
 
-            <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
+            <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#444444] dark:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
         </div>
     </div>
 

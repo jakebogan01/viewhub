@@ -76,8 +76,6 @@
     }
 </script>
 
-try making a custom svelte componnet for global body dark mode and make it conditional to user dark_mode
-
 <svelte:head>
     <title>Dashboard</title>
 </svelte:head>
@@ -149,7 +147,7 @@ try making a custom svelte componnet for global body dark mode and make it condi
                     <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-4">
                         <span class="flex items-center">
                             <span class="w-2 h-2 bg-[#9E0142] rounded-full mr-3"></span>
-                            <span class="text-base hover:text-[#AD1FE9] dark:text-[#D1D7E9] capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500 darK:text-white'}">All</span>
+                            <span class="text-base hover:text-[#AD1FE9] dark:text-[#D1D7E9] dark:hover:text-white capitalize {$page.url === '/dashboard' ? 'text-[#AD1FE9]' : 'text-gray-500 dark:text-white'}">All</span>
                         </span>
                     </button>
                     {#each statuses as status, i (status.id)}
@@ -157,9 +155,9 @@ try making a custom svelte componnet for global body dark mode and make it condi
                             <button type="button" use:inertia="{{ href: route, method: 'get', data: { search: filters.search, status: status.name, tag: filters.tag, sortby: filters.sortby, liked: filters.liked }, replace: true, preserveScroll: true }}" class="flex items-center justify-between w-full mt-2.5 group">
                                 <span class="flex items-center">
                                     <span class="w-2 h-2 rounded-full mr-3" style="background-color: {randomColor[i]}"></span>
-                                    <span class="text-base group-hover:text-[#AD1FE9] dark:text-[#D1D7E9] capitalize {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-gray-500 darK:text-white'}">{status.name}</span>
+                                    <span class="text-base group-hover:text-[#AD1FE9] dark:group-hover:text-white dark:text-[#D1D7E9] capitalize {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-gray-500 darK:text-white'}">{status.name}</span>
                                 </span>
-                                <span class="font-bold text-base group-hover:text-[#AD1FE9] dark:text-white {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-[#21678B]'}">{status.count}</span>
+                                <span class="font-bold text-base group-hover:text-[#AD1FE9] dark:group-hover:text-white dark:text-white {$page.url === `/dashboard?status=${status.name}` ? 'text-[#AD1FE9]' : 'text-[#21678B]'}">{status.count}</span>
                             </button>
                         {/if}
                     {/each}
@@ -260,8 +258,12 @@ try making a custom svelte componnet for global body dark mode and make it condi
                     {#each tasks.data as task (task.id)}
                         <div class="flex flex-col md:flex-row bg-white dark:bg-[#222222] hover:shadow-lg p-6 md:py-7 md:px-8 rounded-[0.625rem] text-13 group" data-sveltekit-preload-data="hover">
                             <div class="hidden md:block pr-10">
-                                <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#17202F] dark:hover:bg-[#3A4374] dark:hover:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold text-[#3A4374] dark:text-white">
-                                    <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                                <button type="button" use:inertia="{{ href: `/notification/${task.id}/like`, method: 'post', data: { user: task.owner_id }, replace: true, preserveScroll: true, }}" class="flex flex-row md:flex-col items-center md:justify-center space-x-2 md:space-x-0 bg-[#F2F4FF] hover:bg-[#CED7FF] dark:bg-[#444444] dark:hover:bg-[#238AB6] text-[#3A4374] dark:text-white rounded-[0.625rem] px-4 py-1 md:p-0 md:w-10 md:h-[3.3125rem] font-bold">
+                                    {#if user.dark_mode}
+                                        <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                                    {:else}
+                                        <svg width="10" height="7" xmlns="http://www.w3.org/2000/svg"><path d="M1 6l4-4 4 4" stroke="#4661E6" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
+                                    {/if}
                                     <span class="mt-1">{task.likes}</span>
                                 </button>
                             </div>
@@ -270,7 +272,7 @@ try making a custom svelte componnet for global body dark mode and make it condi
                                     <h2 class="font-bold text-[#3A4374] group-hover:text-[#238AB6] dark:text-white md:text-lg leading-3">{task.title}</h2>
                                 </a>
                                     <p class="text-[#647196] dark:text-[#D1D7E9] md:text-base my-2 md:mb-4">{@html task.description}</p>
-                                    <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#17202F] rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
+                                    <span class="hidden md:inline-block bg-[#F2F4FF] dark:bg-[#444444] dark:text-white rounded-[0.625rem] px-4 py-1 font-semibold text-[#4661E6] text-base cursor-default">{task.tag}</span>
                             </div>
                             <div class="flex items-end md:items-center justify-between">
                                 <a use:inertia href="/dashboard/tasks/{task.slug}" class="flex items-center space-x-2 font-bold text-[#3A4374] md:text-base">
