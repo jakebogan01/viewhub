@@ -146,7 +146,7 @@
             <!--start departments-->
             <div class="hidden lg:block relative bg-white dark:bg-[#222222] p-6 hover:shadow-lg rounded-[0.625rem] overflow-hidden h-full max-h-[250px] overflow-y-scroll">
                 <div class="flex items-center justify-between">
-                    <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Task Board</h4>
+                    <h4 class="font-bold text-lg text-[#3A4374] dark:text-white">Suggestions</h4>
                     <a href="/dashboard/all-tasks" class="font-semibold text-13 text-[#4661E6] hover:text-[#CED7FF] dark:text-white dark:hover:text-[#238AB6]">View</a>
                 </div>
                 <div>

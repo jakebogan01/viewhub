@@ -69,7 +69,7 @@
                 <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>
                 <span class="font-bold text-13 md:text-sm text-white">Go Back</span>
             </a>
-            <h1 class="font-bold text-lg md:text-2xl md:mt-2">All Tasks</h1>
+            <h1 class="font-bold text-lg md:text-2xl md:mt-2">All Suggestions</h1>
         </div>
         <div>
             <a use:inertia href="/dashboard/task/create" class="bg-[#238AB6] hover:bg-[#186489] font-bold text-13 text-[#F2F4FE] md:text-sm whitespace-nowrap py-2.5 px-4 rounded-[0.625rem]">&#43; Add Feedback</a>
