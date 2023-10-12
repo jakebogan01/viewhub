@@ -28,7 +28,7 @@ class TaskFactory extends Factory
 //            'status_id' => Status::factory(),
             'title' => fake()->sentence(),
             'slug' => fake()->unique()->slug(),
-            'description' => fake()->paragraphs(6, true),
+            'description' => fake()->paragraphs(random_int(1, 8), true),
         ];
     }
 }

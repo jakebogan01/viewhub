@@ -122,7 +122,8 @@
             </section>
         </div>
     </div>
-    <div class="hidden lg:block relative w-0 flex-1">
+    <div class="relativ hidden lg:block relative w-0 flex-1">
+        <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-black to-transparent"></div>
         <iframe src='https://my.spline.design/clonercubesgenerativecopy-ba5d70ec6046fddc4566a0a52369aa2b/' frameborder='0' width='100%' height='100%' class="absolute inset-0 h-full w-full object-cover" loading="eager"></iframe>
     </div>
 </div>
