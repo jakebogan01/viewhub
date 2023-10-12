@@ -45,7 +45,7 @@
         <div class="max-w-lg w-full">
             <form on:submit|preventDefault={submit}>
                 <div>
-                    <BreezeLabel for="name" value="Name" />
+                    <BreezeLabel for="name" value="Username" />
                     <BreezeInput
                         id="name"
                         type="text"
