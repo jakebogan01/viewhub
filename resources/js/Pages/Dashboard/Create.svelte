@@ -16,6 +16,7 @@
     /* svelte-ignore unused-export-let */
     export let auth;
     export let tags;
+    export let statuses;
     export let csrf_token;
 
     // sort tags by id in ascending order
@@ -25,6 +26,7 @@
         title: '',
         description: '',
         tag_id: 1,
+        status_id: 1,
         images: [],
     });
 
@@ -97,6 +99,20 @@
                     </div>
                     {#if $form.errors.title}
                         <p class="text-red-500 text-[0.9rem]">{$form.errors.title} </p>
+                    {/if}
+                </div>
+                <div>
+                    <label for="status_id" class="block font-bold text-13 md:text-sm text-[#3A4374] dark:text-white">Department</label>
+                    <span class="text-13 md:text-sm text-[#647196] dark:text-[#D1D7E9]">Choose you department for your feedback</span>
+                    <div class="mt-3">
+                        <select bind:value={$form.status_id} id="status_id" name="status_id" class="block w-full bg-[#F7F8FE] dark:bg-white/20 text-13 md:text-15 text-[#3A4374] dark:text-white p-3 rounded-[0.3125rem] border-0 ring-1 placeholder:text-[#3A4374] dark:placeholder:text-white/40 ring-inset dark:ring-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600">
+                            {#each statuses as status (status.id)}
+                                <option value={status.id}>{status.name}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    {#if $form.errors.tag_id}
+                        <p class="text-red-500 text-[0.9rem]"> {$form.errors.tag_id} </p>
                     {/if}
                 </div>
                 <div>

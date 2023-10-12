@@ -96,7 +96,6 @@ class DashboardController extends Controller
         $attributes = $this->validateTask();
 
         $attributes['user_id'] = auth()->id();
-        $attributes['status_id'] = 1;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         $task = Task::create($attributes);
@@ -194,6 +193,7 @@ class DashboardController extends Controller
                 'priority' => $task->priority,
                 'due_date' => $task->due_date,
                 'tag' => $task->tag->id,
+                'status' => $task->status->id,
                 'user_id' => $task->user->id,
                 'images' => $task->images->map(function($image) {
                     return [
@@ -204,6 +204,7 @@ class DashboardController extends Controller
                 }),
             ],
             'tags' => Tag::all(),
+            'statuses' => Status::all(),
         ]);
     }
 
@@ -219,7 +220,6 @@ class DashboardController extends Controller
         }
 
         $attributes = $this->validateTask($task);
-        $attributes['status_id'] = $task->status_id;
         $attributes['slug'] = Str::slug($attributes['title']) . '-' . $this->randomThreeDigitID();
 
         $task->update($attributes);
@@ -295,6 +295,7 @@ class DashboardController extends Controller
             'title' => 'required',
             'description' => 'required',
             'tag_id' => ['required', Rule::exists('tags', 'id')],
+            'status_id' => ['required', Rule::exists('statuses', 'id')],
         ]);
     }
 
