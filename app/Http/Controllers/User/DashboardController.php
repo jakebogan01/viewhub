@@ -45,13 +45,20 @@ class DashboardController extends Controller
             'count' => Task::count(),
             'filters' => request()->only(['search', 'status', 'tag', 'sortby', 'liked', 'commented']),
             'tags' => Tag::has('tasks')->get(),
-            'statuses' => Status::all()->map(function($status) {
+            'statuses' => Status::has('tasks')->get()->map(function($status) {
                 return [
                     'id' => $status->id,
                     'name' => $status->name,
                     'count' => $status->tasks->count(),
                 ];
             }),
+//            'statuses' => Status::all()->map(function($status) {
+//                return [
+//                    'id' => $status->id,
+//                    'name' => $status->name,
+//                    'count' => $status->tasks->count(),
+//                ];
+//            }),
             'user' => Auth::user()
         ]);
     }

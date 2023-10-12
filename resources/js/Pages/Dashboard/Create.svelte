@@ -21,6 +21,7 @@
 
     // sort tags by id in ascending order
     tags.sort((a, b) => a.id - b.id);
+    statuses.sort((a, b) => a.id - b.id);
 
     let form = useForm({
         title: '',

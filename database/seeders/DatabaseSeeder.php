@@ -26,9 +26,9 @@ class DatabaseSeeder extends Seeder
         $statuses = ['marketing', 'sales', 'commercial', 'consumer', 'graphics', 'operations', 'it', 'finance', 'legal', 'officers'];
 
         User::factory()->create([
-            'name' => 'test',
-            'email' => 'test@gmail.com',
-            'username' => 'test',
+            'name' => 'Jake Bogan',
+            'email' => 'jakebogan01@gmail.com',
+            'username' => 'jake',
             'password' => bcrypt(123456789),
             'dark_mode' => false,
             'is_admin' => true,
@@ -43,9 +43,9 @@ class DatabaseSeeder extends Seeder
             Tag::factory()->create(['name' => $tag]);
         }
 
-        Task::factory(30)->create();
-        TaskLikes::factory(30)->create();
-        Comment::factory(30)->create();
-        Reply::factory(30)->create();
+//        Task::factory(30)->create();
+//        TaskLikes::factory(30)->create();
+//        Comment::factory(30)->create();
+//        Reply::factory(30)->create();
     }
 }
