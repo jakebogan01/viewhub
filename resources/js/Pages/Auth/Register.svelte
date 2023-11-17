@@ -6,7 +6,25 @@
     import BreezeValidationErrors from "@/Components/ValidationErrors.svelte";
     import {inertia, Link, useForm} from "@inertiajs/inertia-svelte";
     import BreezeCheckbox from "@/Components/Checkbox.svelte";
+    import * as THREE from 'three';
+    import NET from 'vanta/dist/vanta.halo.min';
     export let errors = {};
+
+    function vanta(node) {
+        NET({
+            el: node,
+            THREE: THREE,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 800.00,
+            minWidth: 400.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x7accfe,
+            backgroundColor: 0x0
+        })
+    }
 
     let form = useForm({
         name: null,
@@ -34,106 +52,108 @@
     <title>Register</title>
 </svelte:head>
 
-<div class="registration min-h-full flex bg-black">
-    <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-        <div class="mx-auto w-full max-w-sm lg:w-96">
-            <div>
+<div class="registration min-h-full bg-black">
+    <div class="max-w-[1500px] mx-auto flex min-h-full h-screen">
+            <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+                <div class="mx-auto w-full max-w-sm lg:w-96">
                 <div>
-                    <header class="absolute top-16">
-                        <div class="w-20 md:w-24 cursor-default">
-                            <span class="sr-only">PNY Technology</span>
-                            <img class="w-20 md:w-24" src="/logo/logo.png" alt="">
-                        </div>
-                    </header>
-                </div>
-            </div>
-
-            <section class="mt-8">
-                <div class="mt-6">
-                    <div class="pb-2">
-                        <h2 data-aos="fade-up" data-aos-delay="250" class="mt-16 md:mt-6 text-3xl font-extrabold text-white cursor-default">
-                            Create an account
-                        </h2>
+                    <div>
+                        <header class="absolute top-16">
+                            <div class="w-20 md:w-24 cursor-default">
+                                <span class="sr-only">PNY Technology</span>
+                                <img class="w-20 md:w-24" src="/logo/logo.png" alt="">
+                            </div>
+                        </header>
                     </div>
-                    <form on:submit|preventDefault={submit}>
-                        <div>
-                            <BreezeLabel for="name" value="Username" />
-                            <BreezeInput
-                                id="name"
-                                type="text"
-                                class="mt-1 block w-full"
-                                value={form.name}
-                                required
-                                autofocus
-                                autocomplete="name"
-                                on:input={(evt) => ($form.name = evt.detail)}
-                            />
-                        </div>
-
-                        <div class="mt-4">
-                            <BreezeLabel for="email" value="Email" />
-                            <BreezeInput
-                                id="email"
-                                type="email"
-                                class="mt-1 block w-full"
-                                value={form.email}
-                                required
-                                autocomplete="username"
-                                on:input={(evt) => ($form.email = evt.detail)}
-                            />
-                        </div>
-
-                        <div class="mt-4">
-                            <BreezeLabel for="password" value="Password" />
-                            <BreezeInput
-                                id="password"
-                                type="password"
-                                class="mt-1 block w-full"
-                                value={form.password}
-                                required
-                                autocomplete="new-password"
-                                on:input={(evt) => ($form.password = evt.detail)}
-                            />
-                        </div>
-
-                        <div class="mt-4">
-                            <BreezeLabel for="password_confirmation" value="Confirm Password" />
-                            <BreezeInput
-                                id="password_confirmation"
-                                type="password"
-                                class="mt-1 block w-full"
-                                value={form.password_confirmation}
-                                required
-                                autocomplete="new-password"
-                                on:input={(evt) => ($form.password_confirmation = evt.detail)}
-                            />
-                        </div>
-
-                        <div class="flex items-center justify-end mt-4">
-                            <a
-                                href="/login"
-                                use:inertia
-                                class="text-sm text-white hover:text-gray-200"
-                            >
-                                Already registered?
-                            </a>
-
-                            <BreezeButton
-                                class="ml-4"
-                                xclass:opacity-25={form.processing}
-                                disabled={form.processing}
-                            >
-                                Register
-                            </BreezeButton>
-                        </div>
-                    </form>
                 </div>
-            </section>
+
+                <section class="mt-8">
+                    <div class="mt-6">
+                        <div class="pb-2">
+                            <h2 data-aos="fade-up" data-aos-delay="250" class="mt-16 md:mt-6 text-3xl font-extrabold text-white cursor-default">
+                                Create an account
+                            </h2>
+                        </div>
+                        <form on:submit|preventDefault={submit}>
+                            <div>
+                                <BreezeLabel for="name" value="Username" />
+                                <BreezeInput
+                                    id="name"
+                                    type="text"
+                                    class="mt-1 block w-full"
+                                    value={form.name}
+                                    required
+                                    autofocus
+                                    autocomplete="name"
+                                    on:input={(evt) => ($form.name = evt.detail)}
+                                />
+                            </div>
+
+                            <div class="mt-4">
+                                <BreezeLabel for="email" value="Email" />
+                                <BreezeInput
+                                    id="email"
+                                    type="email"
+                                    class="mt-1 block w-full"
+                                    value={form.email}
+                                    required
+                                    autocomplete="username"
+                                    on:input={(evt) => ($form.email = evt.detail)}
+                                />
+                            </div>
+
+                            <div class="mt-4">
+                                <BreezeLabel for="password" value="Password" />
+                                <BreezeInput
+                                    id="password"
+                                    type="password"
+                                    class="mt-1 block w-full"
+                                    value={form.password}
+                                    required
+                                    autocomplete="new-password"
+                                    on:input={(evt) => ($form.password = evt.detail)}
+                                />
+                            </div>
+
+                            <div class="mt-4">
+                                <BreezeLabel for="password_confirmation" value="Confirm Password" />
+                                <BreezeInput
+                                    id="password_confirmation"
+                                    type="password"
+                                    class="mt-1 block w-full"
+                                    value={form.password_confirmation}
+                                    required
+                                    autocomplete="new-password"
+                                    on:input={(evt) => ($form.password_confirmation = evt.detail)}
+                                />
+                            </div>
+
+                            <div class="flex items-center justify-end mt-4">
+                                <a
+                                    href="/login"
+                                    use:inertia
+                                    class="text-sm text-white hover:text-gray-200"
+                                >
+                                    Already registered?
+                                </a>
+
+                                <BreezeButton
+                                    class="ml-4"
+                                    xclass:opacity-25={form.processing}
+                                    disabled={form.processing}
+                                >
+                                    Register
+                                </BreezeButton>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
         </div>
-    </div>
-    <div class="relativ hidden lg:block relative w-0 flex-1">
-        <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-black to-transparent"></div>
-        <iframe src='https://my.spline.design/clonercubesgenerativecopy-ba5d70ec6046fddc4566a0a52369aa2b/' frameborder='0' width='100%' height='100%' class="absolute inset-0 h-full w-full object-cover" loading="eager"></iframe>
+        <div class="relativ hidden lg:block relative w-0 flex-1">
+            <div class="absolute inset-0 h-full w-[400px] z-50 bg-gradient-to-r from-black to-transparent"></div>
+            <div use:vanta/>
+        </div>
     </div>
 </div>
 
