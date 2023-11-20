@@ -63,7 +63,7 @@
 </svelte:head>
 
 <section>
-    <nav class="relative flex items-center justify-between max-w-[69.375rem] mx-auto sm:rounded-[0.625rem] sm:mx-6 xl:mx-0 px-6 py-6 md:px-9 md:py-8 bg-[#10263E] dark:bg-black z-50">
+    <nav class="relative flex items-center justify-between max-w-[69.375rem] mx-auto sm:rounded-[0.625rem] sm:mx-6 xl:mx-0 px-6 py-6 md:px-9 md:py-8 bg-[#111633] dark:bg-black z-50">
         <div class="text-13 text-[#F3F4FE]">
             <a use:inertia={{ replace: true }} href="/dashboard" class="flex items-center space-x-2">
                 <svg width="7" height="10" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L2 5l4-4" stroke="#ffffff" stroke-width="2" fill="none" fill-rule="evenodd"/></svg>

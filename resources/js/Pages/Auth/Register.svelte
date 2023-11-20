@@ -27,15 +27,15 @@
     <title>Register</title>
 </svelte:head>
 
-<div class="registration min-h-full flex bg-black">
+<div class="registration min-h-full flex bg-[#111633]">
     <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div class="mx-auto w-full max-w-sm lg:w-96">
             <div>
                     <div>
                         <header class="absolute top-16">
                             <div class="w-20 md:w-24 cursor-default">
-                                <span class="sr-only">PNY Technology</span>
-                                <img class="w-20 md:w-24" src="/logo/logo.png" alt="">
+                                <span class="sr-only">Company Logo</span>
+                                <img class="w-20 md:w-24" src="/logo/logo.svg" alt="logo">
                             </div>
                         </header>
                     </div>
@@ -124,7 +124,7 @@
             </div>
         </div>
         <div class="relativ hidden lg:block relative w-0 flex-1">
-            <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-black to-transparent"></div>
+            <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-[#111633] to-transparent"></div>
             <img src="/logo/page.jpg" class="absolute inset-0 h-full w-full object-cover" loading="eager" alt="" role="presentation">
         </div>
     </div>
