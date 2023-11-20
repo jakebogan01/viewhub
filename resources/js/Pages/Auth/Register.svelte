@@ -6,25 +6,6 @@
     import BreezeValidationErrors from "@/Components/ValidationErrors.svelte";
     import {inertia, Link, useForm} from "@inertiajs/inertia-svelte";
     import BreezeCheckbox from "@/Components/Checkbox.svelte";
-    import * as THREE from 'three';
-    import NET from 'vanta/dist/vanta.halo.min';
-    export let errors = {};
-
-    function vanta(node) {
-        NET({
-            el: node,
-            THREE: THREE,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 800.00,
-            minWidth: 400.00,
-            scale: 1.00,
-            scaleMobile: 1.00,
-            color: 0x7accfe,
-            backgroundColor: 0x0
-        })
-    }
 
     let form = useForm({
         name: null,
@@ -34,12 +15,6 @@
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
         terms: false,
     });
-
-    let err = {};
-
-    $: {
-        err = errors;
-    }
 
     const submit = () => {
         $form.post("/register", {
@@ -52,11 +27,10 @@
     <title>Register</title>
 </svelte:head>
 
-<div class="registration min-h-full bg-black">
-    <div class="max-w-[1500px] mx-auto flex min-h-full h-screen">
-            <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
-                <div class="mx-auto w-full max-w-sm lg:w-96">
-                <div>
+<div class="registration min-h-full flex bg-black">
+    <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+        <div class="mx-auto w-full max-w-sm lg:w-96">
+            <div>
                     <div>
                         <header class="absolute top-16">
                             <div class="w-20 md:w-24 cursor-default">
@@ -83,7 +57,6 @@
                                     class="mt-1 block w-full"
                                     value={form.name}
                                     required
-                                    autofocus
                                     autocomplete="name"
                                     on:input={(evt) => ($form.name = evt.detail)}
                                 />
@@ -151,11 +124,10 @@
             </div>
         </div>
         <div class="relativ hidden lg:block relative w-0 flex-1">
-            <div class="absolute inset-0 h-full w-[400px] z-50 bg-gradient-to-r from-black to-transparent"></div>
-            <div use:vanta/>
+            <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-black to-transparent"></div>
+            <img src="/logo/page.jpg" class="absolute inset-0 h-full w-full object-cover" loading="eager" alt="" role="presentation">
         </div>
     </div>
-</div>
 
 <style>
     :global(body) {
