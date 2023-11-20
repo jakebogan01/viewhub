@@ -43,9 +43,9 @@ class DatabaseSeeder extends Seeder
             Tag::factory()->create(['name' => $tag]);
         }
 
-//        Task::factory(30)->create();
-//        TaskLikes::factory(30)->create();
-//        Comment::factory(30)->create();
-//        Reply::factory(30)->create();
+        Task::factory(30)->create();
+        TaskLikes::factory(30)->create();
+        Comment::factory(30)->create();
+        Reply::factory(30)->create();
     }
 }
