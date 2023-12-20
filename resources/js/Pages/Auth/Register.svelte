@@ -1,11 +1,8 @@
 <script>
     import BreezeButton from "@/Components/Button.svelte";
-    import BreezeGuestLayout from "@/Layouts/Guest.svelte";
     import BreezeInput from "@/Components/Input.svelte";
     import BreezeLabel from "@/Components/Label.svelte";
-    import BreezeValidationErrors from "@/Components/ValidationErrors.svelte";
     import {inertia, Link, useForm} from "@inertiajs/inertia-svelte";
-    import BreezeCheckbox from "@/Components/Checkbox.svelte";
 
     let form = useForm({
         name: null,
@@ -35,7 +32,7 @@
                         <header class="absolute top-16">
                             <div class="w-20 md:w-24 cursor-default">
                                 <span class="sr-only">Company Logo</span>
-                                <img class="w-20 md:w-24" src="/logo/logo.svg" alt="logo">
+                                <img class="w-20 md:w-24" src="/logo/logo.png" alt="logo">
                             </div>
                         </header>
                     </div>
@@ -131,12 +128,12 @@
 
 <style>
     :global(body) {
-        height: 100vh;
+        height: 100dvh;
     }
     :global(html) {
-        height: 100vh;
+        height: 100dvh;
     }
     :global(#app) {
-        height: 100vh;
+        height: 100dvh;
     }
 </style>

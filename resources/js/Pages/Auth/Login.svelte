@@ -1,15 +1,15 @@
 <script>
     import BreezeButton from "@/Components/Button.svelte";
-    import BreezeCheckbox from "@/Components/Checkbox.svelte";
-    import BreezeGuestLayout from "@/Layouts/Guest.svelte";
     import BreezeInput from "@/Components/Input.svelte";
     import BreezeLabel from "@/Components/Label.svelte";
-    import BreezeValidationErrors from "@/Components/ValidationErrors.svelte";
     import { Link, useForm } from "@inertiajs/inertia-svelte";
 
     let err = {};
+    /* svelte-ignore unused-export-let */
     export let errors = {};
+    /* svelte-ignore unused-export-let */
     export let canResetPassword;
+    /* svelte-ignore unused-export-let */
     export let status;
 
     console.log(Intl.DateTimeFormat().resolvedOptions().timeZone)
@@ -33,7 +33,7 @@
 </script>
 
 <svelte:head>
-    <title>Login</title>
+    <title>Login / Viewhub</title>
 </svelte:head>
 
 <div class="registration min-h-full flex bg-[#111633]">
@@ -44,7 +44,7 @@
                     <header class="absolute top-16">
                         <div class="w-20 md:w-24 cursor-default">
                             <span class="sr-only">Company Logo</span>
-                            <img class="w-20 md:w-24" src="/logo/logo.svg" alt="logo">
+                            <img class="w-20 md:w-24" src="/logo/logo.png" alt="logo">
                         </div>
                     </header>
                 </div>
@@ -84,36 +84,11 @@
                             />
                         </div>
 
-                        <div class="block mt-4">
-                            <!-- svelte-ignore a11y-label-has-associated-control -->
-                            <label class="flex items-center">
-                                <BreezeCheckbox name="remember" bind:checked={form.remember} />
-                                <span class="ml-2 text-sm text-white">Remember me</span>
-                            </label>
-                        </div>
-
                         <div class="flex items-center justify-end mt-4">
-                            {#if canResetPassword}
-                                <Link
-                                    href="/password/reset"
-                                    class="text-sm text-white hover:text-gray-200"
-                                >
-                                    Forgot your password?
-                                </Link>
-                            {/if}
-
-                            <Link
-                                href="/register"
-                                class="text-sm text-white ml-3 hover:text-gray-200"
-                            >
+                            <Link href="/register" class="text-sm text-white hover:text-gray-200">
                                 Register
                             </Link>
-
-                            <BreezeButton
-                                class="ml-4"
-                                sclass:opacity-25={form.processing}
-                                disabled={form.processing}
-                            >
+                            <BreezeButton class="ml-4" sclass:opacity-25={form.processing} disabled={form.processing}>
                                 Log in
                             </BreezeButton>
                         </div>
@@ -130,12 +105,12 @@
 
 <style>
     :global(body) {
-        height: 100vh;
+        height: 100dvh;
     }
     :global(html) {
-        height: 100vh;
+        height: 100dvh;
     }
     :global(#app) {
-        height: 100vh;
+        height: 100dvh;
     }
 </style>
