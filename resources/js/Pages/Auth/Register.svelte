@@ -121,7 +121,8 @@
             </div>
         </div>
         <div class="relativ hidden lg:block relative w-0 flex-1">
-            <div class="absolute inset-0 h-full w-[200px] z-50 bg-gradient-to-r from-[#111633] to-transparent"></div>
+            <div class="absolute inset-0 h-full w-full z-50 bg-transparent"></div>
+            <img src="/logo/test4.svg" class="absolute inset-0 z-10 h-full" loading="eager" alt="" role="presentation">
             <img src="/logo/page.jpg" class="absolute inset-0 h-full w-full object-cover" loading="eager" alt="" role="presentation">
         </div>
     </div>
